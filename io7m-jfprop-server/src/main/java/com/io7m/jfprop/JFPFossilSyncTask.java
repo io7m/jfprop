@@ -34,11 +34,11 @@ import com.io7m.jnull.NullCheck;
 
 public final class JFPFossilSyncTask implements Callable<Boolean>
 {
-  private final JFPFossilExecutable               fossil_exec;
-  private final File                              fossil_repos;
-  private final OptionType<JFPFossilUserName>     fossil_username;
-  private final LogUsableType                     log;
-  private final JFPErrorReporterType reporter;
+  private final JFPFossilExecutable           fossil_exec;
+  private final File                          fossil_repos;
+  private final OptionType<JFPFossilUserName> fossil_username;
+  private final LogUsableType                 log;
+  private final JFPErrorReporterType          reporter;
 
   /**
    * Construct a synchronization task.

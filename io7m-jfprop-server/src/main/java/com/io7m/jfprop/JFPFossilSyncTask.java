@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
+import java.util.concurrent.TimeUnit;
 
 import com.io7m.jfunctional.FunctionType;
 import com.io7m.jfunctional.OptionType;
@@ -75,6 +76,15 @@ public final class JFPFossilSyncTask implements Callable<Boolean>
     throws Exception
   {
     try {
+
+      /**
+       * If a sync request has just occurred, then the chances are that the
+       * fossil database is going to be locked, because a sync is probably in
+       * progress. Wait a few seconds before trying to sync with a remote.
+       */
+
+      Thread.sleep(TimeUnit.MILLISECONDS.convert(5, TimeUnit.SECONDS));
+
       final List<String> args = new ArrayList<String>();
       args.add(this.fossil_exec.getActual().getCanonicalPath());
       args.add("sync");

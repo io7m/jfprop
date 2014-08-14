@@ -1,10 +1,10 @@
 /*
  * Copyright © 2014 <code@io7m.com> http://io7m.com
- *
+ * 
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
  * copyright notice and this permission notice appear in all copies.
- *
+ * 
  * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
  * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
@@ -17,6 +17,8 @@
 package com.io7m.jfprop;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
@@ -91,4 +93,43 @@ final class JFPFossilController implements JFPFossilControllerType
       }
     }, Boolean.FALSE);
   }
+
+  private void callListDirectory(
+    final File accum,
+    final File current,
+    final List<String> r)
+  {
+    final String[] items = current.list();
+    if (items == null) {
+      return;
+    }
+
+    for (final String name : items) {
+      final File actual = new File(current, name);
+      if (actual.isFile()) {
+        if (name.endsWith(".fossil") && (".fossil".equals(name) == false)) {
+          r.add(new File(accum, name).toString());
+        }
+      } else if (actual.isDirectory()) {
+        this.callListDirectory(
+          new File(accum, name),
+          new File(current, name),
+          r);
+      }
+    }
+  }
+
+  @Override public List<String> listFossilRepositories(
+    final File root)
+    throws IOException
+  {
+    if (root.isDirectory() == false) {
+      throw new IOException("Not a directory: " + root);
+    }
+
+    final List<String> r = new ArrayList<String>();
+    this.callListDirectory(new File("/"), root, r);
+    return r;
+  }
+
 }

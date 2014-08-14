@@ -150,7 +150,7 @@ public final class JFPServerConfigFromProperties implements
     final boolean mass_sync =
       JProperties.getBooleanOptional(
         p,
-        "server_mass_synchronizer_enabled",
+        JFPProperties.name("server_mass_synchronizer_enabled"),
         false);
 
     return new JFPServerConfigFromProperties(

@@ -52,6 +52,7 @@ import org.eclipse.jetty.util.ssl.SslContextFactory;
 
 import com.io7m.jfunctional.FunctionType;
 import com.io7m.jfunctional.None;
+import com.io7m.jfunctional.Option;
 import com.io7m.jfunctional.OptionType;
 import com.io7m.jfunctional.OptionVisitorType;
 import com.io7m.jfunctional.PartialFunctionType;
@@ -215,7 +216,7 @@ public final class JFPServerMain implements Runnable, JFPServerControlType
   private final OptionType<Server>            m_server;
   private OptionType<Server>                  ms_server;
   private final AtomicBoolean                 want_stop;
-  private JFPMassSynchronizer                 mass_sync;
+  private OptionType<JFPMassSynchronizer>     mass_sync;
   private ExecutorService                     executor;
 
   private JFPServerMain(
@@ -337,13 +338,18 @@ public final class JFPServerMain implements Runnable, JFPServerControlType
           }
         });
 
-    this.mass_sync =
-      new JFPMassSynchronizer(
-        this.database,
-        fossil_controller,
-        this.executor,
-        server_repository_directory,
-        this.log.with("mass-sync"));
+    if (this.config.getServerMassSynchronizerEnabled()) {
+      this.mass_sync =
+        Option.some(new JFPMassSynchronizer(
+          this.database,
+          fossil_controller,
+          this.executor,
+          server_repository_directory,
+          this.log.with("mass-sync")));
+    } else {
+      this.mass_sync = Option.none();
+    }
+
   }
 
   private Server getHTTPServer(
@@ -724,7 +730,14 @@ public final class JFPServerMain implements Runnable, JFPServerControlType
           }
         });
 
-      this.executor.execute(this.mass_sync);
+      this.mass_sync.map(new FunctionType<JFPMassSynchronizer, Unit>() {
+        @Override public Unit call(
+          final JFPMassSynchronizer s)
+        {
+          JFPServerMain.this.executor.execute(s);
+          return Unit.unit();
+        }
+      });
 
       if (ev != null) {
         ev.serverStarted(this);
@@ -819,6 +832,13 @@ public final class JFPServerMain implements Runnable, JFPServerControlType
         }
       });
 
-    this.mass_sync.stop();
+    this.mass_sync.map(new FunctionType<JFPMassSynchronizer, Unit>() {
+      @Override public Unit call(
+        final JFPMassSynchronizer s)
+      {
+        s.stop();
+        return Unit.unit();
+      }
+    });
   }
 }

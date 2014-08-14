@@ -1,10 +1,10 @@
 /*
  * Copyright © 2014 <code@io7m.com> http://io7m.com
- *
+ * 
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
  * copyright notice and this permission notice appear in all copies.
- *
+ * 
  * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
  * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
@@ -147,6 +147,12 @@ public final class JFPServerConfigFromProperties implements
     final OptionType<JFPMailConfig> in_mail_config =
       JFPMailConfig.fromPropertiesOptional(p);
 
+    final boolean mass_sync =
+      JProperties.getBooleanOptional(
+        p,
+        "server_mass_synchronizer_enabled",
+        false);
+
     return new JFPServerConfigFromProperties(
       server_admin_password,
       http,
@@ -159,7 +165,8 @@ public final class JFPServerConfigFromProperties implements
       log_level,
       server_log_directory,
       server_database_file,
-      in_mail_config);
+      in_mail_config,
+      mass_sync);
   }
 
   /**
@@ -231,6 +238,7 @@ public final class JFPServerConfigFromProperties implements
   private final OptionType<JFPMailConfig>                      mail_config;
   private final File                                           server_database_file;
   private final File                                           server_log_directory;
+  private final boolean                                        mass_sync;
 
   private JFPServerConfigFromProperties(
     final String in_admin_password,
@@ -244,7 +252,8 @@ public final class JFPServerConfigFromProperties implements
     final LogLevel in_log_level,
     final File in_server_log_directory,
     final File in_server_database_file,
-    final OptionType<JFPMailConfig> in_mail_config)
+    final OptionType<JFPMailConfig> in_mail_config,
+    final boolean in_mass_sync)
   {
     this.admin_password = NullCheck.notNull(in_admin_password, "Password");
 
@@ -273,6 +282,8 @@ public final class JFPServerConfigFromProperties implements
       NullCheck.notNull(in_mail_config, "Mail configuration");
 
     this.log_level = NullCheck.notNull(in_log_level, "Log level");
+
+    this.mass_sync = in_mass_sync;
   }
 
   @Override public String getAdminPassword()
@@ -339,5 +350,10 @@ public final class JFPServerConfigFromProperties implements
     getServerManagementHTTPSConfig()
   {
     return this.m_https;
+  }
+
+  @Override public boolean getServerMassSynchronizerEnabled()
+  {
+    return this.mass_sync;
   }
 }

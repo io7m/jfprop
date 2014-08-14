@@ -43,6 +43,30 @@ final class JFPErrorReporterWithMail
     final JFPMailConfig config)
   {
     return new JFPErrorReporterType() {
+      @Override public void onExternalHTTPError(
+        final URI uri,
+        final int code,
+        final String operation)
+      {
+        log.debug("sending report to " + config.getRecipient());
+
+        final StringBuilder text = new StringBuilder();
+        text
+          .append("An error occurred whilst attempting to access an external URI.\n");
+        text.append("\n");
+        text.append("Operation: ");
+        text.append(operation);
+        text.append("\n");
+        text.append("URI: ");
+        text.append(uri);
+        text.append("\n");
+        text.append("Code: ");
+        text.append(code);
+        text.append("\n");
+
+        JFPErrorReporterWithMail.sendMail(log, config, text);
+      }
+
       @Override public void onExternalProgramError(
         final StringBuilder output,
         final List<String> args,
@@ -67,30 +91,6 @@ final class JFPErrorReporterWithMail
         text.append("\n");
         text.append("\n");
         text.append(out);
-        text.append("\n");
-
-        JFPErrorReporterWithMail.sendMail(log, config, text);
-      }
-
-      @Override public void onExternalHTTPError(
-        final URI uri,
-        final int code,
-        final String operation)
-      {
-        log.debug("sending report to " + config.getRecipient());
-
-        final StringBuilder text = new StringBuilder();
-        text
-          .append("An error occurred whilst attempting to access an external URI.\n");
-        text.append("\n");
-        text.append("Operation: ");
-        text.append(operation);
-        text.append("\n");
-        text.append("URI: ");
-        text.append(uri);
-        text.append("\n");
-        text.append("Code: ");
-        text.append(code);
         text.append("\n");
 
         JFPErrorReporterWithMail.sendMail(log, config, text);

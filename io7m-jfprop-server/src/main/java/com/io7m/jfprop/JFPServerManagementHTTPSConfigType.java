@@ -16,41 +16,54 @@
 
 package com.io7m.jfprop;
 
-import java.net.URI;
-import java.util.List;
+import java.io.File;
+import java.net.InetSocketAddress;
 
-import com.io7m.jlog.LogUsableType;
+/**
+ * The type of HTTPS server configurations.
+ */
 
-final class JFPErrorReporterWithoutMail
+public interface JFPServerManagementHTTPSConfigType
 {
-  public static JFPErrorReporterType newReporter(
-    final LogUsableType log)
-  {
-    return new JFPErrorReporterType() {
-      @Override public void onExternalHTTPError(
-        final URI uri,
-        final int code,
-        final String operation)
-      {
-        log.error(String.format(
-          "code %d while %s at URI %s",
-          code,
-          operation,
-          uri));
-      }
+  /**
+   * @return The desired address of the HTTPS server.
+   */
 
-      @Override public void onExternalProgramError(
-        final StringBuilder output,
-        final List<String> args,
-        final int code)
-      {
-        log.error(output.toString());
-      }
-    };
-  }
+  InetSocketAddress getAddress();
 
-  private JFPErrorReporterWithoutMail()
-  {
-    // Nothing.
-  }
+  /**
+   * @return The key store password.
+   */
+
+  String getKeyStorePassword();
+
+  /**
+   * @return The path to the key store.
+   */
+
+  File getKeyStorePath();
+
+  /**
+   * @return The key store type.
+   */
+
+  String getKeyStoreType();
+
+  /**
+   * @return The trust store password.
+   */
+
+  String getTrustStorePassword();
+
+  /**
+   * @return The path to the trust store.
+   */
+
+  File getTrustStorePath();
+
+  /**
+   * @return The trust store type.
+   */
+
+  String getTrustStoreType();
 }

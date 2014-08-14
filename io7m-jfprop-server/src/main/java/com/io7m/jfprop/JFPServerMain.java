@@ -68,6 +68,19 @@ import com.io7m.jproperties.JPropertyException;
 
 public final class JFPServerMain implements Runnable, JFPServerControlType
 {
+  private static File checkCreateLogAccessDirectory(
+    final File server_log_directory)
+    throws IOException
+  {
+    final File directory_access = new File(server_log_directory, "access");
+    if (directory_access.isDirectory() == false) {
+      if (directory_access.mkdir() == false) {
+        throw new IOException("could not create " + directory_access);
+      }
+    }
+    return directory_access;
+  }
+
   private static JFPErrorReporterType getReporter(
     final JFPServerConfigType config,
     final LogType log_fossil)
@@ -126,6 +139,8 @@ public final class JFPServerMain implements Runnable, JFPServerControlType
       System.err
         .println("fatal: configuration error: invalid email address: "
           + e.getMessage());
+    } catch (final JFPException e) {
+      System.err.println("fatal: error: " + e.getMessage());
     }
   }
 
@@ -153,13 +168,13 @@ public final class JFPServerMain implements Runnable, JFPServerControlType
    * @return A new server.
    * @throws IOException
    *           On I/O errors.
-   * @throws JFPExceptionConfigError
-   *           On configuration errors.
+   * @throws JFPException
+   *           On errors.
    */
 
   public static JFPServerMain newServer(
     final JFPServerConfigType c)
-    throws JFPExceptionConfigError,
+    throws JFPException,
       IOException
   {
     return new JFPServerMain(c, null);
@@ -177,15 +192,15 @@ public final class JFPServerMain implements Runnable, JFPServerControlType
    * @return A new server.
    * @throws IOException
    *           On I/O errors.
-   * @throws JFPExceptionConfigError
-   *           On configuration errors.
+   * @throws JFPException
+   *           On errors.
    */
 
   public static JFPServerMain newServer(
     final JFPServerConfigType c,
     final JFPServerEventsType in_events)
-    throws JFPExceptionConfigError,
-      IOException
+    throws IOException,
+      JFPException
   {
     return new JFPServerMain(c, NullCheck.notNull(in_events, "Events"));
   }
@@ -198,12 +213,13 @@ public final class JFPServerMain implements Runnable, JFPServerControlType
   private final LogType                       log;
   private final JFPJettyLogger                logger;
   private final OptionType<Server>            m_server;
+  private OptionType<Server>                  ms_server;
   private final AtomicBoolean                 want_stop;
 
   private JFPServerMain(
     final JFPServerConfigType in_config,
     final @Nullable JFPServerEventsType in_events)
-    throws JFPExceptionConfigError,
+    throws JFPException,
       IOException
   {
     System.setProperty(
@@ -253,7 +269,7 @@ public final class JFPServerMain implements Runnable, JFPServerControlType
     this.database = JFPDatabase.open(this.log, server_database_file);
 
     final File directory_access =
-      this.checkCreateLogAccessDirectory(server_log_directory);
+      JFPServerMain.checkCreateLogAccessDirectory(server_log_directory);
     final RequestLogHandler request_log_handler =
       JFPServerMain.newRequestLog(directory_access);
 
@@ -263,6 +279,8 @@ public final class JFPServerMain implements Runnable, JFPServerControlType
       this.config.getServerHTTPSConfig();
     final OptionType<JFPServerManagementHTTPConfigType> m_http_opt =
       this.config.getServerManagementHTTPConfig();
+    final OptionType<JFPServerManagementHTTPSConfigType> m_https_opt =
+      this.config.getServerManagementHTTPSConfig();
 
     this.http_server =
       http_opt.map(new FunctionType<JFPServerHTTPConfigType, Server>() {
@@ -280,10 +298,10 @@ public final class JFPServerMain implements Runnable, JFPServerControlType
 
     this.https_server =
       https_opt
-        .mapPartial(new PartialFunctionType<JFPServerHTTPSConfigType, Server, IOException>() {
+        .mapPartial(new PartialFunctionType<JFPServerHTTPSConfigType, Server, JFPException>() {
           @Override public Server call(
             final JFPServerHTTPSConfigType https)
-            throws IOException
+            throws JFPException
           {
             return JFPServerMain.this.getHTTPSServer(
               executor,
@@ -306,25 +324,26 @@ public final class JFPServerMain implements Runnable, JFPServerControlType
           }
         });
 
+    this.ms_server =
+      m_https_opt
+        .mapPartial(new PartialFunctionType<JFPServerManagementHTTPSConfigType, Server, JFPException>() {
+          @Override public Server call(
+            final JFPServerManagementHTTPSConfigType m_https)
+            throws JFPException
+          {
+            return JFPServerMain.this.getManagementHTTPSServer(
+              request_log_handler,
+              m_https);
+          }
+        });
+
     if (this.http_server.isNone()
       && this.https_server.isNone()
-      && this.m_server.isNone()) {
+      && this.m_server.isNone()
+      && this.ms_server.isNone()) {
       throw new JFPExceptionConfigError(
-        "HTTP, HTTPS, and management servers disabled; nothing to do!");
+        "No server types enabled; nothing to do!");
     }
-  }
-
-  private File checkCreateLogAccessDirectory(
-    final File server_log_directory)
-    throws IOException
-  {
-    final File directory_access = new File(server_log_directory, "access");
-    if (directory_access.isDirectory() == false) {
-      if (directory_access.mkdir() == false) {
-        throw new IOException("could not create " + directory_access);
-      }
-    }
-    return directory_access;
   }
 
   private Server getHTTPServer(
@@ -364,7 +383,7 @@ public final class JFPServerMain implements Runnable, JFPServerControlType
     final JFPRemoteControllerType remote_controller,
     final RequestLogHandler request_log_handler,
     final JFPServerHTTPSConfigType https)
-    throws IOException
+    throws JFPException
   {
     try {
       final InetSocketAddress addr = https.getAddress();
@@ -428,20 +447,27 @@ public final class JFPServerMain implements Runnable, JFPServerControlType
       final SslContextFactory scf = new SslContextFactory();
       scf.setSslContext(sc);
 
+      /**
+       * Create the server.
+       */
+
       final HttpConfiguration https_conf = new HttpConfiguration();
       https_conf.setSecurePort(addr.getPort());
       https_conf.setSecureScheme("https");
       https_conf.addCustomizer(new SecureRequestCustomizer());
 
-      final Server s = new Server(addr);
-      final ServerConnector[] cs = new ServerConnector[1];
-      cs[0] =
+      final Server s = new Server();
+      final ServerConnector sconn =
         new ServerConnector(
           s,
           new SslConnectionFactory(scf, "http/1.1"),
           new HttpConnectionFactory(https_conf));
-      cs[0].setReuseAddress(true);
-      cs[0].setPort(addr.getPort());
+      sconn.setHost(addr.getHostName());
+      sconn.setReuseAddress(true);
+      sconn.setPort(addr.getPort());
+
+      final ServerConnector[] cs = new ServerConnector[1];
+      cs[0] = sconn;
 
       final ContextHandlerCollection ch =
         JFPServerCommands.getHandlers(
@@ -460,18 +486,19 @@ public final class JFPServerMain implements Runnable, JFPServerControlType
       s.setConnectors(cs);
       return s;
     } catch (final KeyStoreException e) {
-      throw new IOException(e);
+      throw new JFPExceptionCrypto(e);
     } catch (final NoSuchAlgorithmException e) {
-      throw new IOException(e);
+      throw new JFPExceptionCrypto(e);
     } catch (final CertificateException e) {
-      throw new IOException(e);
+      throw new JFPExceptionCrypto(e);
     } catch (final UnrecoverableKeyException e) {
-      throw new IOException(e);
+      throw new JFPExceptionCrypto(e);
     } catch (final KeyManagementException e) {
-      e.printStackTrace();
-      throw new IOException(e);
+      throw new JFPExceptionCrypto(e);
     } catch (final NoSuchProviderException e) {
-      throw new IOException(e);
+      throw new JFPExceptionCrypto(e);
+    } catch (final IOException e) {
+      throw new JFPExceptionIO(e);
     }
   }
 
@@ -487,7 +514,10 @@ public final class JFPServerMain implements Runnable, JFPServerControlType
     c.setReuseAddress(true);
 
     final ContextHandlerCollection ch =
-      JFPAdminCommands.getHandlers(this.config, this.database, this.log);
+      JFPAdminCommands.getHandlers(
+        this.config,
+        this.database,
+        this.log.with("management-http"));
 
     final HandlerCollection hs = new HandlerCollection();
     hs.addHandler(ch);
@@ -495,6 +525,125 @@ public final class JFPServerMain implements Runnable, JFPServerControlType
 
     s.setHandler(hs);
     return s;
+  }
+
+  private Server getManagementHTTPSServer(
+    final RequestLogHandler request_log_handler,
+    final JFPServerManagementHTTPSConfigType m_https)
+    throws JFPException
+  {
+    try {
+      final InetSocketAddress addr = m_https.getAddress();
+
+      /**
+       * Load keystore.
+       */
+
+      final KeyStore ks = KeyStore.getInstance(m_https.getKeyStoreType());
+      final File ks_path = m_https.getKeyStorePath().getCanonicalFile();
+      final String ks_pass = m_https.getKeyStorePassword();
+      final FileInputStream ks_stream = new FileInputStream(ks_path);
+      ks.load(ks_stream, ks_pass.toCharArray());
+      ks_stream.close();
+
+      this.log.debug("keystore is " + ks_path);
+
+      /**
+       * Load truststore.
+       */
+
+      final KeyStore ts = KeyStore.getInstance(m_https.getTrustStoreType());
+      final File ts_path = m_https.getTrustStorePath().getCanonicalFile();
+      final String ts_pass = m_https.getTrustStorePassword();
+      final FileInputStream ts_stream = new FileInputStream(ts_path);
+      ts.load(ts_stream, ts_pass.toCharArray());
+      ts_stream.close();
+
+      this.log.debug("truststore is " + ts_path);
+
+      /**
+       * Initialise a KeyManagerFactory object to encapsulate the underlying
+       * keystore.
+       */
+
+      final KeyManagerFactory kmf =
+        KeyManagerFactory
+          .getInstance(KeyManagerFactory.getDefaultAlgorithm());
+      kmf.init(ks, ks_pass.toCharArray());
+
+      /**
+       * Initialise a TrustManagerFactory with the truststore.
+       */
+
+      final TrustManagerFactory tmf =
+        TrustManagerFactory.getInstance("SunX509");
+      tmf.init(ts);
+
+      /**
+       * Initialize SSL context.
+       */
+
+      final SSLContext sc = SSLContext.getInstance("TLS");
+      final SecureRandom sr = SecureRandom.getInstance("SHA1PRNG", "SUN");
+      sc.init(kmf.getKeyManagers(), tmf.getTrustManagers(), sr);
+
+      /**
+       * Tell Jetty about the SSL context.
+       */
+
+      final SslContextFactory scf = new SslContextFactory();
+      scf.setSslContext(sc);
+
+      /**
+       * Create the server.
+       */
+
+      final HttpConfiguration https_conf = new HttpConfiguration();
+      https_conf.setSecurePort(addr.getPort());
+      https_conf.setSecureScheme("https");
+      https_conf.addCustomizer(new SecureRequestCustomizer());
+
+      final Server s = new Server();
+      final ServerConnector sconn =
+        new ServerConnector(
+          s,
+          new SslConnectionFactory(scf, "http/1.1"),
+          new HttpConnectionFactory(https_conf));
+      sconn.setHost(addr.getHostName());
+      sconn.setReuseAddress(true);
+      sconn.setPort(addr.getPort());
+
+      final ServerConnector[] cs = new ServerConnector[1];
+      cs[0] = sconn;
+
+      final ContextHandlerCollection ch =
+        JFPAdminCommands.getHandlers(
+          this.config,
+          this.database,
+          this.log.with("management-https"));
+
+      final HandlerCollection hs = new HandlerCollection();
+      hs.addHandler(ch);
+      hs.addHandler(request_log_handler);
+
+      s.setHandler(hs);
+      s.setConnectors(cs);
+      return s;
+    } catch (final UnrecoverableKeyException e) {
+      throw new JFPExceptionCrypto(e);
+    } catch (final KeyManagementException e) {
+      throw new JFPExceptionCrypto(e);
+    } catch (final KeyStoreException e) {
+      throw new JFPExceptionCrypto(e);
+    } catch (final NoSuchAlgorithmException e) {
+      throw new JFPExceptionCrypto(e);
+    } catch (final CertificateException e) {
+      throw new JFPExceptionCrypto(e);
+    } catch (final NoSuchProviderException e) {
+      throw new JFPExceptionCrypto(e);
+    } catch (final IOException e) {
+      throw new JFPExceptionIO(e);
+    }
   }
 
   @Override public void run()
@@ -551,6 +700,24 @@ public final class JFPServerMain implements Runnable, JFPServerControlType
               (ServerConnector) server.getConnectors()[0];
             l.info(String.format(
               "starting management http server on http://%s:%d",
+              sc.getHost(),
+              sc.getPort()));
+
+            server.start();
+            return Unit.unit();
+          }
+        });
+
+      this.ms_server
+        .mapPartial(new PartialFunctionType<Server, Unit, Exception>() {
+          @Override public Unit call(
+            final Server server)
+            throws Exception
+          {
+            final ServerConnector sc =
+              (ServerConnector) server.getConnectors()[0];
+            l.info(String.format(
+              "starting management https server on https://%s:%d",
               sc.getHost(),
               sc.getPort()));
 
@@ -629,6 +796,18 @@ public final class JFPServerMain implements Runnable, JFPServerControlType
       });
 
     this.m_server
+      .mapPartial(new PartialFunctionType<Server, Unit, Exception>() {
+        @Override public Unit call(
+          final Server server)
+          throws Exception
+        {
+          server.stop();
+          server.join();
+          return Unit.unit();
+        }
+      });
+
+    this.ms_server
       .mapPartial(new PartialFunctionType<Server, Unit, Exception>() {
         @Override public Unit call(
           final Server server)

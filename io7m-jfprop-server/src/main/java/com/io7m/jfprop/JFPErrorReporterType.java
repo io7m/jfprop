@@ -26,22 +26,6 @@ import java.util.List;
 public interface JFPErrorReporterType
 {
   /**
-   * Called upon execution failures of external programs.
-   *
-   * @param output
-   *          The output produced by the execution.
-   * @param args
-   *          The arguments that produced the execution failure.
-   * @param code
-   *          The process exit code.
-   */
-
-  void onExternalProgramError(
-    final StringBuilder output,
-    final List<String> args,
-    int code);
-
-  /**
    * Called upon failures caused by calling external HTTP URIs.
    *
    * @param uri
@@ -57,4 +41,20 @@ public interface JFPErrorReporterType
     final URI uri,
     int code,
     String operation);
+
+  /**
+   * Called upon execution failures of external programs.
+   *
+   * @param output
+   *          The output produced by the execution.
+   * @param args
+   *          The arguments that produced the execution failure.
+   * @param code
+   *          The process exit code.
+   */
+
+  void onExternalProgramError(
+    final StringBuilder output,
+    final List<String> args,
+    int code);
 }

@@ -16,41 +16,38 @@
 
 package com.io7m.jfprop;
 
-import java.net.URI;
-import java.util.List;
+/**
+ * The type of exceptions raised on any of the dozens of errors that can be
+ * raised by the Java cryptography functions.
+ */
 
-import com.io7m.jlog.LogUsableType;
-
-final class JFPErrorReporterWithoutMail
+public final class JFPExceptionCrypto extends JFPException
 {
-  public static JFPErrorReporterType newReporter(
-    final LogUsableType log)
-  {
-    return new JFPErrorReporterType() {
-      @Override public void onExternalHTTPError(
-        final URI uri,
-        final int code,
-        final String operation)
-      {
-        log.error(String.format(
-          "code %d while %s at URI %s",
-          code,
-          operation,
-          uri));
-      }
+  private static final long serialVersionUID = 4304443377820999772L;
 
-      @Override public void onExternalProgramError(
-        final StringBuilder output,
-        final List<String> args,
-        final int code)
-      {
-        log.error(output.toString());
-      }
-    };
+  /**
+   * Construct an exception.
+   *
+   * @param e
+   *          The cause.
+   */
+
+  public JFPExceptionCrypto(
+    final Exception e)
+  {
+    super(e);
   }
 
-  private JFPErrorReporterWithoutMail()
+  /**
+   * Construct an exception.
+   *
+   * @param message
+   *          The message.
+   */
+
+  public JFPExceptionCrypto(
+    final String message)
   {
-    // Nothing.
+    super(message);
   }
 }

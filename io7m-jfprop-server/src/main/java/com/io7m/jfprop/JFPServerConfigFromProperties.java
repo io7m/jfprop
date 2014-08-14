@@ -113,6 +113,8 @@ public final class JFPServerConfigFromProperties implements
       JFPServerHTTPSConfigFromProperties.fromPropertiesOptional(p);
     final OptionType<JFPServerManagementHTTPConfigType> m_http =
       JFPServerManagementHTTPConfigFromProperties.fromPropertiesOptional(p);
+    final OptionType<JFPServerManagementHTTPSConfigType> m_https =
+      JFPServerManagementHTTPSConfigFromProperties.fromPropertiesOptional(p);
 
     final File server_database_file =
       new File(JProperties.getString(
@@ -150,6 +152,7 @@ public final class JFPServerConfigFromProperties implements
       http,
       https,
       m_http,
+      m_https,
       fossil_repository_directory,
       fossil_executable,
       fossil_user_name,
@@ -216,23 +219,25 @@ public final class JFPServerConfigFromProperties implements
     }
   }
 
-  private final String                                        admin_password;
-  private final JFPFossilExecutable                           fossil_executable;
-  private final File                                          fossil_repository_directory;
-  private final OptionType<JFPFossilUserName>                 fossil_user_name;
-  private final OptionType<JFPServerHTTPConfigType>           http;
-  private final OptionType<JFPServerHTTPSConfigType>          https;
-  private final LogLevel                                      log_level;
-  private final OptionType<JFPServerManagementHTTPConfigType> m_http;
-  private final OptionType<JFPMailConfig>                     mail_config;
-  private final File                                          server_database_file;
-  private final File                                          server_log_directory;
+  private final String                                         admin_password;
+  private final JFPFossilExecutable                            fossil_executable;
+  private final File                                           fossil_repository_directory;
+  private final OptionType<JFPFossilUserName>                  fossil_user_name;
+  private final OptionType<JFPServerHTTPConfigType>            http;
+  private final OptionType<JFPServerHTTPSConfigType>           https;
+  private final LogLevel                                       log_level;
+  private final OptionType<JFPServerManagementHTTPConfigType>  m_http;
+  private final OptionType<JFPServerManagementHTTPSConfigType> m_https;
+  private final OptionType<JFPMailConfig>                      mail_config;
+  private final File                                           server_database_file;
+  private final File                                           server_log_directory;
 
   private JFPServerConfigFromProperties(
     final String in_admin_password,
     final OptionType<JFPServerHTTPConfigType> in_http,
     final OptionType<JFPServerHTTPSConfigType> in_https,
     final OptionType<JFPServerManagementHTTPConfigType> in_m_http,
+    final OptionType<JFPServerManagementHTTPSConfigType> in_m_https,
     final File in_fossil_repository_directory,
     final JFPFossilExecutable in_fossil_executable,
     final OptionType<JFPFossilUserName> in_fossil_user_name,
@@ -247,6 +252,8 @@ public final class JFPServerConfigFromProperties implements
     this.https = NullCheck.notNull(in_https, "Server HTTPS config");
     this.m_http =
       NullCheck.notNull(in_m_http, "Server management HTTP config");
+    this.m_https =
+      NullCheck.notNull(in_m_https, "Server management HTTPS config");
 
     this.fossil_repository_directory =
       NullCheck.notNull(
@@ -327,4 +334,10 @@ public final class JFPServerConfigFromProperties implements
     return this.m_http;
   }
 
+  @Override public
+    OptionType<JFPServerManagementHTTPSConfigType>
+    getServerManagementHTTPSConfig()
+  {
+    return this.m_https;
+  }
 }

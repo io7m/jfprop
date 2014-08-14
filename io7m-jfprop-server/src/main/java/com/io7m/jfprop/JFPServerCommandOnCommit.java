@@ -36,9 +36,9 @@ import com.io7m.jnull.NullCheck;
 
 final class JFPServerCommandOnCommit extends JFPAuthenticatedHandlerAbstract
 {
+  private final ExecutorService         exec;
   private final JFPFossilControllerType fossil_controller;
   private final JFPRemoteControllerType remote_controller;
-  private final ExecutorService         exec;
 
   JFPServerCommandOnCommit(
     final JFPServerConfigType in_config,

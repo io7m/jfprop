@@ -30,8 +30,8 @@ import com.io7m.junreachable.UnimplementedCodeException;
 
 public final class JFPRemoteNotifyTask implements Callable<Boolean>
 {
-  private final URI                  remote_uri;
   private final LogUsableType        log;
+  private final URI                  remote_uri;
   private final JFPErrorReporterType reporter;
 
   /**

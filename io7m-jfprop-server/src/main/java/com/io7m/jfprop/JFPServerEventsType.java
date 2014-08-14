@@ -25,6 +25,16 @@ package com.io7m.jfprop;
 public interface JFPServerEventsType
 {
   /**
+   * Called when the server has crashed.
+   *
+   * @param x
+   *          The exception that caused the crash.
+   */
+
+  void serverCrashed(
+    final Exception x);
+
+  /**
    * Called when the server has started and is running.
    *
    * @param c
@@ -36,16 +46,6 @@ public interface JFPServerEventsType
   void serverStarted(
     final JFPServerControlType c)
     throws Exception;
-
-  /**
-   * Called when the server has crashed.
-   *
-   * @param x
-   *          The exception that caused the crash.
-   */
-
-  void serverCrashed(
-    final Exception x);
 
   /**
    * Called when the server has stopped.

@@ -46,7 +46,9 @@ public final class JFPServerConfigFromProperties implements
 
   static {
     PORT_RANGE =
-      new RangeInclusiveB(BigInteger.ONE, BigInteger.valueOf(65535));
+      new RangeInclusiveB(
+        NullCheck.notNull(BigInteger.ONE),
+        NullCheck.notNull(BigInteger.valueOf(65535)));
   }
 
   /**
@@ -222,7 +224,9 @@ public final class JFPServerConfigFromProperties implements
         m.append("\n");
       }
 
-      throw new JPropertyIncorrectType(m.toString());
+      final String r = m.toString();
+      assert r != null;
+      throw new JPropertyIncorrectType(r);
     }
   }
 

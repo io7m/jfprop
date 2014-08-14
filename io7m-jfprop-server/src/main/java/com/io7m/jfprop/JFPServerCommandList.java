@@ -35,19 +35,19 @@ import com.io7m.jlog.LogUsableType;
  */
 
 final class JFPServerCommandList extends JFPAuthenticatedHandlerAbstract implements
-PartialFunctionType<Unit, List<String>, Exception>
+  PartialFunctionType<Unit, List<String>, Exception>
 {
   JFPServerCommandList(
     final JFPServerConfigType in_config,
     final JFPServerDatabaseType db,
     final LogUsableType in_log)
-    {
+  {
     super(in_config, db, in_log);
-    }
+  }
 
   @Override public List<String> call(
     final Unit _)
-    {
+  {
     final List<String> r = new ArrayList<String>();
 
     this.callListDirectory(
@@ -56,7 +56,7 @@ PartialFunctionType<Unit, List<String>, Exception>
       r);
 
     return r;
-    }
+  }
 
   private void callListDirectory(
     final File accum,
@@ -71,7 +71,7 @@ PartialFunctionType<Unit, List<String>, Exception>
     for (final String name : items) {
       final File actual = new File(current, name);
       if (actual.isFile()) {
-        if (name.endsWith(".fossil")) {
+        if (name.endsWith(".fossil") && (".fossil".equals(name) == false)) {
           r.add(new File(accum, name).toString());
         }
       } else if (actual.isDirectory()) {
@@ -91,7 +91,7 @@ PartialFunctionType<Unit, List<String>, Exception>
     final JFPUserName user,
     final JFPKey key,
     final JFPServerDatabaseTransactionType transaction)
-      throws JFPException,
+    throws JFPException,
       IOException
   {
     final List<String> r = JFPServerCommandList.this.call(Unit.unit());

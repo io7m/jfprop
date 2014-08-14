@@ -1,10 +1,10 @@
 /*
  * Copyright © 2014 <code@io7m.com> http://io7m.com
- *
+ * 
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
  * copyright notice and this permission notice appear in all copies.
- *
+ * 
  * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
  * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
@@ -17,24 +17,41 @@
 package com.io7m.jfprop;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.security.KeyManagementException;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+import java.security.SecureRandom;
+import java.security.UnrecoverableKeyException;
+import java.security.cert.CertificateException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.mail.internet.AddressException;
+import javax.net.ssl.KeyManagerFactory;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManagerFactory;
 
+import org.eclipse.jetty.server.HttpConfiguration;
+import org.eclipse.jetty.server.HttpConnectionFactory;
 import org.eclipse.jetty.server.NCSARequestLog;
+import org.eclipse.jetty.server.SecureRequestCustomizer;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
+import org.eclipse.jetty.server.SslConnectionFactory;
 import org.eclipse.jetty.server.handler.ContextHandlerCollection;
 import org.eclipse.jetty.server.handler.HandlerCollection;
 import org.eclipse.jetty.server.handler.RequestLogHandler;
+import org.eclipse.jetty.util.ssl.SslContextFactory;
 
+import com.io7m.jfunctional.FunctionType;
 import com.io7m.jfunctional.None;
-import com.io7m.jfunctional.Option;
 import com.io7m.jfunctional.OptionType;
 import com.io7m.jfunctional.OptionVisitorType;
 import com.io7m.jfunctional.PartialFunctionType;
@@ -112,6 +129,22 @@ public final class JFPServerMain implements Runnable, JFPServerControlType
     }
   }
 
+  private static RequestLogHandler newRequestLog(
+    final File directory_access)
+  {
+    final File access_log_template =
+      new File(directory_access, "yyyy_MM_dd.log");
+    final RequestLogHandler request_log_handler = new RequestLogHandler();
+    final NCSARequestLog request_log =
+      new NCSARequestLog(access_log_template.getAbsolutePath());
+    request_log.setRetainDays(31);
+    request_log.setExtended(true);
+    request_log.setAppend(true);
+    request_log.setLogTimeZone("UTC");
+    request_log_handler.setRequestLog(request_log);
+    return request_log_handler;
+  }
+
   /**
    * Create a new server with the given config.
    *
@@ -159,14 +192,12 @@ public final class JFPServerMain implements Runnable, JFPServerControlType
 
   private final JFPServerConfigType           config;
   private final JFPAllDatabaseType            database;
-  private final @Nullable ServerConnector     http_connector;
+  private final @Nullable JFPServerEventsType events;
   private final OptionType<Server>            http_server;
   private final OptionType<Server>            https_server;
   private final LogType                       log;
   private final JFPJettyLogger                logger;
-  private final @Nullable ServerConnector     m_connector;
   private final OptionType<Server>            m_server;
-  private final @Nullable JFPServerEventsType events;
   private final AtomicBoolean                 want_stop;
 
   private JFPServerMain(
@@ -184,7 +215,6 @@ public final class JFPServerMain implements Runnable, JFPServerControlType
     this.want_stop = new AtomicBoolean(false);
 
     final File server_log_directory = this.config.getServerLogDirectory();
-
     if (server_log_directory.isDirectory() == false) {
       throw new FileNotFoundException(server_log_directory.toString());
     }
@@ -198,18 +228,17 @@ public final class JFPServerMain implements Runnable, JFPServerControlType
     this.logger = new JFPJettyLogger();
     this.log = this.logger.getMainLog();
     this.log.setLevel(in_config.getLogLevel());
-
     this.log.info(JFPVersion.getVersionString() + " starting");
-
-    final LogType log_fossil = this.log.with("fossil");
 
     final JFPErrorReporterType reporter =
       JFPServerMain.getReporter(in_config, this.log);
 
     final ExecutorService executor = Executors.newCachedThreadPool();
+    assert executor != null;
+
     final JFPFossilControllerType fossil_controller =
       JFPFossilController.newController(
-        log_fossil.with("control"),
+        this.log.with("fossil-control"),
         executor,
         in_config,
         reporter);
@@ -223,38 +252,196 @@ public final class JFPServerMain implements Runnable, JFPServerControlType
     final File server_database_file = this.config.getServerDatabaseFile();
     this.database = JFPDatabase.open(this.log, server_database_file);
 
+    final File directory_access =
+      this.checkCreateLogAccessDirectory(server_log_directory);
+    final RequestLogHandler request_log_handler =
+      JFPServerMain.newRequestLog(directory_access);
+
+    final OptionType<JFPServerHTTPConfigType> http_opt =
+      this.config.getServerHTTPConfig();
+    final OptionType<JFPServerHTTPSConfigType> https_opt =
+      this.config.getServerHTTPSConfig();
+    final OptionType<JFPServerManagementHTTPConfigType> m_http_opt =
+      this.config.getServerManagementHTTPConfig();
+
+    this.http_server =
+      http_opt.map(new FunctionType<JFPServerHTTPConfigType, Server>() {
+        @Override public Server call(
+          final JFPServerHTTPConfigType http)
+        {
+          return JFPServerMain.this.getHTTPServer(
+            executor,
+            fossil_controller,
+            remote_controller,
+            request_log_handler,
+            http);
+        }
+      });
+
+    this.https_server =
+      https_opt
+        .mapPartial(new PartialFunctionType<JFPServerHTTPSConfigType, Server, IOException>() {
+          @Override public Server call(
+            final JFPServerHTTPSConfigType https)
+            throws IOException
+          {
+            return JFPServerMain.this.getHTTPSServer(
+              executor,
+              fossil_controller,
+              remote_controller,
+              request_log_handler,
+              https);
+          }
+        });
+
+    this.m_server =
+      m_http_opt
+        .map(new FunctionType<JFPServerManagementHTTPConfigType, Server>() {
+          @Override public Server call(
+            final JFPServerManagementHTTPConfigType m_http)
+          {
+            return JFPServerMain.this.getManagementHTTPServer(
+              request_log_handler,
+              m_http);
+          }
+        });
+
+    if (this.http_server.isNone()
+      && this.https_server.isNone()
+      && this.m_server.isNone()) {
+      throw new JFPExceptionConfigError(
+        "HTTP, HTTPS, and management servers disabled; nothing to do!");
+    }
+  }
+
+  private File checkCreateLogAccessDirectory(
+    final File server_log_directory)
+    throws IOException
+  {
     final File directory_access = new File(server_log_directory, "access");
     if (directory_access.isDirectory() == false) {
       if (directory_access.mkdir() == false) {
         throw new IOException("could not create " + directory_access);
       }
     }
+    return directory_access;
+  }
 
-    final File access_log_template =
-      new File(directory_access, "yyyy_MM_dd.log");
-    final RequestLogHandler request_log_handler = new RequestLogHandler();
-    final NCSARequestLog request_log =
-      new NCSARequestLog(access_log_template.getAbsolutePath());
-    request_log.setRetainDays(31);
-    request_log.setExtended(true);
-    request_log.setAppend(true);
-    request_log.setLogTimeZone("UTC");
-    request_log_handler.setRequestLog(request_log);
+  private Server getHTTPServer(
+    final ExecutorService executor,
+    final JFPFossilControllerType fossil_controller,
+    final JFPRemoteControllerType remote_controller,
+    final RequestLogHandler request_log_handler,
+    final JFPServerHTTPConfigType http)
+  {
+    final InetSocketAddress addr = http.getAddress();
 
-    final OptionType<InetSocketAddress> http_addr_opt =
-      this.config.getServerHTTPAddress();
-    final OptionType<InetSocketAddress> m_addr_opt =
-      this.config.getServerManagementAddress();
+    final Server s = new Server(addr);
+    final ServerConnector c = new ServerConnector(s);
+    c.setPort(addr.getPort());
+    c.setReuseAddress(true);
 
-    if (http_addr_opt.isSome()) {
-      final Some<InetSocketAddress> some =
-        (Some<InetSocketAddress>) http_addr_opt;
-      final InetSocketAddress addr = some.get();
+    final ContextHandlerCollection ch =
+      JFPServerCommands.getHandlers(
+        this.config,
+        this.database,
+        executor,
+        fossil_controller,
+        remote_controller,
+        this.log.with("http"));
+
+    final HandlerCollection hs = new HandlerCollection();
+    hs.addHandler(ch);
+    hs.addHandler(request_log_handler);
+
+    s.setHandler(hs);
+    return s;
+  }
+
+  private Server getHTTPSServer(
+    final ExecutorService executor,
+    final JFPFossilControllerType fossil_controller,
+    final JFPRemoteControllerType remote_controller,
+    final RequestLogHandler request_log_handler,
+    final JFPServerHTTPSConfigType https)
+    throws IOException
+  {
+    try {
+      final InetSocketAddress addr = https.getAddress();
+
+      /**
+       * Load keystore.
+       */
+
+      final KeyStore ks = KeyStore.getInstance(https.getKeyStoreType());
+      final File ks_path = https.getKeyStorePath().getCanonicalFile();
+      final String ks_pass = https.getKeyStorePassword();
+      final FileInputStream ks_stream = new FileInputStream(ks_path);
+      ks.load(ks_stream, ks_pass.toCharArray());
+      ks_stream.close();
+
+      this.log.debug("keystore is " + ks_path);
+
+      /**
+       * Load truststore.
+       */
+
+      final KeyStore ts = KeyStore.getInstance(https.getTrustStoreType());
+      final File ts_path = https.getTrustStorePath().getCanonicalFile();
+      final String ts_pass = https.getTrustStorePassword();
+      final FileInputStream ts_stream = new FileInputStream(ts_path);
+      ts.load(ts_stream, ts_pass.toCharArray());
+      ts_stream.close();
+
+      this.log.debug("truststore is " + ts_path);
+
+      /**
+       * Initialise a KeyManagerFactory object to encapsulate the underlying
+       * keystore.
+       */
+
+      final KeyManagerFactory kmf =
+        KeyManagerFactory
+          .getInstance(KeyManagerFactory.getDefaultAlgorithm());
+      kmf.init(ks, ks_pass.toCharArray());
+
+      /**
+       * Initialise a TrustManagerFactory with the truststore.
+       */
+
+      final TrustManagerFactory tmf =
+        TrustManagerFactory.getInstance("SunX509");
+      tmf.init(ts);
+
+      /**
+       * Initialize SSL context.
+       */
+
+      final SSLContext sc = SSLContext.getInstance("TLS");
+      final SecureRandom sr = SecureRandom.getInstance("SHA1PRNG", "SUN");
+      sc.init(kmf.getKeyManagers(), tmf.getTrustManagers(), sr);
+
+      /**
+       * Tell Jetty about the SSL context.
+       */
+
+      final SslContextFactory scf = new SslContextFactory();
+      scf.setSslContext(sc);
+
+      final HttpConfiguration https_conf = new HttpConfiguration();
+      https_conf.setSecurePort(addr.getPort());
+      https_conf.setSecureScheme("https");
+      https_conf.addCustomizer(new SecureRequestCustomizer());
 
       final Server s = new Server(addr);
-      final ServerConnector c = new ServerConnector(s);
-      c.setPort(addr.getPort());
-      c.setReuseAddress(true);
+      final ServerConnector[] cs = new ServerConnector[1];
+      cs[0] =
+        new ServerConnector(
+          s,
+          new SslConnectionFactory(scf, "http/1.1"),
+          new HttpConnectionFactory(https_conf));
+      cs[0].setReuseAddress(true);
+      cs[0].setPort(addr.getPort());
 
       final ContextHandlerCollection ch =
         JFPServerCommands.getHandlers(
@@ -263,53 +450,51 @@ public final class JFPServerMain implements Runnable, JFPServerControlType
           executor,
           fossil_controller,
           remote_controller,
-          this.log.with("http"));
+          this.log.with("https"));
 
       final HandlerCollection hs = new HandlerCollection();
       hs.addHandler(ch);
       hs.addHandler(request_log_handler);
 
       s.setHandler(hs);
-      this.http_connector = c;
-      this.http_server = Option.some(s);
-    } else {
-      this.http_server = Option.none();
-      this.http_connector = null;
+      s.setConnectors(cs);
+      return s;
+    } catch (final KeyStoreException e) {
+      throw new IOException(e);
+    } catch (final NoSuchAlgorithmException e) {
+      throw new IOException(e);
+    } catch (final CertificateException e) {
+      throw new IOException(e);
+    } catch (final UnrecoverableKeyException e) {
+      throw new IOException(e);
+    } catch (final KeyManagementException e) {
+      e.printStackTrace();
+      throw new IOException(e);
+    } catch (final NoSuchProviderException e) {
+      throw new IOException(e);
     }
+  }
 
-    if (m_addr_opt.isSome()) {
-      final Some<InetSocketAddress> some =
-        (Some<InetSocketAddress>) m_addr_opt;
-      final InetSocketAddress addr = some.get();
+  private Server getManagementHTTPServer(
+    final RequestLogHandler request_log_handler,
+    final JFPServerManagementHTTPConfigType m_http)
+  {
+    final InetSocketAddress addr = m_http.getAddress();
 
-      final Server s = new Server(addr);
-      final ServerConnector c = new ServerConnector(s);
-      c.setPort(addr.getPort());
-      c.setReuseAddress(true);
+    final Server s = new Server(addr);
+    final ServerConnector c = new ServerConnector(s);
+    c.setPort(addr.getPort());
+    c.setReuseAddress(true);
 
-      final ContextHandlerCollection ch =
-        JFPAdminCommands.getHandlers(this.config, this.database, this.log);
+    final ContextHandlerCollection ch =
+      JFPAdminCommands.getHandlers(this.config, this.database, this.log);
 
-      final HandlerCollection hs = new HandlerCollection();
-      hs.addHandler(ch);
-      hs.addHandler(request_log_handler);
+    final HandlerCollection hs = new HandlerCollection();
+    hs.addHandler(ch);
+    hs.addHandler(request_log_handler);
 
-      s.setHandler(hs);
-      this.m_connector = c;
-      this.m_server = Option.some(s);
-    } else {
-      this.m_connector = null;
-      this.m_server = Option.none();
-    }
-
-    this.https_server = Option.none();
-
-    if (this.http_server.isNone()
-      && this.https_server.isNone()
-      && this.m_server.isNone()) {
-      throw new JFPExceptionConfigError(
-        "HTTP, HTTPS, and management servers disabled; nothing to do!");
-    }
+    s.setHandler(hs);
+    return s;
   }
 
   @Override public void run()
@@ -326,9 +511,31 @@ public final class JFPServerMain implements Runnable, JFPServerControlType
             final Server server)
             throws Exception
           {
+            final ServerConnector sc =
+              (ServerConnector) server.getConnectors()[0];
             l.info(String.format(
-              "starting http server on %s",
-              c.getServerHTTPAddress()));
+              "starting http server on http://%s:%d",
+              sc.getHost(),
+              sc.getPort()));
+
+            server.start();
+            return Unit.unit();
+          }
+        });
+
+      this.https_server
+        .mapPartial(new PartialFunctionType<Server, Unit, Exception>() {
+          @Override public Unit call(
+            final Server server)
+            throws Exception
+          {
+            final ServerConnector sc =
+              (ServerConnector) server.getConnectors()[0];
+            l.info(String.format(
+              "starting https server on https://%s:%d",
+              sc.getHost(),
+              sc.getPort()));
+
             server.start();
             return Unit.unit();
           }
@@ -340,9 +547,13 @@ public final class JFPServerMain implements Runnable, JFPServerControlType
             final Server server)
             throws Exception
           {
+            final ServerConnector sc =
+              (ServerConnector) server.getConnectors()[0];
             l.info(String.format(
-              "starting management server on %s",
-              c.getServerManagementAddress()));
+              "starting management http server on http://%s:%d",
+              sc.getHost(),
+              sc.getPort()));
+
             server.start();
             return Unit.unit();
           }
@@ -394,6 +605,18 @@ public final class JFPServerMain implements Runnable, JFPServerControlType
     throws Exception
   {
     this.http_server
+      .mapPartial(new PartialFunctionType<Server, Unit, Exception>() {
+        @Override public Unit call(
+          final Server server)
+          throws Exception
+        {
+          server.stop();
+          server.join();
+          return Unit.unit();
+        }
+      });
+
+    this.https_server
       .mapPartial(new PartialFunctionType<Server, Unit, Exception>() {
         @Override public Unit call(
           final Server server)

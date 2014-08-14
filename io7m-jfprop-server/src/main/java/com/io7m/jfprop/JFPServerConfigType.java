@@ -17,7 +17,6 @@
 package com.io7m.jfprop;
 
 import java.io.File;
-import java.net.InetSocketAddress;
 
 import com.io7m.jfunctional.OptionType;
 import com.io7m.jlog.LogLevel;
@@ -72,10 +71,16 @@ public interface JFPServerConfigType
   File getServerDatabaseFile();
 
   /**
-   * @return The server HTTP address.
+   * @return The HTTP server configuration (if enabled).
    */
 
-  OptionType<InetSocketAddress> getServerHTTPAddress();
+  OptionType<JFPServerHTTPConfigType> getServerHTTPConfig();
+
+  /**
+   * @return The HTTPS server configuration (if enabled).
+   */
+
+  OptionType<JFPServerHTTPSConfigType> getServerHTTPSConfig();
 
   /**
    * @return The server log directory.
@@ -84,8 +89,9 @@ public interface JFPServerConfigType
   File getServerLogDirectory();
 
   /**
-   * @return The address of the server management interface.
+   * @return The HTTP management server configuration (if enabled).
    */
 
-  OptionType<InetSocketAddress> getServerManagementAddress();
+    OptionType<JFPServerManagementHTTPConfigType>
+    getServerManagementHTTPConfig();
 }

@@ -32,6 +32,8 @@ import com.io7m.jfprop.JFPMailConfig;
 import com.io7m.jfprop.JFPProperties;
 import com.io7m.jfprop.JFPServerConfigFromProperties;
 import com.io7m.jfprop.JFPServerConfigType;
+import com.io7m.jfprop.JFPServerHTTPConfigType;
+import com.io7m.jfprop.JFPServerManagementHTTPConfigType;
 import com.io7m.jfunctional.Pair;
 import com.io7m.jfunctional.Some;
 import com.io7m.jlog.LogLevel;
@@ -55,17 +57,18 @@ import com.io7m.jproperties.JPropertyNonexistent;
       c.getServerDatabaseFile());
 
     {
-      final Some<InetSocketAddress> some =
-        (Some<InetSocketAddress>) c.getServerHTTPAddress();
-      final InetSocketAddress inet = some.get();
+      final Some<JFPServerHTTPConfigType> some =
+        (Some<JFPServerHTTPConfigType>) c.getServerHTTPConfig();
+      final InetSocketAddress inet = some.get().getAddress();
       Assert.assertEquals("/127.0.0.1", inet.getAddress().toString());
       Assert.assertEquals(8080, inet.getPort());
     }
 
     {
-      final Some<InetSocketAddress> some =
-        (Some<InetSocketAddress>) c.getServerManagementAddress();
-      final InetSocketAddress inet = some.get();
+      final Some<JFPServerManagementHTTPConfigType> some =
+        (Some<JFPServerManagementHTTPConfigType>) c
+          .getServerManagementHTTPConfig();
+      final InetSocketAddress inet = some.get().getAddress();
       Assert.assertEquals("/127.0.0.1", inet.getAddress().toString());
       Assert.assertEquals(8080, inet.getPort());
     }
@@ -115,11 +118,11 @@ import com.io7m.jproperties.JPropertyNonexistent;
       c.getServerDatabaseFile());
 
     {
-      Assert.assertTrue(c.getServerHTTPAddress().isNone());
+      Assert.assertTrue(c.getServerHTTPConfig().isNone());
     }
 
     {
-      Assert.assertTrue(c.getServerManagementAddress().isNone());
+      Assert.assertTrue(c.getServerManagementHTTPConfig().isNone());
     }
 
     Assert.assertEquals(

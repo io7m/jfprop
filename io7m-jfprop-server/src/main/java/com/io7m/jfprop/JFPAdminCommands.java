@@ -1,10 +1,10 @@
 /*
  * Copyright © 2014 <code@io7m.com> http://io7m.com
- *
+ * 
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
  * copyright notice and this permission notice appear in all copies.
- *
+ * 
  * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
  * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
@@ -116,6 +116,46 @@ final class JFPAdminCommands
     {
       final Handler h = new JFPAdminCommandProjectRemoteAdd(c, db, l);
       final ContextHandler ch = new ContextHandler("/project-remote-add");
+      ch.setHandler(h);
+      ch.setAllowNullPathInfo(true);
+      handlers.addHandler(ch);
+    }
+
+    {
+      final Handler h = new JFPAdminCommandMassSyncAdd(c, db, l);
+      final ContextHandler ch = new ContextHandler("/mass-sync-add");
+      ch.setHandler(h);
+      ch.setAllowNullPathInfo(true);
+      handlers.addHandler(ch);
+    }
+
+    {
+      final Handler h = new JFPAdminCommandMassSyncList(c, db, l);
+      final ContextHandler ch = new ContextHandler("/mass-sync-list");
+      ch.setHandler(h);
+      ch.setAllowNullPathInfo(true);
+      handlers.addHandler(ch);
+    }
+
+    {
+      final Handler h = new JFPAdminCommandMassSyncRemove(c, db, l);
+      final ContextHandler ch = new ContextHandler("/mass-sync-remove");
+      ch.setHandler(h);
+      ch.setAllowNullPathInfo(true);
+      handlers.addHandler(ch);
+    }
+
+    {
+      final Handler h = new JFPAdminCommandMassSyncIsEnabled(c, db, l);
+      final ContextHandler ch = new ContextHandler("/mass-sync-is-enabled");
+      ch.setHandler(h);
+      ch.setAllowNullPathInfo(true);
+      handlers.addHandler(ch);
+    }
+
+    {
+      final Handler h = new JFPAdminCommandMassSyncEnable(c, db, l);
+      final ContextHandler ch = new ContextHandler("/mass-sync-enable");
       ch.setHandler(h);
       ch.setAllowNullPathInfo(true);
       handlers.addHandler(ch);

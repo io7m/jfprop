@@ -1,10 +1,10 @@
 /*
  * Copyright © 2014 <code@io7m.com> http://io7m.com
- * 
+ *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
  * copyright notice and this permission notice appear in all copies.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
  * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
@@ -17,6 +17,7 @@
 package com.io7m.jfprop;
 
 import java.util.Set;
+import java.util.SortedMap;
 import java.util.SortedSet;
 
 /**
@@ -24,8 +25,51 @@ import java.util.SortedSet;
  */
 
 public interface JFPAdminDatabaseTransactionType extends
-JFPDatabaseTransactionType
+  JFPDatabaseTransactionType
 {
+  /**
+   * Add a new mass sync.
+   *
+   * @return The identifier of the added mass sync.
+   * @param m
+   *          The mass sync spec.
+   */
+
+  Integer massSyncAdd(
+    JFPMassSyncSpec m);
+
+  /**
+   * Enable or disable mass syncing.
+   * 
+   * @param enabled
+   *          <code>true</code> if mass syncing is enabled.
+   */
+
+  void massSyncEnable(
+    final boolean enabled);
+
+  /**
+   * @return <code>true</code> if mass syncing is enabled.
+   */
+
+  boolean massSyncIsEnabled();
+
+  /**
+   * @return The list of defined mass syncs.
+   */
+
+  SortedMap<Integer, JFPMassSyncSpec> massSyncList();
+
+  /**
+   * Remove a new mass sync.
+   *
+   * @param i
+   *          The mass sync ID.
+   */
+
+  void massSyncRemove(
+    Integer i);
+
   /**
    * Add the remote with the given identifier to the given project.
    *
@@ -40,7 +84,7 @@ JFPDatabaseTransactionType
   void projectAddRemote(
     final JFPProjectPath project,
     Integer remote)
-      throws JFPExceptionNonexistent;
+    throws JFPExceptionNonexistent;
 
   /**
    * List all remotes (including global remotes that are implicitly assigned
@@ -55,7 +99,7 @@ JFPDatabaseTransactionType
 
   Set<Integer> projectListRemotes(
     final JFPProjectPath project)
-      throws JFPExceptionNonexistent;
+    throws JFPExceptionNonexistent;
 
   /**
    * Add the remote with the given identifier to the list of global remotes.
@@ -69,7 +113,7 @@ JFPDatabaseTransactionType
 
   void projectsAddGlobalRemote(
     Integer remote)
-      throws JFPExceptionNonexistent;
+    throws JFPExceptionNonexistent;
 
   /**
    * Add the given remote.
@@ -93,7 +137,7 @@ JFPDatabaseTransactionType
 
   void userAdd(
     JFPUserName user)
-      throws JFPExceptionDuplicate;
+    throws JFPExceptionDuplicate;
 
   /**
    * Generate a new key and add it to the given user.
@@ -107,7 +151,7 @@ JFPDatabaseTransactionType
 
   JFPKey userGenerateKey(
     JFPUserName user)
-      throws JFPExceptionNonexistent;
+    throws JFPExceptionNonexistent;
 
   /**
    * @return The current list of users.
@@ -127,7 +171,7 @@ JFPDatabaseTransactionType
 
   Set<JFPKey> userListKeys(
     JFPUserName user)
-      throws JFPExceptionNonexistent;
+    throws JFPExceptionNonexistent;
 
   /**
    * Revoke the given key from given user.
@@ -143,5 +187,5 @@ JFPDatabaseTransactionType
   void userRevokeKey(
     JFPUserName user,
     JFPKey key)
-      throws JFPExceptionNonexistent;
+    throws JFPExceptionNonexistent;
 }

@@ -215,6 +215,8 @@ public final class JFPServerMain implements Runnable, JFPServerControlType
   private final OptionType<Server>            m_server;
   private OptionType<Server>                  ms_server;
   private final AtomicBoolean                 want_stop;
+  private JFPMassSynchronizer                 mass_sync;
+  private ExecutorService                     executor;
 
   private JFPServerMain(
     final JFPServerConfigType in_config,
@@ -249,20 +251,20 @@ public final class JFPServerMain implements Runnable, JFPServerControlType
     final JFPErrorReporterType reporter =
       JFPServerMain.getReporter(in_config, this.log);
 
-    final ExecutorService executor = Executors.newCachedThreadPool();
-    assert executor != null;
+    this.executor = Executors.newCachedThreadPool();
+    assert this.executor != null;
 
     final JFPFossilControllerType fossil_controller =
       JFPFossilController.newController(
         this.log.with("fossil-control"),
-        executor,
+        this.executor,
         in_config,
         reporter);
 
     final JFPRemoteControllerType remote_controller =
       JFPRemoteController.newController(
         this.log.with("remote-control"),
-        executor,
+        this.executor,
         reporter);
 
     final File server_database_file = this.config.getServerDatabaseFile();
@@ -288,7 +290,6 @@ public final class JFPServerMain implements Runnable, JFPServerControlType
           final JFPServerHTTPConfigType http)
         {
           return JFPServerMain.this.getHTTPServer(
-            executor,
             fossil_controller,
             remote_controller,
             request_log_handler,
@@ -304,7 +305,6 @@ public final class JFPServerMain implements Runnable, JFPServerControlType
             throws JFPException
           {
             return JFPServerMain.this.getHTTPSServer(
-              executor,
               fossil_controller,
               remote_controller,
               request_log_handler,
@@ -337,17 +337,16 @@ public final class JFPServerMain implements Runnable, JFPServerControlType
           }
         });
 
-    if (this.http_server.isNone()
-      && this.https_server.isNone()
-      && this.m_server.isNone()
-      && this.ms_server.isNone()) {
-      throw new JFPExceptionConfigError(
-        "No server types enabled; nothing to do!");
-    }
+    this.mass_sync =
+      new JFPMassSynchronizer(
+        this.database,
+        fossil_controller,
+        this.executor,
+        server_repository_directory,
+        this.log.with("mass-sync"));
   }
 
   private Server getHTTPServer(
-    final ExecutorService executor,
     final JFPFossilControllerType fossil_controller,
     final JFPRemoteControllerType remote_controller,
     final RequestLogHandler request_log_handler,
@@ -364,7 +363,7 @@ public final class JFPServerMain implements Runnable, JFPServerControlType
       JFPServerCommands.getHandlers(
         this.config,
         this.database,
-        executor,
+        this.executor,
         fossil_controller,
         remote_controller,
         this.log.with("http"));
@@ -378,7 +377,6 @@ public final class JFPServerMain implements Runnable, JFPServerControlType
   }
 
   private Server getHTTPSServer(
-    final ExecutorService executor,
     final JFPFossilControllerType fossil_controller,
     final JFPRemoteControllerType remote_controller,
     final RequestLogHandler request_log_handler,
@@ -473,7 +471,7 @@ public final class JFPServerMain implements Runnable, JFPServerControlType
         JFPServerCommands.getHandlers(
           this.config,
           this.database,
-          executor,
+          this.executor,
           fossil_controller,
           remote_controller,
           this.log.with("https"));
@@ -726,6 +724,8 @@ public final class JFPServerMain implements Runnable, JFPServerControlType
           }
         });
 
+      this.executor.execute(this.mass_sync);
+
       if (ev != null) {
         ev.serverStarted(this);
       }
@@ -818,5 +818,7 @@ public final class JFPServerMain implements Runnable, JFPServerControlType
           return Unit.unit();
         }
       });
+
+    this.mass_sync.stop();
   }
 }

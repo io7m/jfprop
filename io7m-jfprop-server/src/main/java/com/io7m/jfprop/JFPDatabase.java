@@ -27,6 +27,7 @@ import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.TreeMap;
 
+import org.mapdb.Atomic.Boolean;
 import org.mapdb.BTreeMap;
 import org.mapdb.DB;
 import org.mapdb.DBMaker;
@@ -43,6 +44,8 @@ import com.io7m.junreachable.UnreachableCodeException;
 
 public final class JFPDatabase
 {
+  private static final int SCHEMA_VERSION = 1;
+
   private static final class Database implements JFPAllDatabaseType
   {
     private final TxMaker       db;
@@ -51,9 +54,39 @@ public final class JFPDatabase
     private Database(
       final TxMaker in_db,
       final LogUsableType in_log)
+      throws JFPExceptionDatabaseIncorrectVersion
     {
       this.db = in_db;
       this.log = in_log;
+
+      final DB d = this.db.makeTx();
+
+      if (d.exists("schema_major")) {
+        final org.mapdb.Atomic.Integer major_i =
+          d.getAtomicInteger("schema_major");
+        if (major_i.get() != JFPDatabase.SCHEMA_VERSION) {
+          final StringBuilder m = new StringBuilder();
+          m.append("Unable to open database - unsupported schema version.\n");
+          m.append("  Database version: ");
+          m.append(major_i.get());
+          m.append("\n");
+          m.append("  Supported version: ");
+          m.append(JFPDatabase.SCHEMA_VERSION);
+          m.append("\n");
+          throw new JFPExceptionDatabaseIncorrectVersion(m.toString());
+        }
+      } else {
+        final org.mapdb.Atomic.Integer major_i =
+          d.getAtomicInteger("schema_major");
+        major_i.set(JFPDatabase.SCHEMA_VERSION);
+      }
+
+      if (d.exists(JFPDatabase.TABLE_MASS_SYNC_ENABLED) == false) {
+        final Boolean mse = JFPDatabase.getMassSyncEnabled(d);
+        mse.set(true);
+      }
+
+      d.commit();
     }
 
     @Override public <T, E extends Exception> T withAdminTransaction(
@@ -110,7 +143,8 @@ public final class JFPDatabase
       final JFPUserName name,
       final JFPKey key)
     {
-      final BTreeMap<JFPUserName, Set<JFPKey>> users = this.getUsers();
+      final BTreeMap<JFPUserName, Set<JFPKey>> users =
+        JFPDatabase.getUsers(this.db);
       if (users.containsKey(name)) {
         final Set<JFPKey> keys = users.get(name);
         return keys.contains(key);
@@ -118,31 +152,45 @@ public final class JFPDatabase
       return false;
     }
 
-    private BTreeMap<JFPProjectPath, Set<Integer>> getProjects()
+    @Override public Integer massSyncAdd(
+      final JFPMassSyncSpec m)
     {
-      final BTreeMap<JFPProjectPath, Set<Integer>> projects =
-        this.db.getTreeMap("projects");
-      return projects;
+      final org.mapdb.Atomic.Integer pool =
+        this.db.getAtomicInteger("mass_sync_ids");
+      final int id = pool.incrementAndGet();
+
+      final BTreeMap<Integer, JFPMassSyncSpec> syncs =
+        JFPDatabase.getMassSyncs(this.db);
+      syncs.put(id, m);
+      return id;
     }
 
-    private BTreeMap<Integer, JFPRemote> getRemotes()
+    @Override public void massSyncEnable(
+      final boolean enabled)
     {
-      final BTreeMap<Integer, JFPRemote> remotes =
-        this.db.getTreeMap("remotes");
-      return remotes;
+      final Boolean r = JFPDatabase.getMassSyncEnabled(this.db);
+      r.set(enabled);
     }
 
-    private Set<Integer> getRemotesGlobal()
+    @Override public boolean massSyncIsEnabled()
     {
-      final Set<Integer> remotes = this.db.getHashSet("remotes_global");
-      return remotes;
+      return JFPDatabase.getMassSyncEnabled(this.db).get();
     }
 
-    private BTreeMap<JFPUserName, Set<JFPKey>> getUsers()
+    @Override public SortedMap<Integer, JFPMassSyncSpec> massSyncList()
     {
-      final BTreeMap<JFPUserName, Set<JFPKey>> users =
-        this.db.getTreeMap("users");
-      return users;
+      final SortedMap<Integer, JFPMassSyncSpec> r =
+        new TreeMap<Integer, JFPMassSyncSpec>();
+      r.putAll(JFPDatabase.getMassSyncs(this.db));
+      return r;
+    }
+
+    @Override public void massSyncRemove(
+      final Integer i)
+    {
+      final BTreeMap<Integer, JFPMassSyncSpec> m =
+        JFPDatabase.getMassSyncs(this.db);
+      m.remove(i);
     }
 
     @Override public void projectAddRemote(
@@ -150,9 +198,10 @@ public final class JFPDatabase
       final Integer remote)
       throws JFPExceptionNonexistent
     {
-      final BTreeMap<Integer, JFPRemote> remotes = this.getRemotes();
+      final BTreeMap<Integer, JFPRemote> remotes =
+        JFPDatabase.getRemotes(this.db);
       final BTreeMap<JFPProjectPath, Set<Integer>> projects =
-        this.getProjects();
+        JFPDatabase.getProjects(this.db);
 
       if (remotes.containsKey(remote) == false) {
         throw new JFPExceptionNonexistent(String.format(
@@ -175,8 +224,8 @@ public final class JFPDatabase
       throws JFPExceptionNonexistent
     {
       final BTreeMap<JFPProjectPath, Set<Integer>> projects =
-        this.getProjects();
-      final Set<Integer> globals = this.getRemotesGlobal();
+        JFPDatabase.getProjects(this.db);
+      final Set<Integer> globals = JFPDatabase.getRemotesGlobal(this.db);
 
       if (projects.containsKey(project) == false) {
         throw new JFPExceptionNonexistent(String.format(
@@ -196,8 +245,9 @@ public final class JFPDatabase
     {
       try {
         final BTreeMap<JFPProjectPath, Set<Integer>> projects =
-          this.getProjects();
-        final BTreeMap<Integer, JFPRemote> remotes = this.getRemotes();
+          JFPDatabase.getProjects(this.db);
+        final BTreeMap<Integer, JFPRemote> remotes =
+          JFPDatabase.getRemotes(this.db);
 
         if (projects.containsKey(project)) {
           final Set<JFPRemote> r = new HashSet<JFPRemote>();
@@ -218,8 +268,10 @@ public final class JFPDatabase
       final Integer remote)
       throws JFPExceptionNonexistent
     {
-      final Set<Integer> remotes_global = this.getRemotesGlobal();
-      final BTreeMap<Integer, JFPRemote> remotes = this.getRemotes();
+      final Set<Integer> remotes_global =
+        JFPDatabase.getRemotesGlobal(this.db);
+      final BTreeMap<Integer, JFPRemote> remotes =
+        JFPDatabase.getRemotes(this.db);
 
       if (remotes.containsKey(remote) == false) {
         throw new JFPExceptionNonexistent(String.format(
@@ -237,7 +289,8 @@ public final class JFPDatabase
         this.db.getAtomicInteger("remote_ids");
       final int id = pool.incrementAndGet();
 
-      final BTreeMap<Integer, JFPRemote> remotes = this.getRemotes();
+      final BTreeMap<Integer, JFPRemote> remotes =
+        JFPDatabase.getRemotes(this.db);
       assert remotes.containsKey(id) == false;
 
       remotes.put(id, r);
@@ -246,7 +299,8 @@ public final class JFPDatabase
 
     @Override public SortedMap<Integer, JFPRemote> remotesGet()
     {
-      final BTreeMap<Integer, JFPRemote> remotes = this.getRemotes();
+      final BTreeMap<Integer, JFPRemote> remotes =
+        JFPDatabase.getRemotes(this.db);
       final SortedMap<Integer, JFPRemote> m =
         new TreeMap<Integer, JFPRemote>();
       m.putAll(remotes);
@@ -257,7 +311,8 @@ public final class JFPDatabase
       final JFPUserName user)
       throws JFPExceptionDuplicate
     {
-      final BTreeMap<JFPUserName, Set<JFPKey>> users = this.getUsers();
+      final BTreeMap<JFPUserName, Set<JFPKey>> users =
+        JFPDatabase.getUsers(this.db);
       if (users.containsKey(user)) {
         throw new JFPExceptionDuplicate(String.format(
           "Duplicate user '%s'",
@@ -272,7 +327,8 @@ public final class JFPDatabase
       throws JFPExceptionNonexistent
     {
       try {
-        final BTreeMap<JFPUserName, Set<JFPKey>> users = this.getUsers();
+        final BTreeMap<JFPUserName, Set<JFPKey>> users =
+          JFPDatabase.getUsers(this.db);
 
         if (users.containsKey(user) == false) {
           throw new JFPExceptionNonexistent(String.format(
@@ -317,7 +373,8 @@ public final class JFPDatabase
 
     @Override public SortedSet<JFPUserName> userListGet()
     {
-      final BTreeMap<JFPUserName, Set<JFPKey>> users = this.getUsers();
+      final BTreeMap<JFPUserName, Set<JFPKey>> users =
+        JFPDatabase.getUsers(this.db);
       return Collections.unmodifiableSortedSet(users.keySet());
     }
 
@@ -325,7 +382,8 @@ public final class JFPDatabase
       final JFPUserName user)
       throws JFPExceptionNonexistent
     {
-      final BTreeMap<JFPUserName, Set<JFPKey>> users = this.getUsers();
+      final BTreeMap<JFPUserName, Set<JFPKey>> users =
+        JFPDatabase.getUsers(this.db);
 
       if (users.containsKey(user) == false) {
         throw new JFPExceptionNonexistent(String.format(
@@ -341,7 +399,8 @@ public final class JFPDatabase
       final JFPKey key)
       throws JFPExceptionNonexistent
     {
-      final BTreeMap<JFPUserName, Set<JFPKey>> users = this.getUsers();
+      final BTreeMap<JFPUserName, Set<JFPKey>> users =
+        JFPDatabase.getUsers(this.db);
 
       if (users.containsKey(user) == false) {
         throw new JFPExceptionNonexistent(String.format(
@@ -355,6 +414,51 @@ public final class JFPDatabase
     }
   }
 
+  private static final String TABLE_MASS_SYNC_ENABLED = "mass_sync_enabled";
+
+  private static Boolean getMassSyncEnabled(
+    final DB db)
+  {
+    return db.getAtomicBoolean(JFPDatabase.TABLE_MASS_SYNC_ENABLED);
+  }
+
+  private static BTreeMap<Integer, JFPMassSyncSpec> getMassSyncs(
+    final DB db)
+  {
+    final BTreeMap<Integer, JFPMassSyncSpec> syncs =
+      db.getTreeMap("mass_syncs");
+    return syncs;
+  }
+
+  private static BTreeMap<JFPProjectPath, Set<Integer>> getProjects(
+    final DB db)
+  {
+    final BTreeMap<JFPProjectPath, Set<Integer>> projects =
+      db.getTreeMap("projects");
+    return projects;
+  }
+
+  private static BTreeMap<Integer, JFPRemote> getRemotes(
+    final DB db)
+  {
+    final BTreeMap<Integer, JFPRemote> remotes = db.getTreeMap("remotes");
+    return remotes;
+  }
+
+  private static Set<Integer> getRemotesGlobal(
+    final DB db)
+  {
+    final Set<Integer> remotes = db.getHashSet("remotes_global");
+    return remotes;
+  }
+
+  private static BTreeMap<JFPUserName, Set<JFPKey>> getUsers(
+    final DB db)
+  {
+    final BTreeMap<JFPUserName, Set<JFPKey>> users = db.getTreeMap("users");
+    return users;
+  }
+
   /**
    * Open a database, creating it if it does not exist.
    *
@@ -363,11 +467,14 @@ public final class JFPDatabase
    * @param file
    *          The database file
    * @return A database.
+   * @throws JFPExceptionDatabaseIncorrectVersion
+   *           On incorrect database versions.
    */
 
   public static JFPAllDatabaseType open(
     final LogUsableType log,
     final File file)
+    throws JFPExceptionDatabaseIncorrectVersion
   {
     NullCheck.notNull(file, "File");
 
@@ -386,10 +493,13 @@ public final class JFPDatabase
    * @param log
    *          A log interface
    * @return A database.
+   * @throws JFPExceptionDatabaseIncorrectVersion
+   *           On incorrect database versions.
    */
 
   public static JFPAllDatabaseType openInMemory(
     final LogUsableType log)
+    throws JFPExceptionDatabaseIncorrectVersion
   {
     final DBMaker<?> maker = DBMaker.newHeapDB();
 

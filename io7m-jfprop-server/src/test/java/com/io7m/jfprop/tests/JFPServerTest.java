@@ -1666,4 +1666,162 @@ import com.io7m.jlog.LogLevel;
 
     Assert.assertTrue(ran.get());
   }
+
+  @Test(timeout = 1000000) public void testAdminMassSyncList_0()
+    throws Exception
+  {
+    final AtomicBoolean ran = new AtomicBoolean(false);
+
+    this.run(true, true, new Callable<Unit>() {
+      @Override public Unit call()
+        throws Exception
+      {
+        try {
+
+          {
+            final HttpURLConnection c =
+              (HttpURLConnection) new URL(
+                "http://localhost:32768/mass-sync-list?admin_password=abcd")
+                .openConnection();
+            c.setRequestMethod("POST");
+
+            final int r = c.getResponseCode();
+            Assert.assertEquals(HttpServletResponse.SC_OK, r);
+          }
+
+          return Unit.unit();
+        } finally {
+          ran.set(true);
+        }
+      }
+    });
+
+    Assert.assertTrue(ran.get());
+  }
+
+  @Test(timeout = 1000000) public void testAdminMassSyncAddBad_0()
+    throws Exception
+  {
+    final AtomicBoolean ran = new AtomicBoolean(false);
+
+    this.run(true, true, new Callable<Unit>() {
+      @Override public Unit call()
+        throws Exception
+      {
+        try {
+
+          {
+            final HttpURLConnection c =
+              (HttpURLConnection) new URL(
+                "http://localhost:32768/mass-sync-add?admin_password=abcd")
+                .openConnection();
+            c.setRequestMethod("POST");
+
+            final int r = c.getResponseCode();
+            Assert.assertEquals(HttpServletResponse.SC_BAD_REQUEST, r);
+          }
+
+          return Unit.unit();
+        } finally {
+          ran.set(true);
+        }
+      }
+    });
+
+    Assert.assertTrue(ran.get());
+  }
+
+  @Test(timeout = 1000000) public void testAdminMassSyncRemoveBad_0()
+    throws Exception
+  {
+    final AtomicBoolean ran = new AtomicBoolean(false);
+
+    this.run(true, true, new Callable<Unit>() {
+      @Override public Unit call()
+        throws Exception
+      {
+        try {
+
+          {
+            final HttpURLConnection c =
+              (HttpURLConnection) new URL(
+                "http://localhost:32768/mass-sync-remove?admin_password=abcd")
+                .openConnection();
+            c.setRequestMethod("POST");
+
+            final int r = c.getResponseCode();
+            Assert.assertEquals(HttpServletResponse.SC_BAD_REQUEST, r);
+          }
+
+          return Unit.unit();
+        } finally {
+          ran.set(true);
+        }
+      }
+    });
+
+    Assert.assertTrue(ran.get());
+  }
+
+  @Test(timeout = 1000000) public void testAdminMassSyncEnable()
+    throws Exception
+  {
+    final AtomicBoolean ran = new AtomicBoolean(false);
+
+    this.run(true, true, new Callable<Unit>() {
+      @Override public Unit call()
+        throws Exception
+      {
+        try {
+
+          {
+            final HttpURLConnection c =
+              (HttpURLConnection) new URL(
+                "http://localhost:32768/mass-sync-is-enabled?admin_password=abcd")
+                .openConnection();
+            c.setRequestMethod("GET");
+
+            final int r = c.getResponseCode();
+            Assert.assertEquals(HttpServletResponse.SC_OK, r);
+
+            final String text =
+              JFPServerTest.this.readAll(c.getInputStream());
+            Assert.assertEquals("true", text.trim());
+          }
+
+          {
+            final HttpURLConnection c =
+              (HttpURLConnection) new URL(
+                "http://localhost:32768/mass-sync-enable?admin_password=abcd&enable=false")
+                .openConnection();
+            c.setRequestMethod("POST");
+
+            final int r = c.getResponseCode();
+            Assert.assertEquals(HttpServletResponse.SC_OK, r);
+          }
+
+          {
+            final HttpURLConnection c =
+              (HttpURLConnection) new URL(
+                "http://localhost:32768/mass-sync-is-enabled?admin_password=abcd")
+                .openConnection();
+            c.setRequestMethod("GET");
+
+            final int r = c.getResponseCode();
+            Assert.assertEquals(HttpServletResponse.SC_OK, r);
+
+            final String text =
+              JFPServerTest.this.readAll(c.getInputStream());
+            Assert.assertEquals("false", text.trim());
+          }
+
+          return Unit.unit();
+        } finally {
+          ran.set(true);
+        }
+      }
+    });
+
+    Assert.assertTrue(ran.get());
+  }
 }

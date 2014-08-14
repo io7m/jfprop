@@ -60,6 +60,31 @@ final class JFPFossilController implements JFPFossilControllerType
     this.reporter = NullCheck.notNull(in_reporter, "Reporter");
   }
 
+  private void callListDirectory(
+    final File accum,
+    final File current,
+    final List<String> r)
+  {
+    final String[] items = current.list();
+    if (items == null) {
+      return;
+    }
+
+    for (final String name : items) {
+      final File actual = new File(current, name);
+      if (actual.isFile()) {
+        if (name.endsWith(".fossil") && (".fossil".equals(name) == false)) {
+          r.add(new File(accum, name).toString());
+        }
+      } else if (actual.isDirectory()) {
+        this.callListDirectory(
+          new File(accum, name),
+          new File(current, name),
+          r);
+      }
+    }
+  }
+
   @Override public Future<Boolean> doSync(
     final JFPProjectPath project)
   {
@@ -92,31 +117,6 @@ final class JFPFossilController implements JFPFossilControllerType
 
       }
     }, Boolean.FALSE);
-  }
-
-  private void callListDirectory(
-    final File accum,
-    final File current,
-    final List<String> r)
-  {
-    final String[] items = current.list();
-    if (items == null) {
-      return;
-    }
-
-    for (final String name : items) {
-      final File actual = new File(current, name);
-      if (actual.isFile()) {
-        if (name.endsWith(".fossil") && (".fossil".equals(name) == false)) {
-          r.add(new File(accum, name).toString());
-        }
-      } else if (actual.isDirectory()) {
-        this.callListDirectory(
-          new File(accum, name),
-          new File(current, name),
-          r);
-      }
-    }
   }
 
   @Override public List<String> listFossilRepositories(

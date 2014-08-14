@@ -1,10 +1,10 @@
 /*
  * Copyright © 2014 <code@io7m.com> http://io7m.com
- *
+ * 
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
  * copyright notice and this permission notice appear in all copies.
- *
+ * 
  * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
  * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
@@ -17,7 +17,9 @@
 package com.io7m.jfprop.tests;
 
 import java.net.URI;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.SortedSet;
@@ -30,9 +32,11 @@ import com.io7m.jfprop.JFPAdminDatabaseTransactionType;
 import com.io7m.jfprop.JFPAllDatabaseType;
 import com.io7m.jfprop.JFPDatabase;
 import com.io7m.jfprop.JFPException;
+import com.io7m.jfprop.JFPExceptionDatabaseIncorrectVersion;
 import com.io7m.jfprop.JFPExceptionDuplicate;
 import com.io7m.jfprop.JFPExceptionNonexistent;
 import com.io7m.jfprop.JFPKey;
+import com.io7m.jfprop.JFPMassSyncSpec;
 import com.io7m.jfprop.JFPProjectPath;
 import com.io7m.jfprop.JFPRemote;
 import com.io7m.jfprop.JFPServerDatabaseTransactionType;
@@ -48,9 +52,13 @@ import com.io7m.junreachable.UnreachableCodeException;
 {
   private JFPAllDatabaseType database()
   {
-    return JFPDatabase.openInMemory(Log.newLog(
-      LogPolicyAllOn.newPolicy(LogLevel.LOG_DEBUG),
-      "tests"));
+    try {
+      return JFPDatabase.openInMemory(Log.newLog(
+        LogPolicyAllOn.newPolicy(LogLevel.LOG_DEBUG),
+        "tests"));
+    } catch (final JFPExceptionDatabaseIncorrectVersion e) {
+      throw new UnreachableCodeException(e);
+    }
   }
 
   @Test(expected = JFPExceptionNonexistent.class) public
@@ -445,6 +453,46 @@ import com.io7m.junreachable.UnreachableCodeException;
         {
           final JFPUserName u = new JFPUserName("someone");
           t.userRevokeKey(u, new JFPKey("abcd1234"));
+          return Unit.unit();
+        }
+      });
+  }
+
+  @Test public void testMassSyncAdd_0()
+    throws Exception
+  {
+    final JFPAllDatabaseType db = this.database();
+    db
+      .withAdminTransaction(new PartialFunctionType<JFPAdminDatabaseTransactionType, Unit, JFPException>() {
+        @Override public Unit call(
+          final JFPAdminDatabaseTransactionType t)
+          throws JFPException
+        {
+          final Map<String, String[]> r = new HashMap<String, String[]>();
+          r.put("time_spec_day", new String[] { "any" });
+          r.put("time_spec_hour", new String[] { "any" });
+          r.put("time_spec_minute", new String[] { "any" });
+          r.put("pattern", new String[] { "[a-z]+" });
+
+          final JFPMassSyncSpec m = JFPMassSyncSpec.parseFromRequest(r);
+          final Integer mi = t.massSyncAdd(m);
+
+          {
+            Assert.assertTrue(mi.intValue() > 0);
+            final SortedMap<Integer, JFPMassSyncSpec> ml = t.massSyncList();
+            Assert.assertTrue(ml.containsKey(mi));
+            Assert.assertEquals(1, ml.keySet().size());
+            Assert.assertEquals(1, ml.size());
+          }
+
+          {
+            t.massSyncRemove(mi);
+            final SortedMap<Integer, JFPMassSyncSpec> ml = t.massSyncList();
+            Assert.assertFalse(ml.containsKey(mi));
+            Assert.assertEquals(0, ml.keySet().size());
+            Assert.assertEquals(0, ml.size());
+          }
+
           return Unit.unit();
         }
       });

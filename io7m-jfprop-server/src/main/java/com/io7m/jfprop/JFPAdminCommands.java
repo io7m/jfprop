@@ -161,6 +161,14 @@ final class JFPAdminCommands
       handlers.addHandler(ch);
     }
 
+    {
+      final Handler h = new JFPAdminCommandMassSyncTestPattern(c, db, l);
+      final ContextHandler ch = new ContextHandler("/mass-sync-test-pattern");
+      ch.setHandler(h);
+      ch.setAllowNullPathInfo(true);
+      handlers.addHandler(ch);
+    }
+
     return handlers;
   }
 

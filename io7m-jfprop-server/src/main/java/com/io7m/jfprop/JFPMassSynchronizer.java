@@ -1,10 +1,10 @@
 /*
  * Copyright © 2014 <code@io7m.com> http://io7m.com
- * 
+ *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
  * copyright notice and this permission notice appear in all copies.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
  * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
@@ -22,7 +22,9 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.SortedMap;
 import java.util.TimeZone;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -93,7 +95,14 @@ public final class JFPMassSynchronizer implements Runnable
             for (final String r : repositories) {
               if (sync.syncSpecRepositoryMatches(r)) {
                 l.debug("repository " + r + " matches, syncing");
-                fsc.doSync(new JFPProjectPath(r));
+                final Future<Boolean> f = fsc.doSync(new JFPProjectPath(r));
+                try {
+                  f.get();
+                } catch (final InterruptedException e) {
+                  l.critical(e.toString());
+                } catch (final ExecutionException e) {
+                  l.critical(e.toString());
+                }
               }
             }
           } catch (final JFPExceptionInvalidArgument e) {

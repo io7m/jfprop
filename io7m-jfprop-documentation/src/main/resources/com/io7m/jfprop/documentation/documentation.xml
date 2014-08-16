@@ -41,6 +41,19 @@
 
     <s:section>
       <s:section-title>Installation</s:section-title>
+      
+      <s:subsection>
+        <s:subsection-title>Binaries</s:subsection-title>
+        <s:paragraph>
+          The package provides an all-in-one executable Jar file,
+          <s:term s:type="file">${project.parent.name}-server-${project.version}-main.jar</s:term>,
+          that can be used to start the <s:term s:type="package">${project.parent.name}</s:term> server:
+        </s:paragraph>
+        <s:paragraph>
+          <s:verbatim s:type="example"><![CDATA[$ java -jar ${project.parent.name}-server-${project.version}-main.jar]]></s:verbatim>
+        </s:paragraph>
+      </s:subsection>
+      
       <s:subsection>
         <s:subsection-title>Source compilation</s:subsection-title>
         <s:paragraph>

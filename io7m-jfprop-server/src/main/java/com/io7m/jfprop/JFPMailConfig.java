@@ -1,10 +1,10 @@
 /*
  * Copyright © 2014 <code@io7m.com> http://io7m.com
- *
+ * 
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
  * copyright notice and this permission notice appear in all copies.
- *
+ * 
  * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
  * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
@@ -40,7 +40,7 @@ public final class JFPMailConfig
 {
   private static JFPMailConfig fromProperties(
     final Properties p)
-    throws JPropertyNonexistent,
+      throws JPropertyNonexistent,
       AddressException
   {
     final String server_address =
@@ -89,10 +89,10 @@ public final class JFPMailConfig
 
   public static OptionType<JFPMailConfig> fromPropertiesOptional(
     final Properties p)
-    throws JPropertyNonexistent,
+      throws JPropertyNonexistent,
       JPropertyIncorrectType,
       AddressException
-  {
+      {
     NullCheck.notNull(p, "Properties");
 
     final boolean enabled =
@@ -104,7 +104,7 @@ public final class JFPMailConfig
       return Option.some(JFPMailConfig.fromProperties(p));
     }
     return Option.none();
-  }
+      }
 
   /**
    * Load configuration data from the given stream.
@@ -124,7 +124,7 @@ public final class JFPMailConfig
 
   public static JFPMailConfig fromStream(
     final InputStream stream)
-    throws IOException,
+      throws IOException,
       JPropertyException,
       JFPExceptionInvalidArgument,
       AddressException
@@ -155,18 +155,18 @@ public final class JFPMailConfig
 
   public static OptionType<JFPMailConfig> fromStreamOptional(
     final InputStream stream)
-    throws IOException,
+      throws IOException,
       JPropertyException,
       JFPExceptionInvalidArgument,
       AddressException
-  {
+      {
     NullCheck.notNull(stream, "Stream");
 
     final Properties p = new Properties();
     p.load(stream);
 
     return JFPMailConfig.fromPropertiesOptional(p);
-  }
+      }
 
   private final InternetAddress                  recipient;
   private final InternetAddress                  sender;

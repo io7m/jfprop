@@ -1,10 +1,10 @@
 /*
  * Copyright © 2014 <code@io7m.com> http://io7m.com
- * 
+ *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
  * copyright notice and this permission notice appear in all copies.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
  * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
@@ -25,12 +25,12 @@ import com.io7m.jnull.NullCheck;
 import com.io7m.jnull.Nullable;
 
 /**
- * The type of valid project paths.
+ * The type of valid repository paths.
  */
 
-public final class JFPProjectPath implements
+public final class JFPRepositoryPath implements
 Serializable,
-Comparable<JFPProjectPath>
+Comparable<JFPRepositoryPath>
 {
   private static final long serialVersionUID = 3708595950836755359L;
 
@@ -43,7 +43,7 @@ Comparable<JFPProjectPath>
     if (normal.codePointAt(0) != '/') {
       return false;
     }
-    if ("/".equals(normal)) {
+    if (normal.length() == 1) {
       return false;
     }
 
@@ -52,7 +52,7 @@ Comparable<JFPProjectPath>
     for (int index = 0; index < elements.length; ++index) {
       final String name =
         NullCheck.notNull(elements[index], "Elements(" + index + ")");
-      if (JFPProjectPath.validPathComponent(name) == false) {
+      if (JFPRepositoryPath.validPathComponent(name) == false) {
         return false;
       }
     }
@@ -115,8 +115,8 @@ Comparable<JFPProjectPath>
   public static boolean validPath(
     final String path)
   {
-    final String normal = JFPProjectPath.normalizePath(path);
-    return JFPProjectPath.isValidNormalized(normal);
+    final String normal = JFPRepositoryPath.normalizePath(path);
+    return JFPRepositoryPath.isValidNormalized(normal);
   }
 
   /**
@@ -164,23 +164,23 @@ Comparable<JFPProjectPath>
    *           If the path is not valid.
    */
 
-  public JFPProjectPath(
+  public JFPRepositoryPath(
     final String in_actual)
       throws JFPExceptionInvalidArgument
   {
-    final String p = JFPProjectPath.normalizePath(in_actual);
-    if (JFPProjectPath.isValidNormalized(p) == false) {
+    final String p = JFPRepositoryPath.normalizePath(in_actual);
+    if (JFPRepositoryPath.isValidNormalized(p) == false) {
       final String m = String.format("path '%s' is not valid", in_actual);
       assert m != null;
       throw new JFPExceptionInvalidArgument(m);
     }
 
-    this.components = JFPProjectPath.makeComponents(p);
+    this.components = JFPRepositoryPath.makeComponents(p);
     this.image = p;
   }
 
   @Override public int compareTo(
-    final @Nullable JFPProjectPath o)
+    final @Nullable JFPRepositoryPath o)
   {
     return this.image.compareTo(NullCheck.notNull(o, "Other").image);
   }
@@ -197,7 +197,7 @@ Comparable<JFPProjectPath>
     if (this.getClass() != obj.getClass()) {
       return false;
     }
-    final JFPProjectPath other = (JFPProjectPath) obj;
+    final JFPRepositoryPath other = (JFPRepositoryPath) obj;
     return this.image.equals(other.image);
   }
 

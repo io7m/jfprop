@@ -1,10 +1,10 @@
 /*
  * Copyright © 2014 <code@io7m.com> http://io7m.com
- *
+ * 
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
  * copyright notice and this permission notice appear in all copies.
- *
+ * 
  * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
  * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
@@ -38,7 +38,7 @@ import com.io7m.jnull.Nullable;
  */
 
 abstract class JFPAuthenticatedHandlerAbstract extends AbstractHandler implements
-JFPAuthenticatedHandlerType
+  JFPAuthenticatedHandlerType
 {
   protected final JFPServerConfigType   config;
   protected final JFPServerDatabaseType database;
@@ -48,18 +48,18 @@ JFPAuthenticatedHandlerType
     final JFPServerConfigType in_config,
     final JFPServerDatabaseType db,
     final LogUsableType in_log)
-    {
+  {
     this.config = NullCheck.notNull(in_config, "Configuration");
     this.database = NullCheck.notNull(db, "Database");
     this.log = NullCheck.notNull(in_log, "Log");
-    }
+  }
 
   @Override public final void handle(
     final @Nullable String target,
     final @Nullable Request base_request,
     final @Nullable HttpServletRequest request,
     final @Nullable HttpServletResponse response)
-      throws IOException,
+    throws IOException,
       ServletException
   {
     assert target != null;
@@ -75,28 +75,28 @@ JFPAuthenticatedHandlerType
       final Pair<JFPUserName, JFPKey> p = JFPAuthentication.getUserAndKey(ps);
 
       this.database
-      .withTransaction(new PartialFunctionType<JFPServerDatabaseTransactionType, Unit, Exception>() {
-        @Override public Unit call(
-          final JFPServerDatabaseTransactionType t)
+        .withTransaction(new PartialFunctionType<JFPServerDatabaseTransactionType, Unit, Exception>() {
+          @Override public Unit call(
+            final JFPServerDatabaseTransactionType t)
             throws Exception
-        {
-          final JFPUserName user = p.getLeft();
-          final JFPKey key = p.getRight();
-          if (t.checkNameAndKey(user, key) == false) {
-            throw new JFPExceptionAuthentication("no such user or key");
-          }
+          {
+            final JFPUserName user = p.getLeft();
+            final JFPKey key = p.getRight();
+            if (t.checkNameAndKey(user, key) == false) {
+              throw new JFPExceptionAuthentication("no such user or key");
+            }
 
-          JFPAuthenticatedHandlerAbstract.this.handleAuthenticated(
-            target,
-            base_request,
-            request,
-            response,
-            user,
-            key,
-            t);
-          return Unit.unit();
-        }
-      });
+            JFPAuthenticatedHandlerAbstract.this.handleAuthenticated(
+              target,
+              base_request,
+              request,
+              response,
+              user,
+              key,
+              t);
+            return Unit.unit();
+          }
+        });
 
     } catch (final JFPExceptionAuthentication e) {
       this.log.error("authentication failed: " + e.getMessage());

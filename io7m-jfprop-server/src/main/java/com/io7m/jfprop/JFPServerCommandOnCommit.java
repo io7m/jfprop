@@ -70,12 +70,12 @@ final class JFPServerCommandOnCommit extends JFPAuthenticatedHandlerAbstract
     try {
       this.log.debug("sync request received");
 
-      final JFPProjectPath project =
-        new JFPProjectPath(JFPRequestUtilities.getValueSingle(
+      final JFPRepositoryPath repository =
+        new JFPRepositoryPath(JFPRequestUtilities.getValueSingle(
           request.getParameterMap(),
-          "project"));
+          "repository"));
 
-      this.log.debug("sync project " + project);
+      this.log.debug("sync repository " + repository);
 
       final SortedMap<Integer, JFPRemote> remotes = transaction.remotesGet();
 
@@ -87,10 +87,10 @@ final class JFPServerCommandOnCommit extends JFPAuthenticatedHandlerAbstract
         @Override public void run()
         {
           try {
-            final Future<Boolean> fsr = fc.doSync(project);
+            final Future<Boolean> fsr = fc.doSync(repository);
             if (fsr.get()) {
               for (final JFPRemote r : remotes.values()) {
-                rc.doCommitNotify(project, r);
+                rc.doCommitNotify(repository, r);
               }
             }
           } catch (final InterruptedException e) {

@@ -1,0 +1,346 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+  Copyright © 2014 <code@io7m.com> http://io7m.com
+
+  Permission to use, copy, modify, and/or distribute this software for any
+  purpose with or without fee is hereby granted, provided that the above
+  copyright notice and this permission notice appear in all copies.
+
+  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+  -->
+
+<s:part 
+  xml:id="config_reference"  
+  xmlns:s="http://schemas.io7m.com/structural/2.0.0"
+  xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <s:part-title>Configuration File Reference</s:part-title>
+  <s:part-contents/>
+
+  <s:section xml:id="config_reference.format">
+    <s:section-title>Configuration Format</s:section-title>
+
+    <s:subsection xml:id="config_reference.format.overview">
+      <s:subsection-title>Overview</s:subsection-title>
+      <s:paragraph>
+        The configuration format for the <s:term s:type="package">${project.parent.name}</s:term> 
+        server is based on the trivial key/value 
+        <s:link-external s:target="http://en.wikipedia.org/wiki/.properties">Java properties</s:link-external>
+        format. All keys are prefixed with <s:term s:type="constant">com.io7m.jfprop</s:term>.
+      </s:paragraph>
+    </s:subsection>
+  </s:section>
+
+  <s:section xml:id="config_reference.parameters">
+    <s:section-title>Configuration Parameters</s:section-title>
+    <s:section-contents/>
+    
+    <s:subsection xml:id="config_reference.parameters.overview">
+      <s:subsection-title>Overview</s:subsection-title>
+      <s:paragraph>
+        This section attempts to exhaustively document all of the possible configuration
+        parameters.
+      </s:paragraph>
+    </s:subsection>
+
+    <s:subsection xml:id="com.io7m.jfprop.fossil_executable">
+      <s:subsection-title>com.io7m.jfprop.fossil_executable</s:subsection-title>
+      <s:paragraph>
+        The <s:term s:type="parameter">com.io7m.jfprop.fossil_executable</s:term> parameter
+        specifies the path to the <s:term s:type="command">fossil</s:term> executable that
+        should be used by the server for performing synchronizations.
+      </s:paragraph>
+    </s:subsection>
+    <s:subsection xml:id="com.io7m.jfprop.fossil_repository_directory">
+      <s:subsection-title>com.io7m.jfprop.fossil_repository_directory</s:subsection-title>
+      <s:paragraph>
+        The <s:term s:type="parameter">com.io7m.jfprop.fossil_repository_directory</s:term> 
+        parameter specifies the directory containing Fossil repositories that the server will
+        manage.
+      </s:paragraph>
+    </s:subsection>
+    <s:subsection xml:id="com.io7m.jfprop.fossil_user_name">
+      <s:subsection-title>com.io7m.jfprop.fossil_user_name</s:subsection-title>
+      <s:paragraph>
+        The <s:term s:type="parameter">com.io7m.jfprop.fossil_user_name</s:term> parameter
+        specifies the username that will be used to access Fossil repositories.
+      </s:paragraph>
+    </s:subsection>
+    <s:subsection xml:id="com.io7m.jfprop.mail_auth_password">
+      <s:subsection-title>com.io7m.jfprop.mail_auth_password</s:subsection-title>
+      <s:paragraph>
+        The <s:term s:type="parameter">com.io7m.jfprop.mail_auth_password</s:term> parameter
+        specifies the password that will be used to authenticate to the mail server given
+        by <s:link s:target="com.io7m.jfprop.mail_server_address">com.io7m.jfprop.mail_server_address</s:link>.
+      </s:paragraph>
+    </s:subsection>
+    <s:subsection xml:id="com.io7m.jfprop.mail_auth_user">
+      <s:subsection-title>com.io7m.jfprop.mail_auth_user</s:subsection-title>
+      <s:paragraph>
+        The <s:term s:type="parameter">com.io7m.jfprop.mail_auth_user</s:term> parameter
+        specifies the username that will be used to authenticate to the mail server given
+        by <s:link s:target="com.io7m.jfprop.mail_server_address">com.io7m.jfprop.mail_server_address</s:link>.
+      </s:paragraph>
+    </s:subsection>
+    <s:subsection xml:id="com.io7m.jfprop.mail_enabled">
+      <s:subsection-title>com.io7m.jfprop.mail_enabled</s:subsection-title>
+      <s:paragraph>
+        The <s:term s:type="parameter">com.io7m.jfprop.mail_enabled</s:term> parameter
+        specifies whether or not mail notifications are enabled. Must be
+        <s:term s:type="constant">true</s:term> or <s:term s:type="constant">false</s:term>.
+      </s:paragraph>
+    </s:subsection>
+    <s:subsection xml:id="com.io7m.jfprop.mail_recipient">
+      <s:subsection-title>com.io7m.jfprop.mail_recipient</s:subsection-title>
+      <s:paragraph>
+        The <s:term s:type="parameter">com.io7m.jfprop.mail_recipient</s:term> parameter
+        specifies the address of the recipient for mail notifications.
+      </s:paragraph>
+    </s:subsection>
+    <s:subsection xml:id="com.io7m.jfprop.mail_sender">
+      <s:subsection-title>com.io7m.jfprop.mail_sender</s:subsection-title>
+      <s:paragraph>
+        The <s:term s:type="parameter">com.io7m.jfprop.mail_sender</s:term> parameter
+        specifies the address of the sender for mail notifications; it is the address
+        from which notifications will appear to originate.
+      </s:paragraph>
+    </s:subsection>
+    <s:subsection xml:id="com.io7m.jfprop.mail_server_address">
+      <s:subsection-title>com.io7m.jfprop.mail_server_address</s:subsection-title>
+      <s:paragraph>
+        The <s:term s:type="parameter">com.io7m.jfprop.mail_server_address</s:term> parameter
+        is the address of the external mail server that will be contacted in order to send
+        mail notifications.
+      </s:paragraph>
+    </s:subsection>
+    <s:subsection xml:id="com.io7m.jfprop.server_admin_address">
+      <s:subsection-title>com.io7m.jfprop.server_admin_address</s:subsection-title>
+      <s:paragraph>
+        The <s:term s:type="parameter">com.io7m.jfprop.server_admin_address</s:term> parameter
+        is the address to which the administration HTTP server will bind.
+      </s:paragraph>
+    </s:subsection>
+    <s:subsection xml:id="com.io7m.jfprop.server_admin_enabled">
+      <s:subsection-title>com.io7m.jfprop.server_admin_enabled</s:subsection-title>
+      <s:paragraph>
+        The <s:term s:type="parameter">com.io7m.jfprop.server_admin_enabled</s:term> parameter
+        specifies whether or not the administration HTTP server is enabled. Must be
+        <s:term s:type="constant">true</s:term> or <s:term s:type="constant">false</s:term>.
+      </s:paragraph>
+    </s:subsection>
+    <s:subsection xml:id="com.io7m.jfprop.server_admin_https_address">
+      <s:subsection-title>com.io7m.jfprop.server_admin_https_address</s:subsection-title>
+      <s:paragraph>
+        The <s:term s:type="parameter">com.io7m.jfprop.server_admin_https_address</s:term> parameter
+        specifies the address to which the administration HTTPS server will bind.
+      </s:paragraph>
+    </s:subsection>
+    <s:subsection xml:id="com.io7m.jfprop.server_admin_https_enabled">
+      <s:subsection-title>com.io7m.jfprop.server_admin_https_enabled</s:subsection-title>
+      <s:paragraph>
+        The <s:term s:type="parameter">com.io7m.jfprop.server_admin_https_enabled</s:term> parameter
+        specifies whether or not the administration HTTPS server is enabled. Must be
+        <s:term s:type="constant">true</s:term> or <s:term s:type="constant">false</s:term>.
+      </s:paragraph>
+    </s:subsection>
+    <s:subsection xml:id="com.io7m.jfprop.server_admin_https_keystore_password">
+      <s:subsection-title>com.io7m.jfprop.server_admin_https_keystore_password</s:subsection-title>
+      <s:paragraph>
+        The <s:term s:type="parameter">com.io7m.jfprop.server_admin_https_keystore_password</s:term> parameter
+        specifies the password used to access the administration HTTPS server keystore.
+      </s:paragraph>
+    </s:subsection>
+    <s:subsection xml:id="com.io7m.jfprop.server_admin_https_keystore_path">
+      <s:subsection-title>com.io7m.jfprop.server_admin_https_keystore_path</s:subsection-title>
+      <s:paragraph>
+        The <s:term s:type="parameter">com.io7m.jfprop.server_admin_https_keystore_path</s:term> parameter
+        specifies the path of the keystore that will be used for the administration HTTPS server.
+      </s:paragraph>
+    </s:subsection>
+    <s:subsection xml:id="com.io7m.jfprop.server_admin_https_keystore_type">
+      <s:subsection-title>com.io7m.jfprop.server_admin_https_keystore_type</s:subsection-title>
+      <s:paragraph>
+        The <s:term s:type="parameter">com.io7m.jfprop.server_admin_https_keystore_type</s:term> parameter
+        specifies the type of the administration HTTPS server keystore. Will typically be 
+        <s:term s:type="constant">"JKS"</s:term> as this is the only guaranteed-available keystore
+        type on the Java platform.
+      </s:paragraph>
+    </s:subsection>
+    <s:subsection xml:id="com.io7m.jfprop.server_admin_https_port">
+      <s:subsection-title>com.io7m.jfprop.server_admin_https_port</s:subsection-title>
+      <s:paragraph>
+        The <s:term s:type="parameter">com.io7m.jfprop.server_admin_https_port</s:term> parameter
+        specifies the port that the administration HTTPS server will use.
+      </s:paragraph>
+    </s:subsection>
+    <s:subsection xml:id="com.io7m.jfprop.server_admin_https_truststore_password">
+      <s:subsection-title>com.io7m.jfprop.server_admin_https_truststore_password</s:subsection-title>
+      <s:paragraph>
+        The <s:term s:type="parameter">com.io7m.jfprop.server_admin_https_truststore_password</s:term> parameter
+        specifies the password used to access the administration HTTPS server truststore.
+      </s:paragraph>
+    </s:subsection>
+    <s:subsection xml:id="com.io7m.jfprop.server_admin_https_truststore_path">
+      <s:subsection-title>com.io7m.jfprop.server_admin_https_truststore_path</s:subsection-title>
+      <s:paragraph>
+        The <s:term s:type="parameter">com.io7m.jfprop.server_admin_https_truststore_path</s:term> parameter
+        specifies the path of the truststore that will be used for the administration HTTPS server.
+      </s:paragraph>
+    </s:subsection>
+    <s:subsection xml:id="com.io7m.jfprop.server_admin_https_truststore_type">
+      <s:subsection-title>com.io7m.jfprop.server_admin_https_truststore_type</s:subsection-title>
+      <s:paragraph>
+        The <s:term s:type="parameter">com.io7m.jfprop.server_admin_https_truststore_type</s:term> parameter
+        specifies the type of the administration HTTPS server truststore. Will typically be 
+        <s:term s:type="constant">"JKS"</s:term> as this is the only guaranteed-available truststore
+        type on the Java platform.
+      </s:paragraph>
+    </s:subsection>
+    <s:subsection xml:id="com.io7m.jfprop.server_admin_password">
+      <s:subsection-title>com.io7m.jfprop.server_admin_password</s:subsection-title>
+      <s:paragraph>
+        The <s:term s:type="parameter">com.io7m.jfprop.server_admin_password</s:term> parameter
+        specifies the password that will be used to access the administration server.
+      </s:paragraph>
+    </s:subsection>
+    <s:subsection xml:id="com.io7m.jfprop.server_admin_port">
+      <s:subsection-title>com.io7m.jfprop.server_admin_port</s:subsection-title>
+      <s:paragraph>
+        The <s:term s:type="parameter">com.io7m.jfprop.server_admin_port</s:term> parameter
+        specifies the port that the administration HTTP server will use.
+      </s:paragraph>
+    </s:subsection>
+    <s:subsection xml:id="com.io7m.jfprop.server_database_file">
+      <s:subsection-title>com.io7m.jfprop.server_database_file</s:subsection-title>
+      <s:paragraph>
+        The <s:term s:type="parameter">com.io7m.jfprop.server_database_file</s:term> parameter
+        specifies the path to the server's database file. Will be created if it does not already
+        exist.
+      </s:paragraph>
+    </s:subsection>
+    <s:subsection xml:id="com.io7m.jfprop.server_http_address">
+      <s:subsection-title>com.io7m.jfprop.server_http_address</s:subsection-title>
+      <s:paragraph>
+        The <s:term s:type="parameter">com.io7m.jfprop.server_http_address</s:term> parameter
+        specifies the address to which the HTTP server will bind.
+      </s:paragraph>
+    </s:subsection>
+    <s:subsection xml:id="com.io7m.jfprop.server_http_enabled">
+      <s:subsection-title>com.io7m.jfprop.server_http_enabled</s:subsection-title>
+      <s:paragraph>
+        The <s:term s:type="parameter">com.io7m.jfprop.server_http_enabled</s:term> parameter
+        specifies whether or not the HTTP server is enabled. Must be
+        <s:term s:type="constant">true</s:term> or <s:term s:type="constant">false</s:term>.
+      </s:paragraph>
+    </s:subsection>
+    <s:subsection xml:id="com.io7m.jfprop.server_http_port">
+      <s:subsection-title>com.io7m.jfprop.server_http_port</s:subsection-title>
+      <s:paragraph>
+        The <s:term s:type="parameter">com.io7m.jfprop.server_http_port</s:term> parameter
+        specifies the port that the HTTP server will use.
+      </s:paragraph>
+    </s:subsection>
+    <s:subsection xml:id="com.io7m.jfprop.server_https_address">
+      <s:subsection-title>com.io7m.jfprop.server_https_address</s:subsection-title>
+      <s:paragraph>
+        The <s:term s:type="parameter">com.io7m.jfprop.server_https_address</s:term> parameter
+        specifies the address to which the HTTPS server will bind.
+      </s:paragraph>
+    </s:subsection>
+    <s:subsection xml:id="com.io7m.jfprop.server_https_enabled">
+      <s:subsection-title>com.io7m.jfprop.server_https_enabled</s:subsection-title>
+      <s:paragraph>
+        The <s:term s:type="parameter">com.io7m.jfprop.server_https_enabled</s:term> parameter
+        specifies whether or not the HTTPS server is enabled. Must be
+        <s:term s:type="constant">true</s:term> or <s:term s:type="constant">false</s:term>.
+      </s:paragraph>
+    </s:subsection>
+    <s:subsection xml:id="com.io7m.jfprop.server_https_keystore_password">
+      <s:subsection-title>com.io7m.jfprop.server_https_keystore_password</s:subsection-title>
+      <s:paragraph>
+        The <s:term s:type="parameter">com.io7m.jfprop.server_https_keystore_password</s:term> parameter
+        specifies the password used to access the HTTPS server keystore.
+      </s:paragraph>
+    </s:subsection>
+    <s:subsection xml:id="com.io7m.jfprop.server_https_keystore_path">
+      <s:subsection-title>com.io7m.jfprop.server_https_keystore_path</s:subsection-title>
+      <s:paragraph>
+        The <s:term s:type="parameter">com.io7m.jfprop.server_https_keystore_path</s:term> parameter
+        specifies the path of the keystore that will be used for the administration HTTPS server.
+      </s:paragraph>
+    </s:subsection>
+    <s:subsection xml:id="com.io7m.jfprop.server_https_keystore_type">
+      <s:subsection-title>com.io7m.jfprop.server_https_keystore_type</s:subsection-title>
+      <s:paragraph>
+        The <s:term s:type="parameter">com.io7m.jfprop.server_https_keystore_type</s:term> parameter
+        specifies the type of the HTTPS server keystore. Will typically be 
+        <s:term s:type="constant">"JKS"</s:term> as this is the only guaranteed-available keystore
+        type on the Java platform.
+      </s:paragraph>
+    </s:subsection>
+    <s:subsection xml:id="com.io7m.jfprop.server_https_port">
+      <s:subsection-title>com.io7m.jfprop.server_https_port</s:subsection-title>
+      <s:paragraph>
+        The <s:term s:type="parameter">com.io7m.jfprop.server_https_port</s:term> parameter
+        specifies the port that the HTTPS server will use.
+      </s:paragraph>
+    </s:subsection>
+    <s:subsection xml:id="com.io7m.jfprop.server_https_truststore_password">
+      <s:subsection-title>com.io7m.jfprop.server_https_truststore_password</s:subsection-title>
+      <s:paragraph>
+        The <s:term s:type="parameter">com.io7m.jfprop.server_https_truststore_password</s:term> parameter
+        specifies the password used to access the HTTPS server truststore.
+      </s:paragraph>
+    </s:subsection>
+    <s:subsection xml:id="com.io7m.jfprop.server_https_truststore_path">
+      <s:subsection-title>com.io7m.jfprop.server_https_truststore_path</s:subsection-title>
+      <s:paragraph>
+        The <s:term s:type="parameter">com.io7m.jfprop.server_https_truststore_path</s:term> parameter
+        specifies the path of the truststore that will be used for the administration HTTPS server.
+      </s:paragraph>
+    </s:subsection>
+    <s:subsection xml:id="com.io7m.jfprop.server_https_truststore_type">
+      <s:subsection-title>com.io7m.jfprop.server_https_truststore_type</s:subsection-title>
+      <s:paragraph>
+        The <s:term s:type="parameter">com.io7m.jfprop.server_https_truststore_type</s:term> parameter
+        specifies the type of the HTTPS server truststore. Will typically be 
+        <s:term s:type="constant">"JKS"</s:term> as this is the only guaranteed-available truststore
+        type on the Java platform.
+      </s:paragraph>
+    </s:subsection>
+    <s:subsection xml:id="com.io7m.jfprop.server_log_directory">
+      <s:subsection-title>com.io7m.jfprop.server_log_directory</s:subsection-title>
+      <s:paragraph>
+        The <s:term s:type="parameter">com.io7m.jfprop.server_log_directory</s:term> parameter
+        specifies the base log directory for the server. The server will typically create
+        subdirectories inside this directory for storing access logs.
+      </s:paragraph>
+    </s:subsection>
+    <s:subsection xml:id="com.io7m.jfprop.server_log_level">
+      <s:subsection-title>com.io7m.jfprop.server_log_level</s:subsection-title>
+      <s:paragraph>
+        The <s:term s:type="parameter">com.io7m.jfprop.server_log_level</s:term> parameter
+        specifies the level of logging to be used. Must be one of
+        <s:term s:type="constant">LOG_DEBUG</s:term>, <s:term s:type="constant">LOG_INFO</s:term>,
+        <s:term s:type="constant">LOG_WARN</s:term>, <s:term s:type="constant">LOG_ERROR</s:term>,
+        or <s:term s:type="constant">LOG_CRITICAL</s:term>.
+      </s:paragraph>
+    </s:subsection>
+    <s:subsection xml:id="com.io7m.jfprop.server_mass_synchronizer_enabled">
+      <s:subsection-title>com.io7m.jfprop.server_mass_synchronizer_enabled</s:subsection-title>
+      <s:paragraph>
+        The <s:term s:type="parameter">com.io7m.jfprop.server_mass_synchronizer_enabled</s:term> parameter
+        specifies whether or not the mass synchronizer is enabled. Must be
+        <s:term s:type="constant">true</s:term> or <s:term s:type="constant">false</s:term>.
+      </s:paragraph>
+    </s:subsection>
+  </s:section>
+
+</s:part>

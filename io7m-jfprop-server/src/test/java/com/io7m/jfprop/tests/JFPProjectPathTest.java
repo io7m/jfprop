@@ -22,7 +22,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import com.io7m.jfprop.JFPExceptionInvalidArgument;
-import com.io7m.jfprop.JFPProjectPath;
+import com.io7m.jfprop.JFPRepositoryPath;
 import com.io7m.jnull.NullCheckException;
 
 @SuppressWarnings({ "static-method", "unused" }) public final class JFPProjectPathTest
@@ -31,27 +31,27 @@ import com.io7m.jnull.NullCheckException;
     throws Exception
   {
     Assert.assertEquals(
-      new JFPProjectPath("/time/for/bed").toString(),
+      new JFPRepositoryPath("/time/for/bed").toString(),
       "/time/for/bed");
   }
 
   @Test public void testCompareTo()
     throws Exception
   {
-    Assert.assertEquals(new JFPProjectPath("/time/for/bed")
-      .compareTo(new JFPProjectPath("/time/for/bed")), 0);
+    Assert.assertEquals(new JFPRepositoryPath("/time/for/bed")
+      .compareTo(new JFPRepositoryPath("/time/for/bed")), 0);
     Assert.assertEquals(
-      new JFPProjectPath("/a").compareTo(new JFPProjectPath("/b")),
+      new JFPRepositoryPath("/a").compareTo(new JFPRepositoryPath("/b")),
       -1);
     Assert.assertEquals(
-      new JFPProjectPath("/b").compareTo(new JFPProjectPath("/a")),
+      new JFPRepositoryPath("/b").compareTo(new JFPRepositoryPath("/a")),
       1);
   }
 
   @Test public void testComponents()
     throws Exception
   {
-    final JFPProjectPath p = new JFPProjectPath("/time/for/bed");
+    final JFPRepositoryPath p = new JFPRepositoryPath("/time/for/bed");
     final List<String> c = p.getComponents();
     Assert.assertEquals(3, c.size());
     Assert.assertEquals("time", c.get(0));
@@ -63,21 +63,21 @@ import com.io7m.jnull.NullCheckException;
     throws Exception
   {
     Assert.assertEquals(
-      new JFPProjectPath("/time/for/bed"),
-      new JFPProjectPath("/time/for/bed"));
+      new JFPRepositoryPath("/time/for/bed"),
+      new JFPRepositoryPath("/time/for/bed"));
 
-    final JFPProjectPath x = new JFPProjectPath("/sugar/lumps");
+    final JFPRepositoryPath x = new JFPRepositoryPath("/sugar/lumps");
     Assert.assertEquals(x, x);
-    Assert.assertNotEquals(new JFPProjectPath("/someone"), new Object());
-    Assert.assertNotEquals(new JFPProjectPath("/someone"), null);
+    Assert.assertNotEquals(new JFPRepositoryPath("/someone"), new Object());
+    Assert.assertNotEquals(new JFPRepositoryPath("/someone"), null);
   }
 
   @Test public void testHashCode()
     throws Exception
   {
     Assert.assertEquals(
-      new JFPProjectPath("/time/for/bed").hashCode(),
-      new JFPProjectPath("/time/for/bed").hashCode());
+      new JFPRepositoryPath("/time/for/bed").hashCode(),
+      new JFPRepositoryPath("/time/for/bed").hashCode());
   }
 
   @Test(expected = JFPExceptionInvalidArgument.class) public
@@ -85,8 +85,8 @@ import com.io7m.jnull.NullCheckException;
     testNotValid_0()
       throws JFPExceptionInvalidArgument
   {
-    Assert.assertFalse(JFPProjectPath.validPath(" "));
-    new JFPProjectPath(" ");
+    Assert.assertFalse(JFPRepositoryPath.validPath(" "));
+    new JFPRepositoryPath(" ");
   }
 
   @Test(expected = JFPExceptionInvalidArgument.class) public
@@ -94,8 +94,8 @@ import com.io7m.jnull.NullCheckException;
     testNotValid_1()
       throws JFPExceptionInvalidArgument
   {
-    Assert.assertFalse(JFPProjectPath.validPath("+"));
-    new JFPProjectPath("+");
+    Assert.assertFalse(JFPRepositoryPath.validPath("+"));
+    new JFPRepositoryPath("+");
   }
 
   @Test(expected = JFPExceptionInvalidArgument.class) public
@@ -103,8 +103,8 @@ import com.io7m.jnull.NullCheckException;
     testNotValid_2()
       throws JFPExceptionInvalidArgument
   {
-    Assert.assertFalse(JFPProjectPath.validPath(""));
-    new JFPProjectPath("");
+    Assert.assertFalse(JFPRepositoryPath.validPath(""));
+    new JFPRepositoryPath("");
   }
 
   @Test(expected = JFPExceptionInvalidArgument.class) public
@@ -112,8 +112,8 @@ import com.io7m.jnull.NullCheckException;
     testNotValid_3()
       throws JFPExceptionInvalidArgument
   {
-    Assert.assertFalse(JFPProjectPath.validPath("/a/b/../c"));
-    new JFPProjectPath("/a/b/../c");
+    Assert.assertFalse(JFPRepositoryPath.validPath("/a/b/../c"));
+    new JFPRepositoryPath("/a/b/../c");
   }
 
   @Test(expected = JFPExceptionInvalidArgument.class) public
@@ -121,8 +121,8 @@ import com.io7m.jnull.NullCheckException;
     testNotValid_4()
       throws JFPExceptionInvalidArgument
   {
-    Assert.assertFalse(JFPProjectPath.validPath("/"));
-    new JFPProjectPath("/");
+    Assert.assertFalse(JFPRepositoryPath.validPath("/"));
+    new JFPRepositoryPath("/");
   }
 
   @Test(expected = JFPExceptionInvalidArgument.class) public
@@ -130,55 +130,55 @@ import com.io7m.jnull.NullCheckException;
     testNotValid_5()
       throws JFPExceptionInvalidArgument
   {
-    Assert.assertFalse(JFPProjectPath.validPath("////////////"));
-    new JFPProjectPath("////////////");
+    Assert.assertFalse(JFPRepositoryPath.validPath("////////////"));
+    new JFPRepositoryPath("////////////");
   }
 
   @Test public void testNotValidComponent_0()
   {
-    Assert.assertFalse(JFPProjectPath.validPathComponent(""));
+    Assert.assertFalse(JFPRepositoryPath.validPathComponent(""));
   }
 
   @Test public void testNotValidComponent_1()
   {
-    Assert.assertFalse(JFPProjectPath.validPathComponent("/"));
+    Assert.assertFalse(JFPRepositoryPath.validPathComponent("/"));
   }
 
   @Test public void testNotValidComponent_2()
   {
-    Assert.assertFalse(JFPProjectPath.validPathComponent(".."));
+    Assert.assertFalse(JFPRepositoryPath.validPathComponent(".."));
   }
 
   @Test(expected = NullCheckException.class) public void testNull_0()
   {
-    JFPProjectPath.validPath((String) TestUtilities.actuallyNull());
+    JFPRepositoryPath.validPath((String) TestUtilities.actuallyNull());
   }
 
   @Test public void testValid_0()
     throws Exception
   {
-    Assert.assertTrue(JFPProjectPath.validPath("/io7m0.fossil"));
+    Assert.assertTrue(JFPRepositoryPath.validPath("/io7m0.fossil"));
     Assert.assertEquals(
       "/io7m0.fossil",
-      new JFPProjectPath("/io7m0.fossil").toString());
+      new JFPRepositoryPath("/io7m0.fossil").toString());
   }
 
   @Test public void testValid_1()
     throws Exception
   {
-    Assert.assertTrue(JFPProjectPath.validPath("/a/b/c"));
-    Assert.assertEquals("/a/b/c", new JFPProjectPath("/a/b/c").toString());
+    Assert.assertTrue(JFPRepositoryPath.validPath("/a/b/c"));
+    Assert.assertEquals("/a/b/c", new JFPRepositoryPath("/a/b/c").toString());
   }
 
   @Test public void testValid_2()
     throws Exception
   {
-    Assert.assertTrue(JFPProjectPath.validPath("/a/b/c/"));
-    Assert.assertEquals("/a/b/c", new JFPProjectPath("/a/b/c/").toString());
+    Assert.assertTrue(JFPRepositoryPath.validPath("/a/b/c/"));
+    Assert.assertEquals("/a/b/c", new JFPRepositoryPath("/a/b/c/").toString());
   }
 
   @Test public void testValidComponent_0()
   {
-    Assert.assertTrue(JFPProjectPath.validPathComponent("io7m0.fossil"));
+    Assert.assertTrue(JFPRepositoryPath.validPathComponent("io7m0.fossil"));
   }
 }

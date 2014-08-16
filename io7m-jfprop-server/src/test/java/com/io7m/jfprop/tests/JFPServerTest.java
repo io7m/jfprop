@@ -54,7 +54,7 @@ import com.io7m.jlog.LogLevel;
   private Properties makeProperties(
     final File temp_dir,
     final boolean start_http,
-    final boolean start_management)
+    final boolean start_admin)
   {
     System.out.println("temporary directory: " + temp_dir);
 
@@ -72,14 +72,12 @@ import com.io7m.jlog.LogLevel;
       p.setProperty(JFPProperties.name("server_http_enabled"), "false");
     }
 
-    if (start_management) {
-      p.setProperty(JFPProperties.name("server_management_enabled"), "true");
-      p.setProperty(
-        JFPProperties.name("server_management_address"),
-        "localhost");
-      p.setProperty(JFPProperties.name("server_management_port"), "32768");
+    if (start_admin) {
+      p.setProperty(JFPProperties.name("server_admin_enabled"), "true");
+      p.setProperty(JFPProperties.name("server_admin_address"), "localhost");
+      p.setProperty(JFPProperties.name("server_admin_port"), "32768");
     } else {
-      p.setProperty(JFPProperties.name("server_management_enabled"), "false");
+      p.setProperty(JFPProperties.name("server_admin_enabled"), "false");
     }
 
     p.setProperty(JFPProperties.name("server_database_file"), new File(
@@ -112,7 +110,7 @@ import com.io7m.jlog.LogLevel;
 
   private void run(
     final boolean start_http,
-    final boolean start_management,
+    final boolean start_admin,
     final Callable<Unit> r)
     throws Exception
   {
@@ -123,7 +121,7 @@ import com.io7m.jlog.LogLevel;
       this.makeProperties(
         this.temporary_folder.getRoot(),
         start_http,
-        start_management);
+        start_admin);
 
     final JFPServerConfigType c =
       JFPServerConfigFromProperties.fromProperties(p);
@@ -337,7 +335,8 @@ import com.io7m.jlog.LogLevel;
 
           {
             final HttpURLConnection c =
-              (HttpURLConnection) new URL("http://localhost:32768/")
+              (HttpURLConnection) new URL(
+                "http://localhost:32768/?admin_password=abcd")
                 .openConnection();
             c.setRequestMethod("GET");
 
@@ -1173,7 +1172,7 @@ import com.io7m.jlog.LogLevel;
     Assert.assertTrue(ran.get());
   }
 
-  @Test(timeout = 1000000) public void testAdminProjectRemoteAddOK()
+  @Test(timeout = 1000000) public void testAdminRepositoryRemoteAddOK()
     throws Exception
   {
     final AtomicBoolean ran = new AtomicBoolean(false);
@@ -1206,7 +1205,7 @@ import com.io7m.jlog.LogLevel;
           {
             final HttpURLConnection c =
               (HttpURLConnection) new URL(
-                "http://localhost:32768/project-remote-add?admin_password=abcd&project=/a/b/c&remote_id="
+                "http://localhost:32768/repository-remote-add?admin_password=abcd&repository=/a/b/c&remote_id="
                   + rid).openConnection();
             c.setRequestMethod("POST");
 
@@ -1224,7 +1223,7 @@ import com.io7m.jlog.LogLevel;
     Assert.assertTrue(ran.get());
   }
 
-  @Test(timeout = 1000000) public void testAdminProjectRemoteListOK()
+  @Test(timeout = 1000000) public void testAdminRepositoryRemoteListOK()
     throws Exception
   {
     final AtomicBoolean ran = new AtomicBoolean(false);
@@ -1257,7 +1256,7 @@ import com.io7m.jlog.LogLevel;
           {
             final HttpURLConnection c =
               (HttpURLConnection) new URL(
-                "http://localhost:32768/project-remote-add?admin_password=abcd&project=/a/b/c&remote_id="
+                "http://localhost:32768/repository-remote-add?admin_password=abcd&repository=/a/b/c&remote_id="
                   + rid).openConnection();
             c.setRequestMethod("POST");
 
@@ -1268,7 +1267,7 @@ import com.io7m.jlog.LogLevel;
           {
             final HttpURLConnection c =
               (HttpURLConnection) new URL(
-                "http://localhost:32768/project-remote-list?admin_password=abcd&project=/a/b/c")
+                "http://localhost:32768/repository-remote-list?admin_password=abcd&repository=/a/b/c")
                 .openConnection();
             c.setRequestMethod("POST");
 
@@ -1290,7 +1289,7 @@ import com.io7m.jlog.LogLevel;
     Assert.assertTrue(ran.get());
   }
 
-  @Test(timeout = 1000000) public void testAdminProjectRemoteListGet()
+  @Test(timeout = 1000000) public void testAdminRepositoryRemoteListGet()
     throws Exception
   {
     final AtomicBoolean ran = new AtomicBoolean(false);
@@ -1304,7 +1303,7 @@ import com.io7m.jlog.LogLevel;
           {
             final HttpURLConnection c =
               (HttpURLConnection) new URL(
-                "http://localhost:32768/project-remote-list?admin_password=abcd&project=/a/b/c")
+                "http://localhost:32768/repository-remote-list?admin_password=abcd&repository=/a/b/c")
                 .openConnection();
             c.setRequestMethod("GET");
 
@@ -1324,7 +1323,7 @@ import com.io7m.jlog.LogLevel;
 
   @Test(timeout = 1000000) public
     void
-    testAdminProjectRemoteListNonexistent()
+    testAdminRepositoryRemoteListNonexistent()
       throws Exception
   {
     final AtomicBoolean ran = new AtomicBoolean(false);
@@ -1338,7 +1337,7 @@ import com.io7m.jlog.LogLevel;
           {
             final HttpURLConnection c =
               (HttpURLConnection) new URL(
-                "http://localhost:32768/project-remote-list?admin_password=abcd&project=/a/b/c")
+                "http://localhost:32768/repository-remote-list?admin_password=abcd&repository=/a/b/c")
                 .openConnection();
             c.setRequestMethod("POST");
 
@@ -1356,7 +1355,7 @@ import com.io7m.jlog.LogLevel;
     Assert.assertTrue(ran.get());
   }
 
-  @Test(timeout = 1000000) public void testAdminProjectRemoteListInvalid()
+  @Test(timeout = 1000000) public void testAdminRepositoryRemoteListInvalid()
     throws Exception
   {
     final AtomicBoolean ran = new AtomicBoolean(false);
@@ -1370,7 +1369,7 @@ import com.io7m.jlog.LogLevel;
           {
             final HttpURLConnection c =
               (HttpURLConnection) new URL(
-                "http://localhost:32768/project-remote-list?admin_password=abcd&project=/a/../c")
+                "http://localhost:32768/repository-remote-list?admin_password=abcd&repository=/a/../c")
                 .openConnection();
             c.setRequestMethod("POST");
 
@@ -1388,7 +1387,7 @@ import com.io7m.jlog.LogLevel;
     Assert.assertTrue(ran.get());
   }
 
-  @Test(timeout = 1000000) public void testAdminProjectRemoteGlobalAddOK()
+  @Test(timeout = 1000000) public void testAdminRepositoryRemoteGlobalAddOK()
     throws Exception
   {
     final AtomicBoolean ran = new AtomicBoolean(false);
@@ -1421,7 +1420,7 @@ import com.io7m.jlog.LogLevel;
           {
             final HttpURLConnection c =
               (HttpURLConnection) new URL(
-                "http://localhost:32768/project-remote-global-add?admin_password=abcd&remote_id="
+                "http://localhost:32768/repository-remote-global-add?admin_password=abcd&remote_id="
                   + rid).openConnection();
             c.setRequestMethod("POST");
 
@@ -1439,8 +1438,10 @@ import com.io7m.jlog.LogLevel;
     Assert.assertTrue(ran.get());
   }
 
-  @Test(timeout = 1000000) public void testAdminProjectRemoteAddNonexistent()
-    throws Exception
+  @Test(timeout = 1000000) public
+    void
+    testAdminRepositoryRemoteAddNonexistent()
+      throws Exception
   {
     final AtomicBoolean ran = new AtomicBoolean(false);
 
@@ -1453,7 +1454,7 @@ import com.io7m.jlog.LogLevel;
           {
             final HttpURLConnection c =
               (HttpURLConnection) new URL(
-                "http://localhost:32768/project-remote-add?admin_password=abcd&project=/a/b/c&remote_id=1")
+                "http://localhost:32768/repository-remote-add?admin_password=abcd&repository=/a/b/c&remote_id=1")
                 .openConnection();
             c.setRequestMethod("POST");
 
@@ -1473,7 +1474,7 @@ import com.io7m.jlog.LogLevel;
 
   @Test(timeout = 1000000) public
     void
-    testAdminProjectRemoteGlobalAddNonexistent()
+    testAdminRepositoryRemoteGlobalAddNonexistent()
       throws Exception
   {
     final AtomicBoolean ran = new AtomicBoolean(false);
@@ -1487,7 +1488,7 @@ import com.io7m.jlog.LogLevel;
           {
             final HttpURLConnection c =
               (HttpURLConnection) new URL(
-                "http://localhost:32768/project-remote-global-add?admin_password=abcd&project=/a/b/c&remote_id=1")
+                "http://localhost:32768/repository-remote-global-add?admin_password=abcd&repository=/a/b/c&remote_id=1")
                 .openConnection();
             c.setRequestMethod("POST");
 
@@ -1507,7 +1508,7 @@ import com.io7m.jlog.LogLevel;
 
   @Test(timeout = 1000000) public
     void
-    testAdminProjectRemoteGlobalAddInvalid()
+    testAdminRepositoryRemoteGlobalAddInvalid()
       throws Exception
   {
     final AtomicBoolean ran = new AtomicBoolean(false);
@@ -1521,7 +1522,7 @@ import com.io7m.jlog.LogLevel;
           {
             final HttpURLConnection c =
               (HttpURLConnection) new URL(
-                "http://localhost:32768/project-remote-global-add?admin_password=abcd&project=/a/b/c&remote_id=Z")
+                "http://localhost:32768/repository-remote-global-add?admin_password=abcd&repository=/a/b/c&remote_id=Z")
                 .openConnection();
             c.setRequestMethod("POST");
 
@@ -1539,8 +1540,10 @@ import com.io7m.jlog.LogLevel;
     Assert.assertTrue(ran.get());
   }
 
-  @Test(timeout = 1000000) public void testAdminProjectRemoteGlobalAddGet()
-    throws Exception
+  @Test(timeout = 1000000) public
+    void
+    testAdminRepositoryRemoteGlobalAddGet()
+      throws Exception
   {
     final AtomicBoolean ran = new AtomicBoolean(false);
 
@@ -1553,7 +1556,7 @@ import com.io7m.jlog.LogLevel;
           {
             final HttpURLConnection c =
               (HttpURLConnection) new URL(
-                "http://localhost:32768/project-remote-global-add?admin_password=abcd&project=/a/b/c&remote_id=1")
+                "http://localhost:32768/repository-remote-global-add?admin_password=abcd&repository=/a/b/c&remote_id=1")
                 .openConnection();
             c.setRequestMethod("GET");
 
@@ -1571,7 +1574,7 @@ import com.io7m.jlog.LogLevel;
     Assert.assertTrue(ran.get());
   }
 
-  @Test(timeout = 1000000) public void testAdminProjectRemoteAddInvalid()
+  @Test(timeout = 1000000) public void testAdminRepositoryRemoteAddInvalid()
     throws Exception
   {
     final AtomicBoolean ran = new AtomicBoolean(false);
@@ -1585,7 +1588,7 @@ import com.io7m.jlog.LogLevel;
           {
             final HttpURLConnection c =
               (HttpURLConnection) new URL(
-                "http://localhost:32768/project-remote-add?admin_password=abcd&project=/a/b/c&remote_id=z")
+                "http://localhost:32768/repository-remote-add?admin_password=abcd&repository=/a/b/c&remote_id=z")
                 .openConnection();
             c.setRequestMethod("POST");
 
@@ -1603,7 +1606,7 @@ import com.io7m.jlog.LogLevel;
     Assert.assertTrue(ran.get());
   }
 
-  @Test(timeout = 1000000) public void testAdminProjectRemoteAddGet()
+  @Test(timeout = 1000000) public void testAdminRepositoryRemoteAddGet()
     throws Exception
   {
     final AtomicBoolean ran = new AtomicBoolean(false);
@@ -1617,7 +1620,7 @@ import com.io7m.jlog.LogLevel;
           {
             final HttpURLConnection c =
               (HttpURLConnection) new URL(
-                "http://localhost:32768/project-remote-add?admin_password=abcd&project=/a/b/c&remote_id=1")
+                "http://localhost:32768/repository-remote-add?admin_password=abcd&repository=/a/b/c&remote_id=1")
                 .openConnection();
             c.setRequestMethod("GET");
 

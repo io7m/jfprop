@@ -84,6 +84,12 @@
     </dependency>
 
     <!-- Depend on the javadoc for each module, in order to aggregate it. -->
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>io7m-jfprop-server</artifactId>
+      <version>${project.version}</version>
+      <classifier>javadoc</classifier>
+    </dependency>
   </dependencies>
 
   <reporting>

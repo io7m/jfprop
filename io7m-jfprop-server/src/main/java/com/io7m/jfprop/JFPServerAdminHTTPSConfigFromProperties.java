@@ -31,12 +31,12 @@ import com.io7m.jproperties.JPropertyException;
 import com.io7m.jranges.RangeCheck;
 
 /**
- * The type of HTTPS management server configuration data that can be loaded
- * from properties.
+ * The type of HTTPS admin server configuration data that can be loaded from
+ * properties.
  */
 
-public final class JFPServerManagementHTTPSConfigFromProperties implements
-  JFPServerManagementHTTPSConfigType
+public final class JFPServerAdminHTTPSConfigFromProperties implements
+  JFPServerAdminHTTPSConfigType
 {
   /**
    * Load configuration data from the given properties.
@@ -52,7 +52,7 @@ public final class JFPServerManagementHTTPSConfigFromProperties implements
    *           On invalid email addresses.
    */
 
-  public static JFPServerManagementHTTPSConfigType fromProperties(
+  public static JFPServerAdminHTTPSConfigType fromProperties(
     final Properties p)
     throws JPropertyException,
       JFPExceptionInvalidArgument,
@@ -61,12 +61,12 @@ public final class JFPServerManagementHTTPSConfigFromProperties implements
     final String address =
       JProperties.getString(
         p,
-        JFPProperties.name("server_management_https_address"));
+        JFPProperties.name("server_admin_https_address"));
     final BigInteger server_port =
       RangeCheck.checkIncludedInBig(
         JProperties.getBigInteger(
           p,
-          JFPProperties.name("server_management_https_port")),
+          JFPProperties.name("server_admin_https_port")),
         "Port",
         JFPServerConfigFromProperties.PORT_RANGE,
         "Valid port range");
@@ -76,30 +76,30 @@ public final class JFPServerManagementHTTPSConfigFromProperties implements
     final File ks_path =
       new File(JProperties.getString(
         p,
-        JFPProperties.name("server_management_https_keystore_path")));
+        JFPProperties.name("server_admin_https_keystore_path")));
     final String ks_pass =
       JProperties.getString(
         p,
-        JFPProperties.name("server_management_https_keystore_password"));
+        JFPProperties.name("server_admin_https_keystore_password"));
     final String ks_type =
       JProperties.getString(
         p,
-        JFPProperties.name("server_management_https_keystore_type"));
+        JFPProperties.name("server_admin_https_keystore_type"));
 
     final File ts_path =
       new File(JProperties.getString(
         p,
-        JFPProperties.name("server_management_https_truststore_path")));
+        JFPProperties.name("server_admin_https_truststore_path")));
     final String ts_pass =
       JProperties.getString(
         p,
-        JFPProperties.name("server_management_https_truststore_password"));
+        JFPProperties.name("server_admin_https_truststore_password"));
     final String ts_type =
       JProperties.getString(
         p,
-        JFPProperties.name("server_management_https_truststore_type"));
+        JFPProperties.name("server_admin_https_truststore_type"));
 
-    return new JFPServerManagementHTTPSConfigFromProperties(
+    return new JFPServerAdminHTTPSConfigFromProperties(
       a,
       ks_path,
       ks_pass,
@@ -124,7 +124,7 @@ public final class JFPServerManagementHTTPSConfigFromProperties implements
    */
 
   public static
-    OptionType<JFPServerManagementHTTPSConfigType>
+    OptionType<JFPServerAdminHTTPSConfigType>
     fromPropertiesOptional(
       final Properties p)
       throws JPropertyException,
@@ -134,11 +134,11 @@ public final class JFPServerManagementHTTPSConfigFromProperties implements
     final boolean http_enabled =
       JProperties.getBooleanOptional(
         p,
-        JFPProperties.name("server_management_https_enabled"),
+        JFPProperties.name("server_admin_https_enabled"),
         false);
 
     if (http_enabled) {
-      return Option.some(JFPServerManagementHTTPSConfigFromProperties
+      return Option.some(JFPServerAdminHTTPSConfigFromProperties
         .fromProperties(p));
     }
 
@@ -153,7 +153,7 @@ public final class JFPServerManagementHTTPSConfigFromProperties implements
   private final File              truststore_path;
   private final String            truststore_type;
 
-  private JFPServerManagementHTTPSConfigFromProperties(
+  private JFPServerAdminHTTPSConfigFromProperties(
     final InetSocketAddress in_address,
     final File in_keystore_path,
     final String in_keystore_password,

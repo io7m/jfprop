@@ -110,4 +110,10 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.]]>
     </s:section>
   </s:part>
 
+  <xi:include href="user-guide.xml"/>
+  <xi:include href="api-types.xml"/>
+  <xi:include href="api-server.xml"/>
+  <xi:include href="api-admin.xml"/>
+  <xi:include href="config-reference.xml"/>
+
 </s:document>

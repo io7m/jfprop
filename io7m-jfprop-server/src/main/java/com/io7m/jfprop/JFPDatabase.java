@@ -44,8 +44,6 @@ import com.io7m.junreachable.UnreachableCodeException;
 
 public final class JFPDatabase
 {
-  private static final int SCHEMA_VERSION = 1;
-
   private static final class Database implements JFPAllDatabaseType
   {
     private final TxMaker       db;
@@ -193,95 +191,6 @@ public final class JFPDatabase
       m.remove(i);
     }
 
-    @Override public void projectAddRemote(
-      final JFPProjectPath project,
-      final Integer remote)
-      throws JFPExceptionNonexistent
-    {
-      final BTreeMap<Integer, JFPRemote> remotes =
-        JFPDatabase.getRemotes(this.db);
-      final BTreeMap<JFPProjectPath, Set<Integer>> projects =
-        JFPDatabase.getProjects(this.db);
-
-      if (remotes.containsKey(remote) == false) {
-        throw new JFPExceptionNonexistent(String.format(
-          "Nonexistent remote '%s'",
-          remote));
-      }
-
-      Set<Integer> project_remotes;
-      if (projects.containsKey(project)) {
-        project_remotes = projects.get(project);
-      } else {
-        project_remotes = new HashSet<Integer>();
-      }
-      project_remotes.add(remote);
-      projects.put(project, project_remotes);
-    }
-
-    @Override public Set<Integer> projectListRemotes(
-      final JFPProjectPath project)
-      throws JFPExceptionNonexistent
-    {
-      final BTreeMap<JFPProjectPath, Set<Integer>> projects =
-        JFPDatabase.getProjects(this.db);
-      final Set<Integer> globals = JFPDatabase.getRemotesGlobal(this.db);
-
-      if (projects.containsKey(project) == false) {
-        throw new JFPExceptionNonexistent(String.format(
-          "Nonexistent project '%s'",
-          project));
-      }
-
-      final Set<Integer> project_remotes = projects.get(project);
-      final Set<Integer> r = new HashSet<Integer>();
-      r.addAll(project_remotes);
-      r.addAll(globals);
-      return r;
-    }
-
-    @Override public Set<JFPRemote> projectRemotesGet(
-      final JFPProjectPath project)
-    {
-      try {
-        final BTreeMap<JFPProjectPath, Set<Integer>> projects =
-          JFPDatabase.getProjects(this.db);
-        final BTreeMap<Integer, JFPRemote> remotes =
-          JFPDatabase.getRemotes(this.db);
-
-        if (projects.containsKey(project)) {
-          final Set<JFPRemote> r = new HashSet<JFPRemote>();
-          final Set<Integer> ids = this.projectListRemotes(project);
-          for (final Integer i : ids) {
-            r.add(remotes.get(i));
-          }
-          return r;
-        }
-
-        return new HashSet<JFPRemote>();
-      } catch (final JFPExceptionNonexistent e) {
-        throw new UnreachableCodeException(e);
-      }
-    }
-
-    @Override public void projectsAddGlobalRemote(
-      final Integer remote)
-      throws JFPExceptionNonexistent
-    {
-      final Set<Integer> remotes_global =
-        JFPDatabase.getRemotesGlobal(this.db);
-      final BTreeMap<Integer, JFPRemote> remotes =
-        JFPDatabase.getRemotes(this.db);
-
-      if (remotes.containsKey(remote) == false) {
-        throw new JFPExceptionNonexistent(String.format(
-          "Nonexistent remote '%s'",
-          remote));
-      }
-
-      remotes_global.add(remote);
-    }
-
     @Override public Integer remoteAdd(
       final JFPRemote r)
     {
@@ -305,6 +214,95 @@ public final class JFPDatabase
         new TreeMap<Integer, JFPRemote>();
       m.putAll(remotes);
       return m;
+    }
+
+    @Override public void repositoryAddGlobalRemote(
+      final Integer remote)
+      throws JFPExceptionNonexistent
+    {
+      final Set<Integer> remotes_global =
+        JFPDatabase.getRemotesGlobal(this.db);
+      final BTreeMap<Integer, JFPRemote> remotes =
+        JFPDatabase.getRemotes(this.db);
+
+      if (remotes.containsKey(remote) == false) {
+        throw new JFPExceptionNonexistent(String.format(
+          "Nonexistent remote '%s'",
+          remote));
+      }
+
+      remotes_global.add(remote);
+    }
+
+    @Override public void repositoryAddRemote(
+      final JFPRepositoryPath project,
+      final Integer remote)
+      throws JFPExceptionNonexistent
+    {
+      final BTreeMap<Integer, JFPRemote> remotes =
+        JFPDatabase.getRemotes(this.db);
+      final BTreeMap<JFPRepositoryPath, Set<Integer>> projects =
+        JFPDatabase.getRepositories(this.db);
+
+      if (remotes.containsKey(remote) == false) {
+        throw new JFPExceptionNonexistent(String.format(
+          "Nonexistent remote '%s'",
+          remote));
+      }
+
+      Set<Integer> project_remotes;
+      if (projects.containsKey(project)) {
+        project_remotes = projects.get(project);
+      } else {
+        project_remotes = new HashSet<Integer>();
+      }
+      project_remotes.add(remote);
+      projects.put(project, project_remotes);
+    }
+
+    @Override public Set<Integer> repositoryListRemotes(
+      final JFPRepositoryPath project)
+      throws JFPExceptionNonexistent
+    {
+      final BTreeMap<JFPRepositoryPath, Set<Integer>> projects =
+        JFPDatabase.getRepositories(this.db);
+      final Set<Integer> globals = JFPDatabase.getRemotesGlobal(this.db);
+
+      if (projects.containsKey(project) == false) {
+        throw new JFPExceptionNonexistent(String.format(
+          "Nonexistent project '%s'",
+          project));
+      }
+
+      final Set<Integer> project_remotes = projects.get(project);
+      final Set<Integer> r = new HashSet<Integer>();
+      r.addAll(project_remotes);
+      r.addAll(globals);
+      return r;
+    }
+
+    @Override public Set<JFPRemote> repositoryRemotesGet(
+      final JFPRepositoryPath project)
+    {
+      try {
+        final BTreeMap<JFPRepositoryPath, Set<Integer>> projects =
+          JFPDatabase.getRepositories(this.db);
+        final BTreeMap<Integer, JFPRemote> remotes =
+          JFPDatabase.getRemotes(this.db);
+
+        if (projects.containsKey(project)) {
+          final Set<JFPRemote> r = new HashSet<JFPRemote>();
+          final Set<Integer> ids = this.repositoryListRemotes(project);
+          for (final Integer i : ids) {
+            r.add(remotes.get(i));
+          }
+          return r;
+        }
+
+        return new HashSet<JFPRemote>();
+      } catch (final JFPExceptionNonexistent e) {
+        throw new UnreachableCodeException(e);
+      }
     }
 
     @Override public void userAdd(
@@ -414,6 +412,8 @@ public final class JFPDatabase
     }
   }
 
+  private static final int    SCHEMA_VERSION          = 1;
+
   private static final String TABLE_MASS_SYNC_ENABLED = "mass_sync_enabled";
 
   private static Boolean getMassSyncEnabled(
@@ -430,14 +430,6 @@ public final class JFPDatabase
     return syncs;
   }
 
-  private static BTreeMap<JFPProjectPath, Set<Integer>> getProjects(
-    final DB db)
-  {
-    final BTreeMap<JFPProjectPath, Set<Integer>> projects =
-      db.getTreeMap("projects");
-    return projects;
-  }
-
   private static BTreeMap<Integer, JFPRemote> getRemotes(
     final DB db)
   {
@@ -450,6 +442,14 @@ public final class JFPDatabase
   {
     final Set<Integer> remotes = db.getHashSet("remotes_global");
     return remotes;
+  }
+
+  private static BTreeMap<JFPRepositoryPath, Set<Integer>> getRepositories(
+    final DB db)
+  {
+    final BTreeMap<JFPRepositoryPath, Set<Integer>> projects =
+      db.getTreeMap("projects");
+    return projects;
   }
 
   private static BTreeMap<JFPUserName, Set<JFPKey>> getUsers(

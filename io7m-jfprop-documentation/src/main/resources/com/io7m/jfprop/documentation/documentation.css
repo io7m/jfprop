@@ -25,12 +25,20 @@
 .command,
 .constant,
 .element,
+.expression,
 .file,
 .function,
 .keyword,
-.type
+.parameter,
+.type,
+.variable
 {
   font-family: monospace;
+}
+
+.term
+{
+  font-style: italic;
 }
 
 .example, .license, .terminal
@@ -57,6 +65,17 @@
 }
 .platforms table tbody,
 .platforms table thead
+{
+  font-size:     8pt;
+  font-family:   monospace;
+}
+
+.parameters table td
+{
+  padding-right: 2.0em;
+}
+.parameters table tbody,
+.parameters table thead
 {
   font-size:     8pt;
   font-family:   monospace;

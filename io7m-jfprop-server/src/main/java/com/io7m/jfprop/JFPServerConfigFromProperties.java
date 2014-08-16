@@ -1,10 +1,10 @@
 /*
  * Copyright © 2014 <code@io7m.com> http://io7m.com
- * 
+ *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
  * copyright notice and this permission notice appear in all copies.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
  * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
@@ -40,7 +40,7 @@ import com.io7m.jranges.RangeInclusiveB;
  */
 
 public final class JFPServerConfigFromProperties implements
-  JFPServerConfigType
+JFPServerConfigType
 {
   static final RangeInclusiveB PORT_RANGE;
 
@@ -69,7 +69,7 @@ public final class JFPServerConfigFromProperties implements
 
   public static JFPServerConfigType fromFile(
     final File file)
-    throws IOException,
+      throws IOException,
       JPropertyException,
       JFPExceptionInvalidArgument,
       AddressException
@@ -100,7 +100,7 @@ public final class JFPServerConfigFromProperties implements
 
   public static JFPServerConfigType fromProperties(
     final Properties p)
-    throws JPropertyException,
+      throws JPropertyException,
       JFPExceptionInvalidArgument,
       AddressException
   {
@@ -113,10 +113,10 @@ public final class JFPServerConfigFromProperties implements
       JFPServerHTTPConfigFromProperties.fromPropertiesOptional(p);
     final OptionType<JFPServerHTTPSConfigType> https =
       JFPServerHTTPSConfigFromProperties.fromPropertiesOptional(p);
-    final OptionType<JFPServerManagementHTTPConfigType> m_http =
-      JFPServerManagementHTTPConfigFromProperties.fromPropertiesOptional(p);
-    final OptionType<JFPServerManagementHTTPSConfigType> m_https =
-      JFPServerManagementHTTPSConfigFromProperties.fromPropertiesOptional(p);
+    final OptionType<JFPServerAdminHTTPConfigType> m_http =
+      JFPServerAdminHTTPConfigFromProperties.fromPropertiesOptional(p);
+    final OptionType<JFPServerAdminHTTPSConfigType> m_https =
+      JFPServerAdminHTTPSConfigFromProperties.fromPropertiesOptional(p);
 
     final File server_database_file =
       new File(JProperties.getString(
@@ -189,7 +189,7 @@ public final class JFPServerConfigFromProperties implements
 
   public static JFPServerConfigType fromStream(
     final InputStream stream)
-    throws IOException,
+      throws IOException,
       JPropertyException,
       JFPExceptionInvalidArgument,
       AddressException
@@ -204,7 +204,7 @@ public final class JFPServerConfigFromProperties implements
 
   private static LogLevel getLogLevel(
     final Properties p)
-    throws JPropertyIncorrectType,
+      throws JPropertyIncorrectType,
       JPropertyNonexistent
   {
     try {
@@ -237,8 +237,8 @@ public final class JFPServerConfigFromProperties implements
   private final OptionType<JFPServerHTTPConfigType>            http;
   private final OptionType<JFPServerHTTPSConfigType>           https;
   private final LogLevel                                       log_level;
-  private final OptionType<JFPServerManagementHTTPConfigType>  m_http;
-  private final OptionType<JFPServerManagementHTTPSConfigType> m_https;
+  private final OptionType<JFPServerAdminHTTPConfigType>  m_http;
+  private final OptionType<JFPServerAdminHTTPSConfigType> m_https;
   private final OptionType<JFPMailConfig>                      mail_config;
   private final File                                           server_database_file;
   private final File                                           server_log_directory;
@@ -248,8 +248,8 @@ public final class JFPServerConfigFromProperties implements
     final String in_admin_password,
     final OptionType<JFPServerHTTPConfigType> in_http,
     final OptionType<JFPServerHTTPSConfigType> in_https,
-    final OptionType<JFPServerManagementHTTPConfigType> in_m_http,
-    final OptionType<JFPServerManagementHTTPSConfigType> in_m_https,
+    final OptionType<JFPServerAdminHTTPConfigType> in_m_http,
+    final OptionType<JFPServerAdminHTTPSConfigType> in_m_https,
     final File in_fossil_repository_directory,
     final JFPFossilExecutable in_fossil_executable,
     final OptionType<JFPFossilUserName> in_fossil_user_name,
@@ -331,8 +331,8 @@ public final class JFPServerConfigFromProperties implements
   }
 
   @Override public
-    OptionType<JFPServerHTTPSConfigType>
-    getServerHTTPSConfig()
+  OptionType<JFPServerHTTPSConfigType>
+  getServerHTTPSConfig()
   {
     return this.https;
   }
@@ -343,15 +343,15 @@ public final class JFPServerConfigFromProperties implements
   }
 
   @Override public
-    OptionType<JFPServerManagementHTTPConfigType>
-    getServerManagementHTTPConfig()
+  OptionType<JFPServerAdminHTTPConfigType>
+  getServerManagementHTTPConfig()
   {
     return this.m_http;
   }
 
   @Override public
-    OptionType<JFPServerManagementHTTPSConfigType>
-    getServerManagementHTTPSConfig()
+  OptionType<JFPServerAdminHTTPSConfigType>
+  getServerManagementHTTPSConfig()
   {
     return this.m_https;
   }

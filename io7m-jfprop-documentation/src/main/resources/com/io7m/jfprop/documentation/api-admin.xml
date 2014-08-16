@@ -1,0 +1,805 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+  Copyright © 2014 <code@io7m.com> http://io7m.com
+
+  Permission to use, copy, modify, and/or distribute this software for any
+  purpose with or without fee is hereby granted, provided that the above
+  copyright notice and this permission notice appear in all copies.
+
+  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+  -->
+
+<s:part 
+  xml:id="api.admin"  
+  xmlns:s="http://schemas.io7m.com/structural/2.0.0"
+  xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <s:part-title>API Reference: Administration</s:part-title>
+  <s:part-contents/>
+
+  <s:section xml:id="api.admin.overview">
+    <s:section-title>Overview</s:section-title>
+    <s:section-contents/>
+ 
+    <s:paragraph>
+      This section describes the API presented to server administrators. 
+      All commands
+      return a <s:term s:type="constant">200</s:term> status code on
+      success, or a status code in the <s:term s:type="constant">400</s:term>
+      range in the case of errors. All commands require clients to send
+      credentials in the form of an admin password, and will return 
+      <s:term s:type="constant">403</s:term> status codes in the case of
+      missing or invalid credentials.
+    </s:paragraph>
+  </s:section>
+
+  <s:section xml:id="api.admin.mass-sync-add">
+    <s:section-title>mass-sync-add</s:section-title>
+    <s:section-contents/>
+    
+    <s:subsection>
+      <s:subsection-title>Description</s:subsection-title>
+      <s:paragraph>
+        The <s:term s:type="command">mass-sync-add</s:term> command adds
+        a new mass synchronization.
+      </s:paragraph>
+    </s:subsection>
+    
+    <s:subsection>
+      <s:subsection-title>Required Parameters</s:subsection-title>
+      <s:formal-item s:kind="specification" s:type="parameters">
+        <s:formal-item-title>Required parameters</s:formal-item-title>
+        <s:table>
+          <s:table-summary>Required parameters</s:table-summary>
+          <s:table-head>
+            <s:table-column-name>Name</s:table-column-name>
+            <s:table-column-name>Type</s:table-column-name>
+            <s:table-column-name>Description</s:table-column-name>
+          </s:table-head>
+          <s:table-body>
+            <s:table-row>
+              <s:table-cell>admin_password</s:table-cell>
+              <s:table-cell><s:link s:target="api.types.type_rules.predefined.string">string</s:link></s:table-cell>
+              <s:table-cell>The admin password</s:table-cell>
+            </s:table-row>
+            <s:table-row>
+              <s:table-cell>pattern</s:table-cell>
+              <s:table-cell><s:link s:target="api.types.pattern">pattern</s:link></s:table-cell>
+              <s:table-cell>The pattern against which the names of repositories will be matched</s:table-cell>
+            </s:table-row>
+            <s:table-row>
+              <s:table-cell>time_spec_day</s:table-cell>
+              <s:table-cell><s:link s:target="api.types.time_component_spec">time_component_spec</s:link></s:table-cell>
+              <s:table-cell>The time specification component for days</s:table-cell>
+            </s:table-row>
+            <s:table-row>
+              <s:table-cell>time_spec_hour</s:table-cell>
+              <s:table-cell><s:link s:target="api.types.time_component_spec">time_component_spec</s:link></s:table-cell>
+              <s:table-cell>The time specification component for hours</s:table-cell>
+            </s:table-row>
+            <s:table-row>
+              <s:table-cell>time_spec_minute</s:table-cell>
+              <s:table-cell><s:link s:target="api.types.time_component_spec">time_component_spec</s:link></s:table-cell>
+              <s:table-cell>The time specification component for minute</s:table-cell>
+            </s:table-row>
+          </s:table-body>
+        </s:table>
+      </s:formal-item>
+    </s:subsection>
+
+    <s:subsection>
+      <s:subsection-title>Return value</s:subsection-title>
+      <s:paragraph>
+        The command returns an integer representing a unique identifier for the
+        newly-added synchronization.
+      </s:paragraph>
+    </s:subsection>
+  </s:section>
+
+  <s:section xml:id="api.admin.mass-sync-enable">
+    <s:section-title>mass-sync-enable</s:section-title>
+    <s:section-contents/>
+    
+    <s:subsection>
+      <s:subsection-title>Description</s:subsection-title>
+      <s:paragraph>
+        The <s:term s:type="command">mass-sync-enable</s:term> command
+        enables and disables the 
+        <s:link s:target="user_guide.configuration.mass-synchronization">mass synchronizer</s:link>.
+        Note that the command does <s:term s:type="term">not</s:term> start the
+        synchronizer if it was disabled in the server configuration file.
+      </s:paragraph>
+    </s:subsection>
+    
+    <s:subsection>
+      <s:subsection-title>Required Parameters</s:subsection-title>
+      <s:formal-item s:kind="specification" s:type="parameters">
+        <s:formal-item-title>Required parameters</s:formal-item-title>
+        <s:table>
+          <s:table-summary>Required parameters</s:table-summary>
+          <s:table-head>
+            <s:table-column-name>Name</s:table-column-name>
+            <s:table-column-name>Type</s:table-column-name>
+            <s:table-column-name>Description</s:table-column-name>
+          </s:table-head>
+          <s:table-body>
+            <s:table-row>
+              <s:table-cell>admin_password</s:table-cell>
+              <s:table-cell><s:link s:target="api.types.type_rules.predefined.string">string</s:link></s:table-cell>
+              <s:table-cell>The admin password</s:table-cell>
+            </s:table-row>
+            <s:table-row>
+              <s:table-cell>enabled</s:table-cell>
+              <s:table-cell><s:link s:target="api.types.type_rules.predefined.boolean">boolean</s:link></s:table-cell>
+              <s:table-cell><s:term s:type="constant">true</s:term> if the synchronizer should be enabled, <s:term s:type="constant">false</s:term> otherwise</s:table-cell>
+            </s:table-row>
+          </s:table-body>
+        </s:table>
+      </s:formal-item>
+    </s:subsection>
+
+    <s:subsection>
+      <s:subsection-title>Return value</s:subsection-title>
+      <s:paragraph>
+        The command does not return a value.
+      </s:paragraph>
+    </s:subsection>
+  </s:section>
+
+  <s:section xml:id="api.admin.mass-sync-is-enabled">
+    <s:section-title>mass-sync-is-enabled</s:section-title>
+    <s:section-contents/>
+    
+    <s:subsection>
+      <s:subsection-title>Description</s:subsection-title>
+      <s:paragraph>
+        The <s:term s:type="command">mass-sync-is-enabled</s:term> command
+        returns <s:term s:type="constant">true</s:term> if the
+        <s:link s:target="user_guide.configuration.mass-synchronization">mass synchronizer</s:link>
+        is enabled. It does <s:term s:type="term">not</s:term> indicate whether or not
+        the synchronizer is actually running, as it may have been disabled in the
+        server's configuration file.
+      </s:paragraph>
+    </s:subsection>
+    
+    <s:subsection>
+      <s:subsection-title>Required Parameters</s:subsection-title>
+      <s:formal-item s:kind="specification" s:type="parameters">
+        <s:formal-item-title>Required parameters</s:formal-item-title>
+        <s:table>
+          <s:table-summary>Required parameters</s:table-summary>
+          <s:table-head>
+            <s:table-column-name>Name</s:table-column-name>
+            <s:table-column-name>Type</s:table-column-name>
+            <s:table-column-name>Description</s:table-column-name>
+          </s:table-head>
+          <s:table-body>
+            <s:table-row>
+              <s:table-cell>admin_password</s:table-cell>
+              <s:table-cell><s:link s:target="api.types.type_rules.predefined.string">string</s:link></s:table-cell>
+              <s:table-cell>The admin password</s:table-cell>
+            </s:table-row>
+          </s:table-body>
+        </s:table>
+      </s:formal-item>
+    </s:subsection>
+
+    <s:subsection>
+      <s:subsection-title>Return value</s:subsection-title>
+      <s:paragraph>
+        The command returns a value of type 
+        <s:link s:target="api.types.type_rules.predefined.boolean">boolean</s:link>.
+      </s:paragraph>
+    </s:subsection>
+  </s:section>
+
+  <s:section xml:id="api.admin.mass-sync-list">
+    <s:section-title>mass-sync-list</s:section-title>
+    <s:section-contents/>
+    
+    <s:subsection>
+      <s:subsection-title>Description</s:subsection-title>
+      <s:paragraph>
+        The <s:term s:type="command">mass-sync-list</s:term> command
+        returns a list of the current mass synchronizations.
+      </s:paragraph>
+    </s:subsection>
+    
+    <s:subsection>
+      <s:subsection-title>Required Parameters</s:subsection-title>
+      <s:formal-item s:kind="specification" s:type="parameters">
+        <s:formal-item-title>Required parameters</s:formal-item-title>
+        <s:table>
+          <s:table-summary>Required parameters</s:table-summary>
+          <s:table-head>
+            <s:table-column-name>Name</s:table-column-name>
+            <s:table-column-name>Type</s:table-column-name>
+            <s:table-column-name>Description</s:table-column-name>
+          </s:table-head>
+          <s:table-body>
+            <s:table-row>
+              <s:table-cell>admin_password</s:table-cell>
+              <s:table-cell><s:link s:target="api.types.type_rules.predefined.string">string</s:link></s:table-cell>
+              <s:table-cell>The admin password</s:table-cell>
+            </s:table-row>
+          </s:table-body>
+        </s:table>
+      </s:formal-item>
+    </s:subsection>
+
+    <s:subsection>
+      <s:subsection-title>Return value</s:subsection-title>
+      <s:paragraph>
+        The command returns a list of values of type 
+        (<s:link s:target="api.types.type_rules.predefined.integer">integer</s:link>,
+         <s:link s:target="api.types.time_component_spec">time_component_spec</s:link>,
+         <s:link s:target="api.types.time_component_spec">time_component_spec</s:link>,
+         <s:link s:target="api.types.time_component_spec">time_component_spec</s:link>,
+         <s:link s:target="api.types.pattern">pattern</s:link>), one value per line.
+      </s:paragraph>
+    </s:subsection>
+  </s:section>
+
+  <s:section xml:id="api.admin.mass-sync-remove">
+    <s:section-title>mass-sync-remove</s:section-title>
+    <s:section-contents/>
+    
+    <s:subsection>
+      <s:subsection-title>Description</s:subsection-title>
+      <s:paragraph>
+        The <s:term s:type="command">mass-sync-remove</s:term> command
+        deletes a mass synchronization.
+      </s:paragraph>
+    </s:subsection>
+    
+    <s:subsection>
+      <s:subsection-title>Required Parameters</s:subsection-title>
+      <s:formal-item s:kind="specification" s:type="parameters">
+        <s:formal-item-title>Required parameters</s:formal-item-title>
+        <s:table>
+          <s:table-summary>Required parameters</s:table-summary>
+          <s:table-head>
+            <s:table-column-name>Name</s:table-column-name>
+            <s:table-column-name>Type</s:table-column-name>
+            <s:table-column-name>Description</s:table-column-name>
+          </s:table-head>
+          <s:table-body>
+            <s:table-row>
+              <s:table-cell>admin_password</s:table-cell>
+              <s:table-cell><s:link s:target="api.types.type_rules.predefined.string">string</s:link></s:table-cell>
+              <s:table-cell>The admin password</s:table-cell>
+            </s:table-row>
+            <s:table-row>
+              <s:table-cell>mass_sync_id</s:table-cell>
+              <s:table-cell><s:link s:target="api.types.type_rules.predefined.integer">integer</s:link></s:table-cell>
+              <s:table-cell>The unique identifier of the mass synchronization</s:table-cell>
+            </s:table-row>
+          </s:table-body>
+        </s:table>
+      </s:formal-item>
+    </s:subsection>
+
+    <s:subsection>
+      <s:subsection-title>Return value</s:subsection-title>
+      <s:paragraph>
+        The command does not return a value.
+      </s:paragraph>
+    </s:subsection>
+  </s:section>
+
+  <s:section xml:id="api.admin.mass-sync-test-pattern">
+    <s:section-title>mass-sync-test-pattern</s:section-title>
+    <s:section-contents/>
+    
+    <s:subsection>
+      <s:subsection-title>Description</s:subsection-title>
+      <s:paragraph>
+        The <s:term s:type="command">mass-sync-test-pattern</s:term> command
+        returns <s:term s:type="constant">true</s:term> if the given
+        <s:term s:type="variable">pattern</s:term> matches the given
+        <s:term s:type="variable">text</s:term>.
+      </s:paragraph>
+    </s:subsection>
+    
+    <s:subsection>
+      <s:subsection-title>Required Parameters</s:subsection-title>
+      <s:formal-item s:kind="specification" s:type="parameters">
+        <s:formal-item-title>Required parameters</s:formal-item-title>
+        <s:table>
+          <s:table-summary>Required parameters</s:table-summary>
+          <s:table-head>
+            <s:table-column-name>Name</s:table-column-name>
+            <s:table-column-name>Type</s:table-column-name>
+            <s:table-column-name>Description</s:table-column-name>
+          </s:table-head>
+          <s:table-body>
+            <s:table-row>
+              <s:table-cell>admin_password</s:table-cell>
+              <s:table-cell><s:link s:target="api.types.type_rules.predefined.string">string</s:link></s:table-cell>
+              <s:table-cell>The admin password</s:table-cell>
+            </s:table-row>
+            <s:table-row>
+              <s:table-cell>pattern</s:table-cell>
+              <s:table-cell><s:link s:target="api.types.pattern">pattern</s:link></s:table-cell>
+              <s:table-cell>A pattern</s:table-cell>
+            </s:table-row>
+            <s:table-row>
+              <s:table-cell>text</s:table-cell>
+              <s:table-cell><s:link s:target="api.types.type_rules.predefined.string">string</s:link></s:table-cell>
+              <s:table-cell>A string to be matched against the pattern</s:table-cell>
+            </s:table-row>
+          </s:table-body>
+        </s:table>
+      </s:formal-item>
+    </s:subsection>
+
+    <s:subsection>
+      <s:subsection-title>Return value</s:subsection-title>
+      <s:paragraph>
+        The command returns a value of type 
+        <s:link s:target="api.types.type_rules.predefined.boolean">boolean</s:link>.
+      </s:paragraph>
+    </s:subsection>
+  </s:section>
+
+  <s:section xml:id="api.admin.remote-add">
+    <s:section-title>remote-add</s:section-title>
+    <s:section-contents/>
+    
+    <s:subsection>
+      <s:subsection-title>Description</s:subsection-title>
+      <s:paragraph>
+        The <s:term s:type="command">remote-add</s:term> command
+        adds a new <s:link s:target="user_guide.configuration.remote">remote</s:link>.
+      </s:paragraph>
+    </s:subsection>
+    
+    <s:subsection>
+      <s:subsection-title>Required Parameters</s:subsection-title>
+      <s:formal-item s:kind="specification" s:type="parameters">
+        <s:formal-item-title>Required parameters</s:formal-item-title>
+        <s:table>
+          <s:table-summary>Required parameters</s:table-summary>
+          <s:table-head>
+            <s:table-column-name>Name</s:table-column-name>
+            <s:table-column-name>Type</s:table-column-name>
+            <s:table-column-name>Description</s:table-column-name>
+          </s:table-head>
+          <s:table-body>
+            <s:table-row>
+              <s:table-cell>admin_password</s:table-cell>
+              <s:table-cell><s:link s:target="api.types.type_rules.predefined.string">string</s:link></s:table-cell>
+              <s:table-cell>The admin password</s:table-cell>
+            </s:table-row>
+            <s:table-row>
+              <s:table-cell>remote_user</s:table-cell>
+              <s:table-cell><s:link s:target="api.types.user_name">user_name</s:link></s:table-cell>
+              <s:table-cell>The user to use on the remote server</s:table-cell>
+            </s:table-row>
+            <s:table-row>
+              <s:table-cell>remote_key</s:table-cell>
+              <s:table-cell><s:link s:target="api.types.key">key</s:link></s:table-cell>
+              <s:table-cell>The key to use on the remote server</s:table-cell>
+            </s:table-row>
+            <s:table-row>
+              <s:table-cell>remote_uri</s:table-cell>
+              <s:table-cell><s:link s:target="api.types.uri">uri</s:link></s:table-cell>
+              <s:table-cell>The base URI of the remote server</s:table-cell>
+            </s:table-row>
+          </s:table-body>
+        </s:table>
+      </s:formal-item>
+    </s:subsection>
+
+    <s:subsection>
+      <s:subsection-title>Return value</s:subsection-title>
+      <s:paragraph>
+        The command returns a value of type 
+        <s:link s:target="api.types.type_rules.predefined.integer">integer</s:link>
+        representing the unique identifier of the new remote.
+      </s:paragraph>
+    </s:subsection>
+  </s:section>
+
+  <s:section xml:id="api.admin.remote-list">
+    <s:section-title>remote-list</s:section-title>
+    <s:section-contents/>
+    
+    <s:subsection>
+      <s:subsection-title>Description</s:subsection-title>
+      <s:paragraph>
+        The <s:term s:type="command">remote-list</s:term> command
+        lists all defined remotes.
+      </s:paragraph>
+    </s:subsection>
+    
+    <s:subsection>
+      <s:subsection-title>Required Parameters</s:subsection-title>
+      <s:formal-item s:kind="specification" s:type="parameters">
+        <s:formal-item-title>Required parameters</s:formal-item-title>
+        <s:table>
+          <s:table-summary>Required parameters</s:table-summary>
+          <s:table-head>
+            <s:table-column-name>Name</s:table-column-name>
+            <s:table-column-name>Type</s:table-column-name>
+            <s:table-column-name>Description</s:table-column-name>
+          </s:table-head>
+          <s:table-body>
+            <s:table-row>
+              <s:table-cell>admin_password</s:table-cell>
+              <s:table-cell><s:link s:target="api.types.type_rules.predefined.string">string</s:link></s:table-cell>
+              <s:table-cell>The admin password</s:table-cell>
+            </s:table-row>
+          </s:table-body>
+        </s:table>
+      </s:formal-item>
+    </s:subsection>
+
+    <s:subsection>
+      <s:subsection-title>Return value</s:subsection-title>
+      <s:paragraph>
+        The command returns a list of values of type
+        (<s:link s:target="api.types.type_rules.predefined.integer">integer</s:link>,
+        <s:link s:target="api.types.uri">uri</s:link>,
+        <s:link s:target="api.types.user_name">user_name</s:link>,
+        <s:link s:target="api.types.key">key</s:link>), with one value per line.
+      </s:paragraph>
+    </s:subsection>
+  </s:section>
+
+  <s:section xml:id="api.admin.repository-remote-add">
+    <s:section-title>repository-remote-add</s:section-title>
+    <s:section-contents/>
+    
+    <s:subsection>
+      <s:subsection-title>Description</s:subsection-title>
+      <s:paragraph>
+        The <s:term s:type="command">repository-remote-add</s:term> command
+        associates a remote with a repository.
+      </s:paragraph>
+    </s:subsection>
+    
+    <s:subsection>
+      <s:subsection-title>Required Parameters</s:subsection-title>
+      <s:formal-item s:kind="specification" s:type="parameters">
+        <s:formal-item-title>Required parameters</s:formal-item-title>
+        <s:table>
+          <s:table-summary>Required parameters</s:table-summary>
+          <s:table-head>
+            <s:table-column-name>Name</s:table-column-name>
+            <s:table-column-name>Type</s:table-column-name>
+            <s:table-column-name>Description</s:table-column-name>
+          </s:table-head>
+          <s:table-body>
+            <s:table-row>
+              <s:table-cell>admin_password</s:table-cell>
+              <s:table-cell><s:link s:target="api.types.type_rules.predefined.string">string</s:link></s:table-cell>
+              <s:table-cell>The admin password</s:table-cell>
+            </s:table-row>
+            <s:table-row>
+              <s:table-cell>repository</s:table-cell>
+              <s:table-cell><s:link s:target="api.types.path">path</s:link></s:table-cell>
+              <s:table-cell>The repository path</s:table-cell>
+            </s:table-row>
+            <s:table-row>
+              <s:table-cell>remote_id</s:table-cell>
+              <s:table-cell><s:link s:target="api.types.type_rules.predefined.integer">integer</s:link></s:table-cell>
+              <s:table-cell>The remote identifier</s:table-cell>
+            </s:table-row>
+          </s:table-body>
+        </s:table>
+      </s:formal-item>
+    </s:subsection>
+
+    <s:subsection>
+      <s:subsection-title>Return value</s:subsection-title>
+      <s:paragraph>
+        The command does not return a value.
+      </s:paragraph>
+    </s:subsection>
+  </s:section>
+
+  <s:section xml:id="api.admin.repository-remote-global-add">
+    <s:section-title>repository-remote-global-add</s:section-title>
+    <s:section-contents/>
+    
+    <s:subsection>
+      <s:subsection-title>Description</s:subsection-title>
+      <s:paragraph>
+        The <s:term s:type="command">repository-remote-global-add</s:term> command
+        associates a remote with all repositories.
+      </s:paragraph>
+    </s:subsection>
+    
+    <s:subsection>
+      <s:subsection-title>Required Parameters</s:subsection-title>
+      <s:formal-item s:kind="specification" s:type="parameters">
+        <s:formal-item-title>Required parameters</s:formal-item-title>
+        <s:table>
+          <s:table-summary>Required parameters</s:table-summary>
+          <s:table-head>
+            <s:table-column-name>Name</s:table-column-name>
+            <s:table-column-name>Type</s:table-column-name>
+            <s:table-column-name>Description</s:table-column-name>
+          </s:table-head>
+          <s:table-body>
+            <s:table-row>
+              <s:table-cell>admin_password</s:table-cell>
+              <s:table-cell><s:link s:target="api.types.type_rules.predefined.string">string</s:link></s:table-cell>
+              <s:table-cell>The admin password</s:table-cell>
+            </s:table-row>
+            <s:table-row>
+              <s:table-cell>remote_id</s:table-cell>
+              <s:table-cell><s:link s:target="api.types.type_rules.predefined.integer">integer</s:link></s:table-cell>
+              <s:table-cell>The remote identifier</s:table-cell>
+            </s:table-row>
+          </s:table-body>
+        </s:table>
+      </s:formal-item>
+    </s:subsection>
+
+    <s:subsection>
+      <s:subsection-title>Return value</s:subsection-title>
+      <s:paragraph>
+        The command does not return a value.
+      </s:paragraph>
+    </s:subsection>
+  </s:section>
+
+  <s:section xml:id="api.admin.repository-remote-list">
+    <s:section-title>repository-remote-list</s:section-title>
+    <s:section-contents/>
+    
+    <s:subsection>
+      <s:subsection-title>Description</s:subsection-title>
+      <s:paragraph>
+        The <s:term s:type="command">repository-remote-list</s:term> command
+        returns the list of identifiers of remotes associated with a given repository, 
+        including remotes that have been associated globally with
+        <s:link s:target="api.admin.repository-remote-global-add">repository-remote-global-add</s:link>.
+      </s:paragraph>
+    </s:subsection>
+    
+    <s:subsection>
+      <s:subsection-title>Required Parameters</s:subsection-title>
+      <s:formal-item s:kind="specification" s:type="parameters">
+        <s:formal-item-title>Required parameters</s:formal-item-title>
+        <s:table>
+          <s:table-summary>Required parameters</s:table-summary>
+          <s:table-head>
+            <s:table-column-name>Name</s:table-column-name>
+            <s:table-column-name>Type</s:table-column-name>
+            <s:table-column-name>Description</s:table-column-name>
+          </s:table-head>
+          <s:table-body>
+            <s:table-row>
+              <s:table-cell>admin_password</s:table-cell>
+              <s:table-cell><s:link s:target="api.types.type_rules.predefined.string">string</s:link></s:table-cell>
+              <s:table-cell>The admin password</s:table-cell>
+            </s:table-row>
+            <s:table-row>
+              <s:table-cell>repository</s:table-cell>
+              <s:table-cell><s:link s:target="api.types.path">path</s:link></s:table-cell>
+              <s:table-cell>The repository path</s:table-cell>
+            </s:table-row>
+          </s:table-body>
+        </s:table>
+      </s:formal-item>
+    </s:subsection>
+
+    <s:subsection>
+      <s:subsection-title>Return value</s:subsection-title>
+      <s:paragraph>
+        The command returns a list of values of type 
+        <s:link s:target="api.types.type_rules.predefined.integer">integer</s:link>, one
+        value per line.
+      </s:paragraph>
+    </s:subsection>
+  </s:section>
+
+  <s:section xml:id="api.admin.user-add">
+    <s:section-title>user-add</s:section-title>
+    <s:section-contents/>
+    
+    <s:subsection>
+      <s:subsection-title>Description</s:subsection-title>
+      <s:paragraph>
+        The <s:term s:type="command">user-add</s:term> command
+        creates a new 
+        <s:link s:target="user_guide.configuration.authentication">user</s:link>.
+      </s:paragraph>
+    </s:subsection>
+    
+    <s:subsection>
+      <s:subsection-title>Required Parameters</s:subsection-title>
+      <s:formal-item s:kind="specification" s:type="parameters">
+        <s:formal-item-title>Required parameters</s:formal-item-title>
+        <s:table>
+          <s:table-summary>Required parameters</s:table-summary>
+          <s:table-head>
+            <s:table-column-name>Name</s:table-column-name>
+            <s:table-column-name>Type</s:table-column-name>
+            <s:table-column-name>Description</s:table-column-name>
+          </s:table-head>
+          <s:table-body>
+            <s:table-row>
+              <s:table-cell>admin_password</s:table-cell>
+              <s:table-cell><s:link s:target="api.types.type_rules.predefined.string">string</s:link></s:table-cell>
+              <s:table-cell>The admin password</s:table-cell>
+            </s:table-row>
+            <s:table-row>
+              <s:table-cell>user</s:table-cell>
+              <s:table-cell><s:link s:target="api.types.user_name">user_name</s:link></s:table-cell>
+              <s:table-cell>The name of the user to create</s:table-cell>
+            </s:table-row>
+          </s:table-body>
+        </s:table>
+      </s:formal-item>
+    </s:subsection>
+
+    <s:subsection>
+      <s:subsection-title>Return value</s:subsection-title>
+      <s:paragraph>
+        The command does not return a value.
+      </s:paragraph>
+    </s:subsection>
+  </s:section>
+
+  <s:section xml:id="api.admin.user-generate-key">
+    <s:section-title>user-generate-key</s:section-title>
+    <s:section-contents/>
+    
+    <s:subsection>
+      <s:subsection-title>Description</s:subsection-title>
+      <s:paragraph>
+        The <s:term s:type="command">user-generate-key</s:term> command
+        generates a new 
+        <s:link s:target="user_guide.configuration.authentication">key</s:link> 
+        for a given user.
+      </s:paragraph>
+    </s:subsection>
+    
+    <s:subsection>
+      <s:subsection-title>Required Parameters</s:subsection-title>
+      <s:formal-item s:kind="specification" s:type="parameters">
+        <s:formal-item-title>Required parameters</s:formal-item-title>
+        <s:table>
+          <s:table-summary>Required parameters</s:table-summary>
+          <s:table-head>
+            <s:table-column-name>Name</s:table-column-name>
+            <s:table-column-name>Type</s:table-column-name>
+            <s:table-column-name>Description</s:table-column-name>
+          </s:table-head>
+          <s:table-body>
+            <s:table-row>
+              <s:table-cell>admin_password</s:table-cell>
+              <s:table-cell><s:link s:target="api.types.type_rules.predefined.string">string</s:link></s:table-cell>
+              <s:table-cell>The admin password</s:table-cell>
+            </s:table-row>
+            <s:table-row>
+              <s:table-cell>user</s:table-cell>
+              <s:table-cell><s:link s:target="api.types.user_name">user_name</s:link></s:table-cell>
+              <s:table-cell>The name of the user that will receive the new key</s:table-cell>
+            </s:table-row>
+          </s:table-body>
+        </s:table>
+      </s:formal-item>
+    </s:subsection>
+
+    <s:subsection>
+      <s:subsection-title>Return value</s:subsection-title>
+      <s:paragraph>
+        The command returns a value of type <s:link s:target="api.types.key">key</s:link>.
+      </s:paragraph>
+    </s:subsection>
+  </s:section>
+
+  <s:section xml:id="api.admin.user-list">
+    <s:section-title>user-list</s:section-title>
+    <s:section-contents/>
+    
+    <s:subsection>
+      <s:subsection-title>Description</s:subsection-title>
+      <s:paragraph>
+        The <s:term s:type="command">user-list</s:term> command
+        returns a list of the current users.
+      </s:paragraph>
+    </s:subsection>
+    
+    <s:subsection>
+      <s:subsection-title>Required Parameters</s:subsection-title>
+      <s:formal-item s:kind="specification" s:type="parameters">
+        <s:formal-item-title>Required parameters</s:formal-item-title>
+        <s:table>
+          <s:table-summary>Required parameters</s:table-summary>
+          <s:table-head>
+            <s:table-column-name>Name</s:table-column-name>
+            <s:table-column-name>Type</s:table-column-name>
+            <s:table-column-name>Description</s:table-column-name>
+          </s:table-head>
+          <s:table-body>
+            <s:table-row>
+              <s:table-cell>admin_password</s:table-cell>
+              <s:table-cell><s:link s:target="api.types.type_rules.predefined.string">string</s:link></s:table-cell>
+              <s:table-cell>The admin password</s:table-cell>
+            </s:table-row>
+            <s:table-row>
+              <s:table-cell>user</s:table-cell>
+              <s:table-cell><s:link s:target="api.types.user_name">user_name</s:link></s:table-cell>
+              <s:table-cell>The name of the user</s:table-cell>
+            </s:table-row>
+          </s:table-body>
+        </s:table>
+      </s:formal-item>
+    </s:subsection>
+
+    <s:subsection>
+      <s:subsection-title>Return value</s:subsection-title>
+      <s:paragraph>
+        The command returns a list of values of type 
+        <s:link s:target="api.types.user_name">user_name</s:link>, one value
+        per line.
+      </s:paragraph>
+    </s:subsection>
+  </s:section>
+
+  <s:section xml:id="api.admin.user-revoke-key">
+    <s:section-title>user-revoke-key</s:section-title>
+    <s:section-contents/>
+    
+    <s:subsection>
+      <s:subsection-title>Description</s:subsection-title>
+      <s:paragraph>
+        The <s:term s:type="command">user-revoke-key</s:term> command
+        revokes a key for a given user.
+      </s:paragraph>
+    </s:subsection>
+    
+    <s:subsection>
+      <s:subsection-title>Required Parameters</s:subsection-title>
+      <s:formal-item s:kind="specification" s:type="parameters">
+        <s:formal-item-title>Required parameters</s:formal-item-title>
+        <s:table>
+          <s:table-summary>Required parameters</s:table-summary>
+          <s:table-head>
+            <s:table-column-name>Name</s:table-column-name>
+            <s:table-column-name>Type</s:table-column-name>
+            <s:table-column-name>Description</s:table-column-name>
+          </s:table-head>
+          <s:table-body>
+            <s:table-row>
+              <s:table-cell>admin_password</s:table-cell>
+              <s:table-cell><s:link s:target="api.types.type_rules.predefined.string">string</s:link></s:table-cell>
+              <s:table-cell>The admin password</s:table-cell>
+            </s:table-row>
+            <s:table-row>
+              <s:table-cell>user</s:table-cell>
+              <s:table-cell><s:link s:target="api.types.user_name">user_name</s:link></s:table-cell>
+              <s:table-cell>The name of the user</s:table-cell>
+            </s:table-row>
+            <s:table-row>
+              <s:table-cell>key</s:table-cell>
+              <s:table-cell><s:link s:target="api.types.key">key</s:link></s:table-cell>
+              <s:table-cell>The key for the user</s:table-cell>
+            </s:table-row>
+          </s:table-body>
+        </s:table>
+      </s:formal-item>
+    </s:subsection>
+
+    <s:subsection>
+      <s:subsection-title>Return value</s:subsection-title>
+      <s:paragraph>
+        The command does not return a value.
+      </s:paragraph>
+    </s:subsection>
+  </s:section>
+
+</s:part>

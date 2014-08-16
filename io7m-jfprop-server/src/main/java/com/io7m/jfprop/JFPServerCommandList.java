@@ -1,10 +1,10 @@
 /*
  * Copyright © 2014 <code@io7m.com> http://io7m.com
- * 
+ *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
  * copyright notice and this permission notice appear in all copies.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
  * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
@@ -40,11 +40,11 @@ final class JFPServerCommandList extends JFPAuthenticatedHandlerAbstract
     final JFPServerDatabaseType db,
     final JFPFossilControllerType in_fossil_controller,
     final LogUsableType in_log)
-  {
+    {
     super(in_config, db, in_log);
     this.fossil =
       NullCheck.notNull(in_fossil_controller, "Fossil controller");
-  }
+    }
 
   @Override public void handleAuthenticated(
     final String target,
@@ -54,7 +54,7 @@ final class JFPServerCommandList extends JFPAuthenticatedHandlerAbstract
     final JFPUserName user,
     final JFPKey key,
     final JFPServerDatabaseTransactionType transaction)
-    throws JFPException,
+      throws JFPException,
       IOException
   {
     final List<String> r =

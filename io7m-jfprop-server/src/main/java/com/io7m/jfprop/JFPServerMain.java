@@ -1,10 +1,10 @@
 /*
  * Copyright © 2014 <code@io7m.com> http://io7m.com
- * 
+ *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
  * copyright notice and this permission notice appear in all copies.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
  * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
@@ -71,7 +71,7 @@ public final class JFPServerMain implements Runnable, JFPServerControlType
 {
   private static File checkCreateLogAccessDirectory(
     final File server_log_directory)
-    throws IOException
+      throws IOException
   {
     final File directory_access = new File(server_log_directory, "access");
     if (directory_access.isDirectory() == false) {
@@ -138,8 +138,8 @@ public final class JFPServerMain implements Runnable, JFPServerControlType
       System.err.println("fatal: configuration error: " + e.getMessage());
     } catch (final AddressException e) {
       System.err
-        .println("fatal: configuration error: invalid email address: "
-          + e.getMessage());
+      .println("fatal: configuration error: invalid email address: "
+        + e.getMessage());
     } catch (final JFPException e) {
       System.err.println("fatal: error: " + e.getMessage());
     }
@@ -175,7 +175,7 @@ public final class JFPServerMain implements Runnable, JFPServerControlType
 
   public static JFPServerMain newServer(
     final JFPServerConfigType c)
-    throws JFPException,
+      throws JFPException,
       IOException
   {
     return new JFPServerMain(c, null);
@@ -200,7 +200,7 @@ public final class JFPServerMain implements Runnable, JFPServerControlType
   public static JFPServerMain newServer(
     final JFPServerConfigType c,
     final JFPServerEventsType in_events)
-    throws IOException,
+      throws IOException,
       JFPException
   {
     return new JFPServerMain(c, NullCheck.notNull(in_events, "Events"));
@@ -222,7 +222,7 @@ public final class JFPServerMain implements Runnable, JFPServerControlType
   private JFPServerMain(
     final JFPServerConfigType in_config,
     final @Nullable JFPServerEventsType in_events)
-    throws JFPException,
+      throws JFPException,
       IOException
   {
     System.setProperty(
@@ -280,9 +280,9 @@ public final class JFPServerMain implements Runnable, JFPServerControlType
       this.config.getServerHTTPConfig();
     final OptionType<JFPServerHTTPSConfigType> https_opt =
       this.config.getServerHTTPSConfig();
-    final OptionType<JFPServerManagementHTTPConfigType> m_http_opt =
+    final OptionType<JFPServerAdminHTTPConfigType> m_http_opt =
       this.config.getServerManagementHTTPConfig();
-    final OptionType<JFPServerManagementHTTPSConfigType> m_https_opt =
+    final OptionType<JFPServerAdminHTTPSConfigType> m_https_opt =
       this.config.getServerManagementHTTPSConfig();
 
     this.http_server =
@@ -300,43 +300,43 @@ public final class JFPServerMain implements Runnable, JFPServerControlType
 
     this.https_server =
       https_opt
-        .mapPartial(new PartialFunctionType<JFPServerHTTPSConfigType, Server, JFPException>() {
-          @Override public Server call(
-            final JFPServerHTTPSConfigType https)
+      .mapPartial(new PartialFunctionType<JFPServerHTTPSConfigType, Server, JFPException>() {
+        @Override public Server call(
+          final JFPServerHTTPSConfigType https)
             throws JFPException
-          {
-            return JFPServerMain.this.getHTTPSServer(
-              fossil_controller,
-              remote_controller,
-              request_log_handler,
-              https);
-          }
-        });
+        {
+          return JFPServerMain.this.getHTTPSServer(
+            fossil_controller,
+            remote_controller,
+            request_log_handler,
+            https);
+        }
+      });
 
     this.m_server =
       m_http_opt
-        .map(new FunctionType<JFPServerManagementHTTPConfigType, Server>() {
-          @Override public Server call(
-            final JFPServerManagementHTTPConfigType m_http)
-          {
-            return JFPServerMain.this.getManagementHTTPServer(
-              request_log_handler,
-              m_http);
-          }
-        });
+      .map(new FunctionType<JFPServerAdminHTTPConfigType, Server>() {
+        @Override public Server call(
+          final JFPServerAdminHTTPConfigType m_http)
+        {
+          return JFPServerMain.this.getManagementHTTPServer(
+            request_log_handler,
+            m_http);
+        }
+      });
 
     this.ms_server =
       m_https_opt
-        .mapPartial(new PartialFunctionType<JFPServerManagementHTTPSConfigType, Server, JFPException>() {
-          @Override public Server call(
-            final JFPServerManagementHTTPSConfigType m_https)
+      .mapPartial(new PartialFunctionType<JFPServerAdminHTTPSConfigType, Server, JFPException>() {
+        @Override public Server call(
+          final JFPServerAdminHTTPSConfigType m_https)
             throws JFPException
-          {
-            return JFPServerMain.this.getManagementHTTPSServer(
-              request_log_handler,
-              m_https);
-          }
-        });
+        {
+          return JFPServerMain.this.getManagementHTTPSServer(
+            request_log_handler,
+            m_https);
+        }
+      });
 
     if (this.config.getServerMassSynchronizerEnabled()) {
       this.mass_sync =
@@ -387,7 +387,7 @@ public final class JFPServerMain implements Runnable, JFPServerControlType
     final JFPRemoteControllerType remote_controller,
     final RequestLogHandler request_log_handler,
     final JFPServerHTTPSConfigType https)
-    throws JFPException
+      throws JFPException
   {
     try {
       final InetSocketAddress addr = https.getAddress();
@@ -425,7 +425,7 @@ public final class JFPServerMain implements Runnable, JFPServerControlType
 
       final KeyManagerFactory kmf =
         KeyManagerFactory
-          .getInstance(KeyManagerFactory.getDefaultAlgorithm());
+        .getInstance(KeyManagerFactory.getDefaultAlgorithm());
       kmf.init(ks, ks_pass.toCharArray());
 
       /**
@@ -508,7 +508,7 @@ public final class JFPServerMain implements Runnable, JFPServerControlType
 
   private Server getManagementHTTPServer(
     final RequestLogHandler request_log_handler,
-    final JFPServerManagementHTTPConfigType m_http)
+    final JFPServerAdminHTTPConfigType m_http)
   {
     final InetSocketAddress addr = m_http.getAddress();
 
@@ -533,8 +533,8 @@ public final class JFPServerMain implements Runnable, JFPServerControlType
 
   private Server getManagementHTTPSServer(
     final RequestLogHandler request_log_handler,
-    final JFPServerManagementHTTPSConfigType m_https)
-    throws JFPException
+    final JFPServerAdminHTTPSConfigType m_https)
+      throws JFPException
   {
     try {
       final InetSocketAddress addr = m_https.getAddress();
@@ -572,7 +572,7 @@ public final class JFPServerMain implements Runnable, JFPServerControlType
 
       final KeyManagerFactory kmf =
         KeyManagerFactory
-          .getInstance(KeyManagerFactory.getDefaultAlgorithm());
+        .getInstance(KeyManagerFactory.getDefaultAlgorithm());
       kmf.init(ks, ks_pass.toCharArray());
 
       /**
@@ -659,76 +659,76 @@ public final class JFPServerMain implements Runnable, JFPServerControlType
       final JFPServerConfigType c = this.config;
 
       this.http_server
-        .mapPartial(new PartialFunctionType<Server, Unit, Exception>() {
-          @Override public Unit call(
-            final Server server)
+      .mapPartial(new PartialFunctionType<Server, Unit, Exception>() {
+        @Override public Unit call(
+          final Server server)
             throws Exception
-          {
-            final ServerConnector sc =
-              (ServerConnector) server.getConnectors()[0];
-            l.info(String.format(
-              "starting http server on http://%s:%d",
-              sc.getHost(),
-              sc.getPort()));
+        {
+          final ServerConnector sc =
+            (ServerConnector) server.getConnectors()[0];
+          l.info(String.format(
+            "starting http server on http://%s:%d",
+            sc.getHost(),
+            sc.getPort()));
 
-            server.start();
-            return Unit.unit();
-          }
-        });
+          server.start();
+          return Unit.unit();
+        }
+      });
 
       this.https_server
-        .mapPartial(new PartialFunctionType<Server, Unit, Exception>() {
-          @Override public Unit call(
-            final Server server)
+      .mapPartial(new PartialFunctionType<Server, Unit, Exception>() {
+        @Override public Unit call(
+          final Server server)
             throws Exception
-          {
-            final ServerConnector sc =
-              (ServerConnector) server.getConnectors()[0];
-            l.info(String.format(
-              "starting https server on https://%s:%d",
-              sc.getHost(),
-              sc.getPort()));
+        {
+          final ServerConnector sc =
+            (ServerConnector) server.getConnectors()[0];
+          l.info(String.format(
+            "starting https server on https://%s:%d",
+            sc.getHost(),
+            sc.getPort()));
 
-            server.start();
-            return Unit.unit();
-          }
-        });
+          server.start();
+          return Unit.unit();
+        }
+      });
 
       this.m_server
-        .mapPartial(new PartialFunctionType<Server, Unit, Exception>() {
-          @Override public Unit call(
-            final Server server)
+      .mapPartial(new PartialFunctionType<Server, Unit, Exception>() {
+        @Override public Unit call(
+          final Server server)
             throws Exception
-          {
-            final ServerConnector sc =
-              (ServerConnector) server.getConnectors()[0];
-            l.info(String.format(
-              "starting management http server on http://%s:%d",
-              sc.getHost(),
-              sc.getPort()));
+        {
+          final ServerConnector sc =
+            (ServerConnector) server.getConnectors()[0];
+          l.info(String.format(
+            "starting management http server on http://%s:%d",
+            sc.getHost(),
+            sc.getPort()));
 
-            server.start();
-            return Unit.unit();
-          }
-        });
+          server.start();
+          return Unit.unit();
+        }
+      });
 
       this.ms_server
-        .mapPartial(new PartialFunctionType<Server, Unit, Exception>() {
-          @Override public Unit call(
-            final Server server)
+      .mapPartial(new PartialFunctionType<Server, Unit, Exception>() {
+        @Override public Unit call(
+          final Server server)
             throws Exception
-          {
-            final ServerConnector sc =
-              (ServerConnector) server.getConnectors()[0];
-            l.info(String.format(
-              "starting management https server on https://%s:%d",
-              sc.getHost(),
-              sc.getPort()));
+        {
+          final ServerConnector sc =
+            (ServerConnector) server.getConnectors()[0];
+          l.info(String.format(
+            "starting management https server on https://%s:%d",
+            sc.getHost(),
+            sc.getPort()));
 
-            server.start();
-            return Unit.unit();
-          }
-        });
+          server.start();
+          return Unit.unit();
+        }
+      });
 
       this.mass_sync.map(new FunctionType<JFPMassSynchronizer, Unit>() {
         @Override public Unit call(
@@ -785,52 +785,52 @@ public final class JFPServerMain implements Runnable, JFPServerControlType
     throws Exception
   {
     this.http_server
-      .mapPartial(new PartialFunctionType<Server, Unit, Exception>() {
-        @Override public Unit call(
-          final Server server)
+    .mapPartial(new PartialFunctionType<Server, Unit, Exception>() {
+      @Override public Unit call(
+        final Server server)
           throws Exception
-        {
-          server.stop();
-          server.join();
-          return Unit.unit();
-        }
-      });
+      {
+        server.stop();
+        server.join();
+        return Unit.unit();
+      }
+    });
 
     this.https_server
-      .mapPartial(new PartialFunctionType<Server, Unit, Exception>() {
-        @Override public Unit call(
-          final Server server)
+    .mapPartial(new PartialFunctionType<Server, Unit, Exception>() {
+      @Override public Unit call(
+        final Server server)
           throws Exception
-        {
-          server.stop();
-          server.join();
-          return Unit.unit();
-        }
-      });
+      {
+        server.stop();
+        server.join();
+        return Unit.unit();
+      }
+    });
 
     this.m_server
-      .mapPartial(new PartialFunctionType<Server, Unit, Exception>() {
-        @Override public Unit call(
-          final Server server)
+    .mapPartial(new PartialFunctionType<Server, Unit, Exception>() {
+      @Override public Unit call(
+        final Server server)
           throws Exception
-        {
-          server.stop();
-          server.join();
-          return Unit.unit();
-        }
-      });
+      {
+        server.stop();
+        server.join();
+        return Unit.unit();
+      }
+    });
 
     this.ms_server
-      .mapPartial(new PartialFunctionType<Server, Unit, Exception>() {
-        @Override public Unit call(
-          final Server server)
+    .mapPartial(new PartialFunctionType<Server, Unit, Exception>() {
+      @Override public Unit call(
+        final Server server)
           throws Exception
-        {
-          server.stop();
-          server.join();
-          return Unit.unit();
-        }
-      });
+      {
+        server.stop();
+        server.join();
+        return Unit.unit();
+      }
+    });
 
     this.mass_sync.map(new FunctionType<JFPMassSynchronizer, Unit>() {
       @Override public Unit call(

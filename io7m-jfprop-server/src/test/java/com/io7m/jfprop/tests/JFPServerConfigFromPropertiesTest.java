@@ -1,10 +1,10 @@
 /*
  * Copyright © 2014 <code@io7m.com> http://io7m.com
- * 
+ *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
  * copyright notice and this permission notice appear in all copies.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
  * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
@@ -30,10 +30,10 @@ import com.io7m.jfprop.JFPFossilExecutable;
 import com.io7m.jfprop.JFPFossilUserName;
 import com.io7m.jfprop.JFPMailConfig;
 import com.io7m.jfprop.JFPProperties;
+import com.io7m.jfprop.JFPServerAdminHTTPConfigType;
 import com.io7m.jfprop.JFPServerConfigFromProperties;
 import com.io7m.jfprop.JFPServerConfigType;
 import com.io7m.jfprop.JFPServerHTTPConfigType;
-import com.io7m.jfprop.JFPServerManagementHTTPConfigType;
 import com.io7m.jfunctional.Pair;
 import com.io7m.jfunctional.Some;
 import com.io7m.jlog.LogLevel;
@@ -65,8 +65,8 @@ import com.io7m.jproperties.JPropertyNonexistent;
     }
 
     {
-      final Some<JFPServerManagementHTTPConfigType> some =
-        (Some<JFPServerManagementHTTPConfigType>) c
+      final Some<JFPServerAdminHTTPConfigType> some =
+        (Some<JFPServerAdminHTTPConfigType>) c
           .getServerManagementHTTPConfig();
       final InetSocketAddress inet = some.get().getAddress();
       Assert.assertEquals("/127.0.0.1", inet.getAddress().toString());
@@ -153,11 +153,9 @@ import com.io7m.jproperties.JPropertyNonexistent;
     p.setProperty(JFPProperties.name("server_http_port"), "8080");
     p.setProperty(JFPProperties.name("server_http_address"), "127.0.0.1");
 
-    p.setProperty(JFPProperties.name("server_management_enabled"), "true");
-    p.setProperty(JFPProperties.name("server_management_port"), "8080");
-    p.setProperty(
-      JFPProperties.name("server_management_address"),
-      "127.0.0.1");
+    p.setProperty(JFPProperties.name("server_admin_enabled"), "true");
+    p.setProperty(JFPProperties.name("server_admin_port"), "8080");
+    p.setProperty(JFPProperties.name("server_admin_address"), "127.0.0.1");
 
     p.setProperty(
       JFPProperties.name("server_database_file"),
@@ -190,7 +188,7 @@ import com.io7m.jproperties.JPropertyNonexistent;
     p.setProperty(JFPProperties.name("server_admin_password"), "abcd");
 
     p.setProperty(JFPProperties.name("server_http_enabled"), "false");
-    p.setProperty(JFPProperties.name("server_management_enabled"), "false");
+    p.setProperty(JFPProperties.name("server_admin_enabled"), "false");
 
     p.setProperty(
       JFPProperties.name("server_database_file"),

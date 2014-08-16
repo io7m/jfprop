@@ -1,10 +1,10 @@
 /*
  * Copyright © 2014 <code@io7m.com> http://io7m.com
- * 
+ *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
  * copyright notice and this permission notice appear in all copies.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
  * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
@@ -33,7 +33,7 @@ final class JFPAdminCommands
     final ContextHandlerCollection handlers = new ContextHandlerCollection();
 
     {
-      final Handler h = new JFPAdminCommandDefault();
+      final Handler h = new JFPAdminCommandDefault(c, db, l);
       final ContextHandler ch = new ContextHandler("/");
       ch.setHandler(h);
       ch.setAllowNullPathInfo(true);
@@ -97,25 +97,26 @@ final class JFPAdminCommands
     }
 
     {
-      final Handler h = new JFPAdminCommandProjectRemoteGlobalAdd(c, db, l);
+      final Handler h =
+        new JFPAdminCommandRepositoryRemoteGlobalAdd(c, db, l);
       final ContextHandler ch =
-        new ContextHandler("/project-remote-global-add");
+        new ContextHandler("/repository-remote-global-add");
       ch.setHandler(h);
       ch.setAllowNullPathInfo(true);
       handlers.addHandler(ch);
     }
 
     {
-      final Handler h = new JFPAdminCommandProjectRemoteList(c, db, l);
-      final ContextHandler ch = new ContextHandler("/project-remote-list");
+      final Handler h = new JFPAdminCommandRepositoryRemoteList(c, db, l);
+      final ContextHandler ch = new ContextHandler("/repository-remote-list");
       ch.setHandler(h);
       ch.setAllowNullPathInfo(true);
       handlers.addHandler(ch);
     }
 
     {
-      final Handler h = new JFPAdminCommandProjectRemoteAdd(c, db, l);
-      final ContextHandler ch = new ContextHandler("/project-remote-add");
+      final Handler h = new JFPAdminCommandRepositoryRemoteAdd(c, db, l);
+      final ContextHandler ch = new ContextHandler("/repository-remote-add");
       ch.setHandler(h);
       ch.setAllowNullPathInfo(true);
       handlers.addHandler(ch);

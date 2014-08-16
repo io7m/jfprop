@@ -37,7 +37,7 @@ import com.io7m.jfprop.JFPExceptionDuplicate;
 import com.io7m.jfprop.JFPExceptionNonexistent;
 import com.io7m.jfprop.JFPKey;
 import com.io7m.jfprop.JFPMassSyncSpec;
-import com.io7m.jfprop.JFPProjectPath;
+import com.io7m.jfprop.JFPRepositoryPath;
 import com.io7m.jfprop.JFPRemote;
 import com.io7m.jfprop.JFPServerDatabaseTransactionType;
 import com.io7m.jfprop.JFPUserName;
@@ -73,9 +73,9 @@ import com.io7m.junreachable.UnreachableCodeException;
           final JFPAdminDatabaseTransactionType t)
           throws JFPException
         {
-          final JFPProjectPath p = new JFPProjectPath("/a/b/c.fossil");
+          final JFPRepositoryPath p = new JFPRepositoryPath("/a/b/c.fossil");
 
-          t.projectAddRemote(p, Integer.valueOf(23));
+          t.repositoryAddRemote(p, Integer.valueOf(23));
           return Unit.unit();
         }
       });
@@ -93,8 +93,8 @@ import com.io7m.junreachable.UnreachableCodeException;
           final JFPAdminDatabaseTransactionType t)
           throws JFPException
         {
-          final JFPProjectPath p = new JFPProjectPath("/a/b/c.fossil");
-          t.projectListRemotes(p);
+          final JFPRepositoryPath p = new JFPRepositoryPath("/a/b/c.fossil");
+          t.repositoryListRemotes(p);
           return Unit.unit();
         }
       });
@@ -110,7 +110,7 @@ import com.io7m.junreachable.UnreachableCodeException;
           final JFPAdminDatabaseTransactionType t)
           throws JFPException
         {
-          final JFPProjectPath p = new JFPProjectPath("/a/b/c.fossil");
+          final JFPRepositoryPath p = new JFPRepositoryPath("/a/b/c.fossil");
           final URI uri = URI.create("http://127.0.0.1");
           final JFPUserName user = new JFPUserName("someone");
           final JFPKey key = new JFPKey("abcd1234");
@@ -121,9 +121,9 @@ import com.io7m.junreachable.UnreachableCodeException;
           Assert.assertEquals(1, m.size());
           Assert.assertTrue(m.values().contains(r));
 
-          t.projectAddRemote(p, rid);
+          t.repositoryAddRemote(p, rid);
 
-          final Set<Integer> rs = t.projectListRemotes(p);
+          final Set<Integer> rs = t.repositoryListRemotes(p);
           Assert.assertTrue(rs.contains(rid));
           return Unit.unit();
         }
@@ -140,7 +140,7 @@ import com.io7m.junreachable.UnreachableCodeException;
           final JFPAdminDatabaseTransactionType t)
           throws JFPException
         {
-          final JFPProjectPath p = new JFPProjectPath("/a/b/c.fossil");
+          final JFPRepositoryPath p = new JFPRepositoryPath("/a/b/c.fossil");
 
           final URI uri = URI.create("http://127.0.0.1");
           final JFPUserName user = new JFPUserName("someone");
@@ -150,10 +150,10 @@ import com.io7m.junreachable.UnreachableCodeException;
           final Integer rid0 = t.remoteAdd(r);
           final Integer rid1 = t.remoteAdd(r);
 
-          t.projectAddRemote(p, rid0);
-          t.projectAddRemote(p, rid1);
+          t.repositoryAddRemote(p, rid0);
+          t.repositoryAddRemote(p, rid1);
 
-          final Set<Integer> rs = t.projectListRemotes(p);
+          final Set<Integer> rs = t.repositoryListRemotes(p);
           Assert.assertEquals(2, rs.size());
           Assert.assertTrue(rs.contains(rid0));
           Assert.assertTrue(rs.contains(rid1));
@@ -172,7 +172,7 @@ import com.io7m.junreachable.UnreachableCodeException;
           final JFPAdminDatabaseTransactionType t)
           throws JFPException
         {
-          final JFPProjectPath p = new JFPProjectPath("/a/b/c.fossil");
+          final JFPRepositoryPath p = new JFPRepositoryPath("/a/b/c.fossil");
 
           final URI uri = URI.create("http://127.0.0.1");
           final JFPUserName user = new JFPUserName("someone");
@@ -182,10 +182,10 @@ import com.io7m.junreachable.UnreachableCodeException;
           final Integer rid0 = t.remoteAdd(r);
           final Integer rid1 = t.remoteAdd(r);
 
-          t.projectsAddGlobalRemote(rid0);
-          t.projectAddRemote(p, rid1);
+          t.repositoryAddGlobalRemote(rid0);
+          t.repositoryAddRemote(p, rid1);
 
-          final Set<Integer> rs = t.projectListRemotes(p);
+          final Set<Integer> rs = t.repositoryListRemotes(p);
           Assert.assertEquals(2, rs.size());
           Assert.assertTrue(rs.contains(rid0));
           Assert.assertTrue(rs.contains(rid1));
@@ -206,8 +206,8 @@ import com.io7m.junreachable.UnreachableCodeException;
           final JFPAdminDatabaseTransactionType t)
           throws JFPException
         {
-          final JFPProjectPath p = new JFPProjectPath("/a/b/c.fossil");
-          t.projectsAddGlobalRemote(Integer.valueOf(23));
+          final JFPRepositoryPath p = new JFPRepositoryPath("/a/b/c.fossil");
+          t.repositoryAddGlobalRemote(Integer.valueOf(23));
           return Unit.unit();
         }
       });

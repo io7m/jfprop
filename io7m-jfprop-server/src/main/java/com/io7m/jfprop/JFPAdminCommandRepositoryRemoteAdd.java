@@ -31,16 +31,16 @@ import com.io7m.jlog.LogUsableType;
  * Command to list users.
  */
 
-public final class JFPAdminCommandProjectRemoteAdd extends
-JFPAdminHandlerAbstract
+public final class JFPAdminCommandRepositoryRemoteAdd extends
+  JFPAdminHandlerAbstract
 {
-  JFPAdminCommandProjectRemoteAdd(
+  JFPAdminCommandRepositoryRemoteAdd(
     final JFPServerConfigType in_config,
     final JFPAdminDatabaseType db,
     final LogUsableType in_log)
-    {
+  {
     super(in_config, db, in_log);
-    }
+  }
 
   @Override public void handleAuthenticated(
     final String target,
@@ -48,7 +48,7 @@ JFPAdminHandlerAbstract
     final HttpServletRequest request,
     final HttpServletResponse response,
     final JFPAdminDatabaseTransactionType transaction)
-      throws JFPException,
+    throws JFPException,
       IOException,
       ServletException
   {
@@ -64,17 +64,17 @@ JFPAdminHandlerAbstract
       final Map<String, String[]> params = request.getParameterMap();
       assert params != null;
 
-      final JFPProjectPath project =
-        new JFPProjectPath(JFPRequestUtilities.getValueSingle(
+      final JFPRepositoryPath project =
+        new JFPRepositoryPath(JFPRequestUtilities.getValueSingle(
           params,
-          "project"));
+          "repository"));
       final Integer remote =
         Integer.valueOf(JFPRequestUtilities.getValueSingle(
           params,
           "remote_id"));
       assert remote != null;
 
-      transaction.projectAddRemote(project, remote);
+      transaction.repositoryAddRemote(project, remote);
     } catch (final JFPExceptionNonexistent e) {
       JFPResponseUtilities.sendText(
         response,

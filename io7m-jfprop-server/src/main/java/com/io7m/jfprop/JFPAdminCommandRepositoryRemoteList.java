@@ -32,10 +32,10 @@ import com.io7m.jlog.LogUsableType;
  * Command to list users.
  */
 
-public final class JFPAdminCommandProjectRemoteList extends
+public final class JFPAdminCommandRepositoryRemoteList extends
   JFPAdminHandlerAbstract
 {
-  JFPAdminCommandProjectRemoteList(
+  JFPAdminCommandRepositoryRemoteList(
     final JFPServerConfigType in_config,
     final JFPAdminDatabaseType db,
     final LogUsableType in_log)
@@ -65,11 +65,11 @@ public final class JFPAdminCommandProjectRemoteList extends
       final Map<String, String[]> params = request.getParameterMap();
       assert params != null;
 
-      final JFPProjectPath project =
-        new JFPProjectPath(JFPRequestUtilities.getValueSingle(
+      final JFPRepositoryPath project =
+        new JFPRepositoryPath(JFPRequestUtilities.getValueSingle(
           params,
-          "project"));
-      final Set<Integer> r = transaction.projectListRemotes(project);
+          "repository"));
+      final Set<Integer> r = transaction.repositoryListRemotes(project);
 
       final byte[] e = JFPResponseUtilities.encodeSet(r);
       JFPResponseUtilities.sendBytesAsUTF8(response, e);

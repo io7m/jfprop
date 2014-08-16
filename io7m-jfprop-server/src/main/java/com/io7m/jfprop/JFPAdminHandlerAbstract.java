@@ -1,10 +1,10 @@
 /*
  * Copyright © 2014 <code@io7m.com> http://io7m.com
- *
+ * 
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
  * copyright notice and this permission notice appear in all copies.
- *
+ * 
  * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
  * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
@@ -37,7 +37,7 @@ import com.io7m.jnull.Nullable;
  */
 
 abstract class JFPAdminHandlerAbstract extends AbstractHandler implements
-JFPAdminHandlerType
+  JFPAdminHandlerType
 {
   protected final JFPServerConfigType  config;
   protected final JFPAdminDatabaseType database;
@@ -47,18 +47,18 @@ JFPAdminHandlerType
     final JFPServerConfigType in_config,
     final JFPAdminDatabaseType db,
     final LogUsableType in_log)
-    {
+  {
     this.config = NullCheck.notNull(in_config, "Configuration");
     this.database = NullCheck.notNull(db, "Database");
     this.log = NullCheck.notNull(in_log, "Log");
-    }
+  }
 
   @Override public final void handle(
     final @Nullable String target,
     final @Nullable Request base_request,
     final @Nullable HttpServletRequest request,
     final @Nullable HttpServletResponse response)
-      throws IOException,
+    throws IOException,
       ServletException
   {
     assert target != null;
@@ -87,20 +87,20 @@ JFPAdminHandlerType
       }
 
       this.database
-      .withAdminTransaction(new PartialFunctionType<JFPAdminDatabaseTransactionType, Unit, Exception>() {
-        @Override public Unit call(
-          final JFPAdminDatabaseTransactionType t)
+        .withAdminTransaction(new PartialFunctionType<JFPAdminDatabaseTransactionType, Unit, Exception>() {
+          @Override public Unit call(
+            final JFPAdminDatabaseTransactionType t)
             throws Exception
-        {
-          JFPAdminHandlerAbstract.this.handleAuthenticated(
-            target,
-            base_request,
-            request,
-            response,
-            t);
-          return Unit.unit();
-        }
-      });
+          {
+            JFPAdminHandlerAbstract.this.handleAuthenticated(
+              target,
+              base_request,
+              request,
+              response,
+              t);
+            return Unit.unit();
+          }
+        });
 
     } catch (final JFPExceptionAuthentication e) {
       this.log.error("authentication failed: " + e.getMessage());

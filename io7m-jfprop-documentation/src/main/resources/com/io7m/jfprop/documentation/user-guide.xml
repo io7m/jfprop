@@ -1,0 +1,610 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+  Copyright © 2014 <code@io7m.com> http://io7m.com
+
+  Permission to use, copy, modify, and/or distribute this software for any
+  purpose with or without fee is hereby granted, provided that the above
+  copyright notice and this permission notice appear in all copies.
+
+  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+  -->
+
+<s:part 
+  xml:id="user_guide"  
+  xmlns:s="http://schemas.io7m.com/structural/2.0.0"
+  xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <s:part-title>User Guide</s:part-title>
+  <s:part-contents/>
+
+  <s:section xml:id="user_guide.overview">
+    <s:section-title>Overview</s:section-title>
+
+    <s:paragraph>
+      The <s:term s:type="package">${project.parent.name}</s:term> package implements a
+      simple system for keeping <s:link-external s:target="http://fossil-scm.org">Fossil</s:link-external>
+      repositories up-to-date and synchronized with remote servers.
+    </s:paragraph>
+    <s:paragraph>
+      The main use case is that of synchronizing private 
+      (but "<s:term s:type="term">canonical</s:term>") repositories with a public mirror.
+      An organization, <s:term s:type="term">ExampleCorp</s:term>, using <s:link-external s:target="http://fossil-scm.org">Fossil</s:link-external>
+      may have something approximating the following configuration:
+    </s:paragraph>
+    <s:formal-item s:kind="example" s:type="diagram">
+      <s:formal-item-title>Organization</s:formal-item-title>
+      <s:image s:source="org0.png">Organization</s:image>
+    </s:formal-item>
+    <s:paragraph>
+      The server at <s:term s:type="constant">fsl.iw.example.com</s:term> acts as the
+      so-called <s:term s:type="term">canonical</s:term> repository. That is, it's
+      the repository that's considered to be the authoritative source for the project.
+      In the example above, <s:term s:type="constant">fsl.iw.example.com</s:term> is
+      a server that's private to the <s:term s:type="term">ExampleCorp</s:term> organization,
+      with the red line indicating the boundary of the <s:term s:type="term">ExampleCorp</s:term>
+      private network.
+      Developers in the organization have <s:term s:type="term">clones</s:term> of this
+      repository on each of their workstations (<s:term s:type="constant">c0.iw.example.com</s:term>,
+      <s:term s:type="constant">c1.iw.example.com</s:term>, etc). Each time a developer
+      makes a change to his/her own clone of the repository, the clone is automatically
+      <s:term s:type="term">synchronized</s:term> with the <s:term s:type="term">remote</s:term>
+      of the clone (<s:term s:type="constant">fsl.iw.example.com</s:term>), pushing
+      new changes to the remote and pulling any changes received by the remote since the
+      last synchronization. Consequently, changes made by each developer are gradually 
+      propagated to each other developer, and the <s:term s:type="constant">fsl.iw.example.com</s:term>
+      repository.
+    </s:paragraph>
+    <s:paragraph xml:id="user_guide.overview.issues">
+      The organization then decides to create a public <s:term s:type="term">mirror</s:term>
+      of the repository, hosted on <s:term s:type="constant">fossilhub.com</s:term>. This
+      mirror repository may or may not allow commits and tickets to be created by
+      external contributors. The <s:term s:type="constant">fossilhub.com</s:term>
+      repository is the <s:term s:type="term">remote</s:term> of the 
+      <s:term s:type="constant">fsl.iw.example.com</s:term> repository. The problem
+      here is that when a developer makes a change to their own clone and synchronizes
+      with <s:term s:type="constant">fsl.iw.example.com</s:term>, this will
+      <s:term s:type="term">not</s:term> cause <s:term s:type="constant">fsl.iw.example.com</s:term>
+      to synchronize with <s:term s:type="constant">fossilhub.com</s:term>. The effect of
+      this is that the <s:term s:type="constant">fossilhub.com</s:term> repository will
+      drift further and further out of date with respect to 
+      <s:term s:type="constant">fsl.iw.example.com</s:term>, unless a developer manually
+      logs into the <s:term s:type="constant">fsl.iw.example.com</s:term> server and 
+      synchronizes the repository with <s:term s:type="constant">fossilhub.com</s:term>. 
+      Also, if external contributors are allowed to make
+      changes to the <s:term s:type="constant">fossilhub.com</s:term> repository, these
+      changes will not reach <s:term s:type="constant">fsl.iw.example.com</s:term> (and
+      by extension, each of the <s:term s:type="term">ExampleCorp</s:term> developers)
+      until the next time that <s:term s:type="constant">fsl.iw.example.com</s:term> is
+      manually synchronized.
+    </s:paragraph>
+    <s:paragraph>
+      The <s:term s:type="package">${project.parent.name}</s:term> package attempts to
+      implement a simple server to help alleviate the above problem. 
+    </s:paragraph>
+    <s:paragraph>
+      The  <s:term s:type="package">fossil</s:term> program can be configured to run
+      small pieces of code written in the <s:term s:type="package">TH1</s:term>
+      scripting language whenever the person using the program performs a commit,
+      or creates/edits a ticket. The scripting language is capable of making HTTP(S)
+      requests. The <s:term s:type="package">${project.parent.name}</s:term> package
+      implements a server that listens for HTTP(S) requests, and synchronizes
+      repositories with their own remotes when requests appear. Essentially, each
+      developer configures their own clone to send a request to the 
+      <s:term s:type="package">${project.parent.name}</s:term> server listening
+      on <s:term s:type="constant">fsl.iw.example.com</s:term> each time they
+      commit, and the listening server then synchronizes the 
+      <s:term s:type="constant">fsl.iw.example.com</s:term> repository with
+      <s:term s:type="constant">fossilhub.com</s:term>. The 
+      <s:term s:type="package">${project.parent.name}</s:term> server can also
+      be configured to contact other 
+      <s:term s:type="package">${project.parent.name}</s:term> servers when this
+      occurs, to propagate changes to repositories that are even further removed
+      <s:footnote>
+        There is currently no protection against servers sending synchronization
+        requests to each other, resulting in infinite loops.
+      </s:footnote>. As an example:
+    </s:paragraph>
+    <s:formal-item s:kind="example" s:type="diagram">
+      <s:formal-item-title>Sync requests</s:formal-item-title>
+      <s:image s:source="org1.png">Sync requests</s:image>
+    </s:formal-item>
+    <s:formal-item s:kind="example">
+      <s:formal-item-title>Sync procedure</s:formal-item-title>
+      <s:list-ordered>
+        <s:list-item>
+          The developer commits to <s:term s:type="constant">c0.iw.example.com</s:term>,
+          which causes a synchronization with <s:term s:type="constant">fsl.iw.example.com</s:term>.
+        </s:list-item>
+        <s:list-item>
+          The <s:term s:type="package">fossil</s:term> program on
+          <s:term s:type="constant">c0.iw.example.com</s:term> contacts the
+          <s:term s:type="package">${project.parent.name}</s:term> server on
+          <s:term s:type="constant">fsl.iw.example.com</s:term>.
+        </s:list-item>
+        <s:list-item>
+          The <s:term s:type="package">${project.parent.name}</s:term> server on
+          <s:term s:type="constant">fsl.iw.example.com</s:term> tells the
+          repository to synchronize.
+        </s:list-item>
+        <s:list-item>
+          The repository on <s:term s:type="constant">fsl.iw.example.com</s:term>
+          synchronizes with <s:term s:type="constant">fossilhub.com</s:term>.
+        </s:list-item>
+      </s:list-ordered>
+    </s:formal-item>
+  </s:section>
+  
+  <s:section xml:id="user_guide.configuration">
+    <s:section-title>Configuration</s:section-title>
+    <s:section-contents/>
+
+    <s:subsection xml:id="user_guide.configuration.overview">
+      <s:subsection-title>Overview</s:subsection-title>
+      <s:paragraph>
+        The <s:term s:type="package">${project.parent.name}</s:term> server uses
+        a simple configuration file for the settings required to actually get the
+        server up and running, and then depends on a 
+        <s:term s:type="term">administration interface</s:term> to configure all
+        other settings. The administration interface listens for HTTP(S) requests and
+        provides a trivial <s:term s:type="term">REST</s:term> API intended to be
+        usable by simple command line tools.
+      </s:paragraph>
+      <s:paragraph>
+        Full documentation for the configuration file format is given
+        in the <s:link s:target="config_reference">reference manual</s:link> 
+        for the format.
+      </s:paragraph>
+    </s:subsection>
+    <s:subsection xml:id="user_guide.configuration.minimal">
+      <s:subsection-title>Minimal server</s:subsection-title>
+      <s:paragraph>
+        The bare minimum configuration needed to get a server to start
+        is as follows:
+      </s:paragraph>
+      <s:formal-item s:kind="example">
+        <s:formal-item-title>Minimal server configuration</s:formal-item-title>
+        <s:verbatim><xi:include href="server0.conf" parse="text"/></s:verbatim>
+      </s:formal-item>
+      <s:paragraph>
+        The configuration file will:
+      </s:paragraph>
+      <s:formal-item s:kind="example">
+        <s:formal-item-title>Minimal server configuration</s:formal-item-title>
+        <s:list-ordered>
+          <s:list-item>
+            Tell the server to place HTTP(S) access logs in <s:term s:type="file">/var/log/jfprop</s:term>. 
+            The log files are in the
+            <s:link-external s:target="https://en.wikipedia.org/wiki/Common_Log_Format">common log format</s:link-external>.
+            The log files are automatically rotated by date, and the server keeps 30 days worth of logs.
+          </s:list-item>
+          <s:list-item>
+            Tell the server to perform full debug logging.
+          </s:list-item>
+          <s:list-item>
+            Tell the server to create its configuration database at <s:term s:type="file">/var/db/jfprop</s:term>.
+          </s:list-item>
+          <s:list-item>
+            Set the administration password to <s:term s:type="constant">hackme</s:term>. Clients connecting
+            to the administration interface are required to present this password in order to access any commands.
+          </s:list-item>
+          <s:list-item>
+            Set the Fossil repository directory to <s:term s:type="file">/fossil/repositories</s:term>. The
+            server will resolve all repository names relative to this directory. So, if a client refers to
+            a repository named <s:term s:type="file">/com.example/project.fossil</s:term>, the server will
+            access <s:term s:type="file">/fossil/repositories/com.example/project.fossil</s:term>.
+          </s:list-item>
+          <s:list-item>
+            Tell the server to use the Fossil executable at
+            <s:term s:type="file">/usr/bin/fossil</s:term>.
+          </s:list-item>
+          <s:list-item>
+            Enable an HTTP server interface, making it accessible on 
+            <s:term s:type="constant">10.2.1.10:10080</s:term>. This is the interface
+            that clients use to send change notifications.
+          </s:list-item>
+          <s:list-item>
+            Enable an HTTP administration interface, making it accessible on 
+            <s:term s:type="constant">127.0.0.1:11080</s:term>. This is the interface
+            that clients use to administer the server.
+          </s:list-item>
+        </s:list-ordered>
+      </s:formal-item>
+      <s:paragraph>
+        With this configuration file (<s:term s:type="file">server.conf</s:term>), and 
+        assuming that all referenced directories have been created, the server can be 
+        started with the included 
+        <s:term s:type="file">${project.parent.name}-server-${project.version}-main.jar</s:term>:
+      </s:paragraph>
+      <s:formal-item s:kind="example">
+        <s:formal-item-title>Minimal server configuration</s:formal-item-title>
+        <s:verbatim><![CDATA[$ java -jar ${project.parent.name}-server-${project.version}-main.jar server.conf
+main: info: io7m-jfprop-server ${project.version} starting
+main: info: starting http server on http://10.2.1.10:10080
+main: info: starting administration http server on http://localhost.localdomain:11080]]></s:verbatim>
+      </s:formal-item>
+      <s:paragraph>
+        The server does not fork into the background, allowing it to be safely
+        monitored by process supervision programs such as 
+        <s:link-external s:target="http://cr.yp.to/daemontools.html">daemontools</s:link-external>.
+      </s:paragraph>
+    </s:subsection>
+
+    <s:subsection xml:id="user_guide.configuration.authentication">
+      <s:subsection-title>Authentication</s:subsection-title>
+      <s:paragraph>
+        The <s:term s:type="package">${project.parent.name}</s:term> server implements
+        a simple authentication system. In order to use the administration interface, clients
+        must provide the <s:term s:type="term">admin password</s:term>. This is passed
+        as an ordinary HTTP request parameter called 
+        <s:term s:type="variable">admin_password</s:term>. As an example, using the
+        ubiquitous <s:link-external s:target="http://curl.haxx.se/">curl</s:link-external> command
+        line tool (with individual HTTP parameters passed with the <s:term s:type="command">-d</s:term> option):
+      </s:paragraph>
+      <s:formal-item s:kind="example">
+        <s:formal-item-title>Management access</s:formal-item-title>
+        <s:verbatim><![CDATA[$ curl http://127.0.0.1:11080/ -d admin_password=hackme
+Unknown or unspecified command]]></s:verbatim>
+      </s:formal-item>
+      <s:paragraph>
+        The server replies with a simple <s:term s:type="constant">text/plain</s:term>
+        UTF-8 body. Without the admin password, access is denied (and a 
+        <s:term s:type="constant">403</s:term> HTTP status code is returned):
+      </s:paragraph>
+      <s:formal-item s:kind="example">
+        <s:formal-item-title>Management access</s:formal-item-title>
+        <s:verbatim><![CDATA[$ curl http://127.0.0.1:11080/
+Access denied]]></s:verbatim>
+      </s:formal-item>
+      <s:paragraph>
+        Clients wanting to send notifications of commits and tickets to the server must
+        also be authenticated. First, assuming a client with a user name 
+        <s:term s:type="constant">client0</s:term>, a <s:term s:type="term">user</s:term>
+        must first be created:
+      </s:paragraph>
+      <s:formal-item s:kind="example">
+        <s:formal-item-title>User creation</s:formal-item-title>
+        <s:verbatim><![CDATA[$ curl http://127.0.0.1:11080/user-add -d admin_password=hackme -d user=client0]]></s:verbatim>
+      </s:formal-item>
+      <s:paragraph>
+        The server says nothing and returns a standard 
+        <s:term s:type="constant">200</s:term> HTTP status code
+        if the operation is successful.
+      </s:paragraph>
+      <s:paragraph>
+        A single user may have many different workstations, and for reasons of 
+        security, each workstation should be uniquely authenticated. For
+        example, if a developer loses their laptop to theft, that laptop should no
+        longer have any kind of access to the server. The server allows this kind
+        of control by requiring user accounts to have 
+        <s:term s:type="term">keys</s:term>. In order to generate a new key for
+        <s:term s:type="constant">client0</s:term>, use the
+        <s:term s:type="constant">user-generate-key</s:term> command:
+      </s:paragraph>
+      <s:formal-item s:kind="example">
+        <s:formal-item-title>Key generation</s:formal-item-title>
+        <s:verbatim><![CDATA[$ curl http://127.0.0.1:11080/user-generate-key -d admin_password=hackme -d user=client0
+ff569067d71901822d41cb6f0a889da6caf1ecc1ca69fac22e7a10db1a24ee43
+$ curl http://127.0.0.1:11080/user-generate-key -d admin_password=hackme -d user=client0
+abc684a8a6fde91644c2cc4829baaef7a96445897a339f18ea40d99ec15491c1
+$ curl http://127.0.0.1:11080/user-generate-key -d admin_password=hackme -d user=client0
+04c7fea50c91415e39bbe3c0ce1a7bbce165fdd50e3d5c8b25d460f4ef99c923]]></s:verbatim>
+      </s:formal-item>
+      <s:paragraph>
+        The keys for any user account can be listed:
+      </s:paragraph>
+      <s:formal-item s:kind="example">
+        <s:formal-item-title>Key listing</s:formal-item-title>
+        <s:verbatim><![CDATA[$ curl http://127.0.0.1:11080/user-list-keys -d admin_password=hackme -d user=client0
+ff569067d71901822d41cb6f0a889da6caf1ecc1ca69fac22e7a10db1a24ee43
+abc684a8a6fde91644c2cc4829baaef7a96445897a339f18ea40d99ec15491c1
+04c7fea50c91415e39bbe3c0ce1a7bbce165fdd50e3d5c8b25d460f4ef99c923]]></s:verbatim>
+      </s:formal-item>
+      <s:paragraph>
+        Keys can also be revoked at any time:
+      </s:paragraph>
+      <s:formal-item s:kind="example">
+        <s:formal-item-title>Key revocation</s:formal-item-title>
+        <s:verbatim><![CDATA[$ curl http://127.0.0.1:11080/user-revoke-key -d admin_password=hackme -d user=client0 -d key=ff569067d71901822d41cb6f0a889da6caf1ecc1ca69fac22e7a10db1a24ee43
+$ curl http://127.0.0.1:11080/user-list-keys -d admin_password=hackme -d user=client0
+abc684a8a6fde91644c2cc4829baaef7a96445897a339f18ea40d99ec15491c1
+04c7fea50c91415e39bbe3c0ce1a7bbce165fdd50e3d5c8b25d460f4ef99c923]]></s:verbatim>
+      </s:formal-item>
+      <s:paragraph>
+        Clients must present valid user names and keys in order to use the
+        server interface. The <s:term s:type="command">list</s:term> command 
+        (on the server interface, not the administration interface) will list 
+        all repositories in any subdirectory of the configured repository
+        directory. Assuming that the directory contains 
+        <s:term s:type="file">example0.fossil</s:term>,
+        <s:term s:type="file">example1.fossil</s:term>, and
+        <s:term s:type="file">example2.fossil</s:term>:
+      </s:paragraph>
+      <s:formal-item s:kind="example">
+        <s:formal-item-title>Repository listing</s:formal-item-title>
+        <s:verbatim><![CDATA[$ curl http://127.0.0.1:10080/list -d user=client0 -d key=abc684a8a6fde91644c2cc4829baaef7a96445897a339f18ea40d99ec15491c1
+/example0.fossil
+/example1.fossil
+/example2.fossil]]></s:verbatim>
+      </s:formal-item>
+      <s:paragraph>
+        Without a correct user name and key, access is denied:
+      </s:paragraph>
+      <s:formal-item s:kind="example">
+        <s:formal-item-title>Repository listing (Access denied)</s:formal-item-title>
+        <s:verbatim><![CDATA[$ curl http://127.0.0.1:10080/list -d user=client0 -d key=notvalid
+Access denied]]></s:verbatim>
+      </s:formal-item>
+    </s:subsection>
+
+    <s:subsection xml:id="user_guide.configuration.synchronization">
+      <s:subsection-title>Synchronization</s:subsection-title>
+      <s:paragraph>
+        With a user configured with a key, notifications can now be delivered to the
+        server interface.
+      </s:paragraph>
+      <s:formal-item s:kind="example">
+        <s:formal-item-title>Commit notification</s:formal-item-title>
+        <s:verbatim><![CDATA[$ curl http://127.0.0.1:10080/on-commit -d repository=/example0.fossil -d user=client0 -d key=abc684a8a6fde91644c2cc4829baaef7a96445897a339f18ea40d99ec15491c1]]></s:verbatim>
+      </s:formal-item>
+      <s:paragraph>
+        The server then runs <s:term s:type="command">fossil sync</s:term> on the
+        repository specified by the client.
+      </s:paragraph>
+    </s:subsection>
+
+    <s:subsection xml:id="user_guide.configuration.mass-synchronization">
+      <s:subsection-title>Mass synchronization</s:subsection-title>
+      <s:paragraph>
+        In the <s:link s:target="user_guide.overview.issues">original example</s:link>,
+        one of the issues was that if developers make changes on an external mirror
+        repository, then those changes don't make it back into a canonical repository
+        until something causes the canonical repository to synchronize. The
+        <s:term s:type="package">${project.parent.name}</s:term> server can periodically
+        synchronize sets of repositories. Administrators provide 
+        <s:term s:type="term">time specifications</s:term> 
+        (such as "any day, on hours divisible by 2, at 30 minutes past the hour") and
+        <s:term s:type="term">regular expressions</s:term> 
+        (such as <s:term s:type="expression">"/x/.*\.fossil"</s:term>),
+        and the server synchronizes matching repositories at matching times. As an
+        example, to synchronize all repositories with names containing the word "example"
+        at <s:term s:type="term">14:25</s:term> every day:
+      </s:paragraph>
+      <s:formal-item s:kind="example">
+        <s:formal-item-title>Mass synchronization example</s:formal-item-title>
+        <s:verbatim><![CDATA[$ curl http://127.0.0.1:11080/mass-sync-add -d admin_password=hackme -d time_spec_day=any -d time_spec_hour='exact 14' -d time_spec_minute='exact 25' -d pattern='.*example.*\.fossil']]></s:verbatim>
+      </s:formal-item>
+      <s:paragraph>
+        To synchronize all repositories at the start of all even hours:
+      </s:paragraph>
+      <s:formal-item s:kind="example">
+        <s:formal-item-title>Mass synchronization example</s:formal-item-title>
+        <s:verbatim><![CDATA[$ curl http://127.0.0.1:11080/mass-sync-add -d admin_password=hackme -d time_spec_day=any -d time_spec_hour='divisible 2' -d time_spec_minute='exact 0' -d pattern='.*\.fossil']]></s:verbatim>
+      </s:formal-item>
+      <s:paragraph>
+        The server provides a test command, 
+        <s:term s:type="command">mass-sync-test-pattern</s:term>, that adminstrators 
+        can use to check if a given pattern will match a given repository:
+      </s:paragraph>
+      <s:formal-item s:kind="example">
+        <s:formal-item-title>Mass synchronization example</s:formal-item-title>
+        <s:verbatim><![CDATA[$ curl http://127.0.0.1:11080/mass-sync-test-pattern -d admin_password=hackme -d pattern='.*\.fossil' -d text='a.fossil'
+true
+
+$ curl http://127.0.0.1:11080/mass-sync-test-pattern -d admin_password=hackme -d pattern='example\.fossil' -d text='a.fossil'
+false]]></s:verbatim>
+      </s:formal-item>
+      <s:paragraph>
+        Mass synchronization is not enabled by default, and must be explicitly
+        enabled in the configuration file:
+      </s:paragraph>
+      <s:formal-item s:kind="example">
+        <s:formal-item-title>Mass synchronization configuration</s:formal-item-title>
+        <s:verbatim><![CDATA[com.io7m.jfprop.server_mass_synchronizer_enabled = true]]></s:verbatim>
+      </s:formal-item>
+      <s:paragraph>
+        This is intended as a safety feature in emergencies: If a misconfigured
+        mass synchronization is causing repository syncs at an alarming rate, the
+        administrator can stop the server, disable the synchronizer, restart the
+        server, and then not have to rush to fix the misconfigured mass synchronization
+        in the administration interface before more synchronizations occur.
+      </s:paragraph>
+    </s:subsection>
+
+    <s:subsection xml:id="user_guide.configuration.tls">
+      <s:subsection-title>TLS</s:subsection-title>
+      <s:paragraph>
+        Clearly, sending user names, keys, and passwords in cleartext over
+        hostile networks is a bad idea. The 
+        <s:term s:type="package">${project.parent.name}</s:term> server can
+        be configured to use the 
+        <s:link-external s:target="http://en.wikipedia.org/wiki/Transport_Layer_Security">TLS</s:link-external>
+        protocol to secure all communications between clients and the server.
+      </s:paragraph>
+      <s:paragraph>
+        Familiarity with Java <s:link-external s:target="http://en.wikipedia.org/wiki/Keystore">keystores</s:link-external>
+        and <s:term s:type="term">truststores</s:term> is assumed, and the
+        configuration of these is outside of the scope of this documentation.
+        The following configuration file enables TLS for both the administration
+        and server interfaces:
+      </s:paragraph>
+      <s:formal-item s:kind="example">
+        <s:formal-item-title>TLS server configuration</s:formal-item-title>
+        <s:verbatim><xi:include href="server1.conf" parse="text"/></s:verbatim>
+      </s:formal-item>
+      <s:paragraph>
+        The configuration file will:
+      </s:paragraph>
+      <s:formal-item s:kind="example">
+        <s:formal-item-title>TLS server configuration</s:formal-item-title>
+        <s:list-ordered>
+          <s:list-item>
+            Enable an HTTPS administration interface, making it accessible on 
+            <s:term s:type="constant">127.0.0.1:11443</s:term>. The administration
+            interface will use the given <s:term s:type="file">/etc/jfprop/key_store.jks</s:term>
+            key store, and <s:term s:type="file">/etc/jfprop/trust_store.jks</s:term>
+            trust store.
+          </s:list-item>
+          <s:list-item>
+            Enable an HTTPS server interface, making it accessible on 
+            <s:term s:type="constant">10.2.1.10:10443</s:term>. The server
+            interface will use the given <s:term s:type="file">/etc/jfprop/key_store.jks</s:term>
+            key store, and <s:term s:type="file">/etc/jfprop/trust_store.jks</s:term>
+            trust store.
+          </s:list-item>
+        </s:list-ordered>
+      </s:formal-item>
+      <s:paragraph>
+        Note that the configuration file does not enable the plain HTTP interfaces,
+        so all clients <s:term s:type="term">must</s:term> speak TLS in order to be
+        able to communicate with the server. This is optional: The 
+        <s:term s:type="package">${project.parent.name}</s:term> server supports
+        any combination of HTTP and HTTPS interfaces running on any given addresses.
+      </s:paragraph>
+    </s:subsection>
+
+    <s:subsection xml:id="user_guide.configuration.remote">
+      <s:subsection-title>Remotes</s:subsection-title>
+      <s:paragraph>
+        The <s:term s:type="package">${project.parent.name}</s:term> server
+        is capable of calling the 
+        <s:link s:target="api.server.on-commit">on-commit</s:link> command
+        on other <s:term s:type="package">${project.parent.name}</s:term> servers.
+        This allows notifications to propagate to other servers automatically,
+        triggering chains of synchronizations <s:footnote>
+          There is currently no protection against servers continually
+          calling each other in an infinite loop. Configure remotes wisely!
+        </s:footnote>.
+      </s:paragraph>
+      <s:paragraph>
+        Essentially, administrators add <s:term s:type="term">remotes</s:term>
+        and then associate those remotes with repositories. These are distinct
+        from Fossil's concept of remotes. When a client calls the 
+        <s:link s:target="api.server.on-commit">on-commit</s:link>
+        command for a repository <s:term s:type="variable">r</s:term>, the
+        server calls the 
+        <s:link s:target="api.server.on-commit">on-commit</s:link>
+        command on all remotes associated with 
+        <s:term s:type="variable">r</s:term>. The server appears to be an
+        ordinary client to the remotes (and must therefore have a configured
+        user name and key). Adding a remote is simple:
+      </s:paragraph>
+      <s:formal-item s:kind="example">
+        <s:formal-item-title>Remote creation</s:formal-item-title>
+        <s:verbatim><![CDATA[$ curl http://127.0.0.1:11080/remote-add -d admin_password=hackme -d remote_uri=http://remote.example.com -d remote_user=someone -d remote_key=3b46849adef3ed05c2a0124a884312fc72adbb9be1cc29ea2a03bb30dd229914
+$ curl http://127.0.0.1:11080/remote-add -d admin_password=hackme -d remote_uri=http://remote2.example.com -d remote_user=someone -d remote_key=157d284ca5859aed03f4afff21e82fcf9e8e1f1bdec070ff60a5bbb7d85137a3
+$ curl http://127.0.0.1:11080/remote-list -d admin_password=hackme
+1|http://remote.example.com|someone|3b46849adef3ed05c2a0124a884312fc72adbb9be1cc29ea2a03bb30dd229914
+2|http://remote2.example.com|someone|157d284ca5859aed03f4afff21e82fcf9e8e1f1bdec070ff60a5bbb7d85137a3
+]]></s:verbatim>
+        </s:formal-item>
+        <s:paragraph>
+          Remotes are referred to by server-generated integer identifiers. In
+          the above example, the initially created remote has an identifier of 
+          <s:term s:type="constant">1</s:term>.
+          Remotes can be associated with individual repositories, or can be associated
+          with all repositories globally. The latter case is intended to save administrators
+          the burden of configuring hundreds of repositories.
+        </s:paragraph>
+        <s:formal-item s:kind="example">
+          <s:formal-item-title>Remote association</s:formal-item-title>
+          <s:verbatim><![CDATA[$ curl http://127.0.0.1:11080/repository-remote-add -d admin_password=hackme -d remote_id=1 -d repository=/x/y/example0.fossil
+$ curl http://127.0.0.1:11080/repository-remote-list -d admin_password=hackme -d repository=/x/y/example0.fossil
+1
+$ curl http://127.0.0.1:11080/repository-remote-global-add -d admin_password=hackme -d remote_id=2
+$ curl http://127.0.0.1:11080/repository-remote-list -d admin_password=hackme -d repository=/x/y/example0.fossil
+1
+2]]></s:verbatim>
+      </s:formal-item>
+    </s:subsection>
+
+    <s:subsection xml:id="user_guide.configuration.mail">
+      <s:subsection-title>Mail</s:subsection-title>
+      <s:paragraph>
+        The <s:term s:type="package">${project.parent.name}</s:term> server is
+        capable of notifying an administrator when certain classes of problems
+        occur. Specifically, when a synchronization error occurs for a repository,
+        and when notifying a 
+        <s:link s:target="user_guide.configuration.remote">remote</s:link> fails.
+      </s:paragraph>
+      <s:paragraph>
+        The following configuration file enables mail notifications for an
+        administrator, setting the mail server, recipient, and sender:
+      </s:paragraph>
+      <s:formal-item s:kind="example">
+        <s:formal-item-title>Mail notification configuration</s:formal-item-title>
+        <s:verbatim><xi:include href="server2.conf" parse="text"/></s:verbatim>
+      </s:formal-item>
+      <s:paragraph>
+        If the mail server requires a username and password for authentication,
+        these can be specified separately:
+      </s:paragraph>
+      <s:formal-item s:kind="example">
+        <s:formal-item-title>Mail notification configuration (Authentication)</s:formal-item-title>
+        <s:verbatim><xi:include href="server3.conf" parse="text"/></s:verbatim>
+      </s:formal-item>
+    </s:subsection>
+
+    <s:subsection xml:id="user_guide.configuration.fossil">
+      <s:subsection-title>Configuring Fossil</s:subsection-title>
+      <s:paragraph>
+        In order to actually make use of the <s:term s:type="package">${project.parent.name}</s:term> system,
+        the Fossil tool must be configured to send HTTP(S) requests
+        when commits and ticket changes occur. Note that a version of 
+        Fossil built more recently than
+        <s:link-external s:target="http://fossil-scm.org/index.html/info/1311841a3c201a669bc0e433e24c6caf3fd3ab1d">2013-12-20</s:link-external>
+        is required.
+      </s:paragraph>
+      <s:paragraph>
+        Using the <s:term s:type="command">fossil ui</s:term> web interface,
+        navigate to <s:term s:type="constant">Admin → Transfers</s:term>.
+        Then, assuming the 
+        <s:term s:type="package">${project.parent.name}</s:term> server is
+        at <s:term s:type="expression">http://fsl.iw.example.com:10080</s:term>,
+        the repository in question is <s:term s:type="file">/example0.fossil</s:term>,
+        the desired user name is <s:term s:type="constant">someone</s:term>, and
+        the desired key is <s:term s:type="constant">f6925a1f7d8bb47376ec1d89291a9e5d9b6ca1a55932d853610c67b34a9ed785</s:term>,
+        the following <s:term s:type="package">TH1</s:term> script added to the
+        <s:term s:type="constant">Commit</s:term> and
+        <s:term s:type="constant">Ticket</s:term> sections will cause Fossil
+        to notify the server when commits or ticket changes occur:
+      </s:paragraph>
+      <s:formal-item s:kind="example">
+        <s:formal-item-title>TH1 Commit/ticket hook</s:formal-item-title>
+        <s:verbatim><![CDATA[
+puts "Commit hook: notifying http://fsl.iw.example.com:10080...\n"
+http -async "http://fsl.iw.example.com:10080/on-commit" "user=someone&key=f6925a1f7d8bb47376ec1d89291a9e5d9b6ca1a55932d853610c67b34a9ed785&repository=/example0.fossil"]]></s:verbatim>
+      </s:formal-item>
+      <s:paragraph>
+        Note that by default, Fossil will only allow connections to 
+        servers with names that are matched by the pattern specified
+        in the <s:term s:type="variable">th1-uri-regexp</s:term> setting.
+        By default, the value of this setting is empty and so all connection
+        attempts will be denied. To allow connections to
+        <s:term s:type="expression">http://fsl.iw.example.com:10080</s:term>,
+        set the <s:term s:type="variable">th1-uri-regexp</s:term> setting
+        to a pattern that matches the URI:
+      </s:paragraph>
+      <s:formal-item s:kind="example">
+        <s:formal-item-title>TH1 URI pattern</s:formal-item-title>
+        <s:verbatim><![CDATA[$ fossil settings th1-uri-regexp 'http://fsl\.iw\.example\.com'
+$ fossil settings th1-uri-regexp
+th1-uri-regexp   (local) http://fsl\.iw\.example\.com]]></s:verbatim>
+      </s:formal-item>
+      <s:paragraph>
+        This can be tested by navigating to the 
+        <s:term s:type="constant">Admin → TH1</s:term> section in the
+        web interface and manually executing <s:term s:type="command">http -async</s:term>
+        commands at the command prompt - URIs that are not allowed by the current regular
+        expression will raise errors.
+      </s:paragraph>
+    </s:subsection>
+  </s:section>
+
+</s:part>

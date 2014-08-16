@@ -1,10 +1,10 @@
 /*
  * Copyright © 2014 <code@io7m.com> http://io7m.com
- * 
+ *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
  * copyright notice and this permission notice appear in all copies.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
  * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
@@ -36,7 +36,7 @@ import com.io7m.jranges.RangeCheck;
  */
 
 public final class JFPServerHTTPSConfigFromProperties implements
-  JFPServerHTTPSConfigType
+JFPServerHTTPSConfigType
 {
   /**
    * Load configuration data from the given properties.
@@ -54,7 +54,7 @@ public final class JFPServerHTTPSConfigFromProperties implements
 
   public static JFPServerHTTPSConfigType fromProperties(
     final Properties p)
-    throws JPropertyException,
+      throws JPropertyException,
       JFPExceptionInvalidArgument,
       AddressException
   {
@@ -62,13 +62,13 @@ public final class JFPServerHTTPSConfigFromProperties implements
       JProperties.getString(p, JFPProperties.name("server_https_address"));
     final BigInteger server_port =
       RangeCheck
-        .checkIncludedInBig(
-          JProperties.getBigInteger(
-            p,
-            JFPProperties.name("server_https_port")),
+      .checkIncludedInBig(
+        JProperties.getBigInteger(
+          p,
+          JFPProperties.name("server_https_port")),
           "Port",
           JFPServerConfigFromProperties.PORT_RANGE,
-          "Valid port range");
+        "Valid port range");
     final InetSocketAddress a =
       new InetSocketAddress(address, server_port.intValue());
 
@@ -124,10 +124,10 @@ public final class JFPServerHTTPSConfigFromProperties implements
 
   public static OptionType<JFPServerHTTPSConfigType> fromPropertiesOptional(
     final Properties p)
-    throws JPropertyException,
+      throws JPropertyException,
       JFPExceptionInvalidArgument,
       AddressException
-  {
+      {
     final boolean http_enabled =
       JProperties.getBooleanOptional(
         p,
@@ -140,7 +140,7 @@ public final class JFPServerHTTPSConfigFromProperties implements
     }
 
     return Option.none();
-  }
+      }
 
   private final InetSocketAddress address;
   private final String            keystore_pass;

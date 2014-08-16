@@ -1,10 +1,10 @@
 /*
  * Copyright © 2014 <code@io7m.com> http://io7m.com
- *
+ * 
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
  * copyright notice and this permission notice appear in all copies.
- *
+ * 
  * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
  * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
@@ -39,7 +39,7 @@ public final class JFPAuthentication
 
   public static String getAdminPassword(
     final Map<String, String[]> request)
-      throws JFPExceptionAuthentication
+    throws JFPExceptionAuthentication
   {
     if (request.containsKey("admin_password") == false) {
       throw new JFPExceptionAuthentication("admin password not specified");
@@ -64,7 +64,7 @@ public final class JFPAuthentication
 
   public static JFPKey getKey(
     final Map<String, String[]> request)
-      throws JFPExceptionAuthentication
+    throws JFPExceptionAuthentication
   {
     if (request.containsKey("key") == false) {
       throw new JFPExceptionAuthentication("key not specified");
@@ -90,7 +90,7 @@ public final class JFPAuthentication
 
   public static JFPUserName getUser(
     final Map<String, String[]> request)
-      throws JFPExceptionAuthentication
+    throws JFPExceptionAuthentication
   {
     if (request.containsKey("user") == false) {
       throw new JFPExceptionAuthentication("user name not specified");
@@ -116,12 +116,12 @@ public final class JFPAuthentication
 
   public static Pair<JFPUserName, JFPKey> getUserAndKey(
     final Map<String, String[]> request)
-      throws JFPExceptionAuthentication
-      {
+    throws JFPExceptionAuthentication
+  {
     final JFPUserName user = JFPAuthentication.getUser(request);
     final JFPKey key = JFPAuthentication.getKey(request);
     return Pair.pair(user, key);
-      }
+  }
 
   private JFPAuthentication()
   {

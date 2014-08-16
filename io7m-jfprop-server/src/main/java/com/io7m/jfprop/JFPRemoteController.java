@@ -1,10 +1,10 @@
 /*
  * Copyright © 2014 <code@io7m.com> http://io7m.com
- *
+ * 
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
  * copyright notice and this permission notice appear in all copies.
- *
+ * 
  * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
  * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
@@ -31,7 +31,7 @@ final class JFPRemoteController implements JFPRemoteControllerType
 {
   private static URI makeURI(
     final JFPRemote remote,
-    final JFPProjectPath project)
+    final JFPRepositoryPath project)
   {
     final URI base = remote.getURI();
     final String base_text = base.toString();
@@ -62,8 +62,8 @@ final class JFPRemoteController implements JFPRemoteControllerType
     return new JFPRemoteController(log, in_executor, in_reporter);
   }
 
-  private final ExecutorService                   executor;
-  private final LogUsableType                     log;
+  private final ExecutorService      executor;
+  private final LogUsableType        log;
   private final JFPErrorReporterType reporter;
 
   private JFPRemoteController(
@@ -77,13 +77,13 @@ final class JFPRemoteController implements JFPRemoteControllerType
   }
 
   @Override public Future<Boolean> doCommitNotify(
-    final JFPProjectPath project,
+    final JFPRepositoryPath project,
     final JFPRemote remote)
-  {
+    {
     final URI sync = JFPRemoteController.makeURI(remote, project);
     return this.executor.submit(new JFPRemoteNotifyTask(
       this.log,
       sync,
       this.reporter));
-  }
+    }
 }

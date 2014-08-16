@@ -25,7 +25,7 @@ import java.util.SortedSet;
  */
 
 public interface JFPAdminDatabaseTransactionType extends
-  JFPDatabaseTransactionType
+JFPDatabaseTransactionType
 {
   /**
    * Add a new mass sync.
@@ -40,7 +40,7 @@ public interface JFPAdminDatabaseTransactionType extends
 
   /**
    * Enable or disable mass syncing.
-   * 
+   *
    * @param enabled
    *          <code>true</code> if mass syncing is enabled.
    */
@@ -71,51 +71,6 @@ public interface JFPAdminDatabaseTransactionType extends
     Integer i);
 
   /**
-   * Add the remote with the given identifier to the given project.
-   *
-   * @param project
-   *          The project.
-   * @param remote
-   *          The remote.
-   * @throws JFPExceptionNonexistent
-   *           If the remote does not exist.
-   */
-
-  void projectAddRemote(
-    final JFPProjectPath project,
-    Integer remote)
-    throws JFPExceptionNonexistent;
-
-  /**
-   * List all remotes (including global remotes that are implicitly assigned
-   * to all projects) for the given project.
-   *
-   * @param project
-   *          The project.
-   * @return The set of remotes for the project.
-   * @throws JFPExceptionNonexistent
-   *           If the project does not exist.
-   */
-
-  Set<Integer> projectListRemotes(
-    final JFPProjectPath project)
-    throws JFPExceptionNonexistent;
-
-  /**
-   * Add the remote with the given identifier to the list of global remotes.
-   * That is, remotes that will be synchronized for all projects.
-   *
-   * @param remote
-   *          The remote.
-   * @throws JFPExceptionNonexistent
-   *           If the remote does not exist.
-   */
-
-  void projectsAddGlobalRemote(
-    Integer remote)
-    throws JFPExceptionNonexistent;
-
-  /**
    * Add the given remote.
    *
    * @param r
@@ -125,6 +80,51 @@ public interface JFPAdminDatabaseTransactionType extends
 
   Integer remoteAdd(
     JFPRemote r);
+
+  /**
+   * Add the remote with the given identifier to the list of global remotes.
+   * That is, remotes that will be synchronized for all repositories.
+   *
+   * @param remote
+   *          The remote.
+   * @throws JFPExceptionNonexistent
+   *           If the remote does not exist.
+   */
+
+  void repositoryAddGlobalRemote(
+    Integer remote)
+      throws JFPExceptionNonexistent;
+
+  /**
+   * Add the remote with the given identifier to the given repository.
+   *
+   * @param repository
+   *          The repository.
+   * @param remote
+   *          The remote.
+   * @throws JFPExceptionNonexistent
+   *           If the remote does not exist.
+   */
+
+  void repositoryAddRemote(
+    final JFPRepositoryPath repository,
+    Integer remote)
+      throws JFPExceptionNonexistent;
+
+  /**
+   * List all remotes (including global remotes that are implicitly assigned
+   * to all repositories) for the given repository.
+   *
+   * @param repository
+   *          The repository.
+   * @return The set of remotes for the repository.
+   * @throws JFPExceptionNonexistent
+   *           If the repository does not exist.
+   */
+
+  Set<Integer> repositoryListRemotes(
+    final JFPRepositoryPath repository)
+      throws JFPExceptionNonexistent;
 
   /**
    * Create a new user.
@@ -137,7 +137,7 @@ public interface JFPAdminDatabaseTransactionType extends
 
   void userAdd(
     JFPUserName user)
-    throws JFPExceptionDuplicate;
+      throws JFPExceptionDuplicate;
 
   /**
    * Generate a new key and add it to the given user.
@@ -151,7 +151,7 @@ public interface JFPAdminDatabaseTransactionType extends
 
   JFPKey userGenerateKey(
     JFPUserName user)
-    throws JFPExceptionNonexistent;
+      throws JFPExceptionNonexistent;
 
   /**
    * @return The current list of users.
@@ -171,7 +171,7 @@ public interface JFPAdminDatabaseTransactionType extends
 
   Set<JFPKey> userListKeys(
     JFPUserName user)
-    throws JFPExceptionNonexistent;
+      throws JFPExceptionNonexistent;
 
   /**
    * Revoke the given key from given user.
@@ -187,5 +187,5 @@ public interface JFPAdminDatabaseTransactionType extends
   void userRevokeKey(
     JFPUserName user,
     JFPKey key)
-    throws JFPExceptionNonexistent;
+      throws JFPExceptionNonexistent;
 }

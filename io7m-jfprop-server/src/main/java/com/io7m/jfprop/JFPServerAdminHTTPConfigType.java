@@ -1,10 +1,10 @@
 /*
  * Copyright © 2014 <code@io7m.com> http://io7m.com
- * 
+ *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
  * copyright notice and this permission notice appear in all copies.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
  * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
@@ -16,54 +16,17 @@
 
 package com.io7m.jfprop;
 
-import java.io.File;
 import java.net.InetSocketAddress;
 
 /**
- * The type of HTTPS server configurations.
+ * The type of HTTP admin server configurations.
  */
 
-public interface JFPServerManagementHTTPSConfigType
+public interface JFPServerAdminHTTPConfigType
 {
   /**
-   * @return The desired address of the HTTPS server.
+   * @return The desired address of the HTTP server.
    */
 
   InetSocketAddress getAddress();
-
-  /**
-   * @return The key store password.
-   */
-
-  String getKeyStorePassword();
-
-  /**
-   * @return The path to the key store.
-   */
-
-  File getKeyStorePath();
-
-  /**
-   * @return The key store type.
-   */
-
-  String getKeyStoreType();
-
-  /**
-   * @return The trust store password.
-   */
-
-  String getTrustStorePassword();
-
-  /**
-   * @return The path to the trust store.
-   */
-
-  File getTrustStorePath();
-
-  /**
-   * @return The trust store type.
-   */
-
-  String getTrustStoreType();
 }

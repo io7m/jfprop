@@ -1,10 +1,10 @@
 /*
  * Copyright © 2014 <code@io7m.com> http://io7m.com
- *
+ * 
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
  * copyright notice and this permission notice appear in all copies.
- *
+ * 
  * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
  * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
@@ -52,14 +52,14 @@ public final class JFPMassSynchronizer implements Runnable
     final ExecutorService in_exec,
     final File in_fossil_root,
     final LogUsableType in_log)
-  {
+    {
     this.db = NullCheck.notNull(in_db, "Database");
     this.exec = NullCheck.notNull(in_exec, "Executor");
     this.fossil = NullCheck.notNull(in_fossil, "Fossil controller");
     this.fossil_root = NullCheck.notNull(in_fossil_root, "Fossil root");
     this.log = NullCheck.notNull(in_log, "Log");
     this.want_stop = new AtomicBoolean(false);
-  }
+    }
 
   private void doSyncAll(
     final Calendar current_time,
@@ -95,7 +95,8 @@ public final class JFPMassSynchronizer implements Runnable
             for (final String r : repositories) {
               if (sync.syncSpecRepositoryMatches(r)) {
                 l.debug("repository " + r + " matches, syncing");
-                final Future<Boolean> f = fsc.doSync(new JFPProjectPath(r));
+                final Future<Boolean> f =
+                  fsc.doSync(new JFPRepositoryPath(r));
                 try {
                   f.get();
                 } catch (final InterruptedException e) {
@@ -125,17 +126,17 @@ public final class JFPMassSynchronizer implements Runnable
           Calendar.getInstance(TimeZone.getTimeZone("UTC"));
 
         this.db
-          .withAdminTransaction(new PartialFunctionType<JFPAdminDatabaseTransactionType, Unit, JFPException>() {
-            @Override public Unit call(
-              final JFPAdminDatabaseTransactionType t)
+        .withAdminTransaction(new PartialFunctionType<JFPAdminDatabaseTransactionType, Unit, JFPException>() {
+          @Override public Unit call(
+            final JFPAdminDatabaseTransactionType t)
               throws JFPException
-            {
-              if (t.massSyncIsEnabled()) {
-                JFPMassSynchronizer.this.doSyncAll(current_time, t);
-              }
-              return Unit.unit();
+          {
+            if (t.massSyncIsEnabled()) {
+              JFPMassSynchronizer.this.doSyncAll(current_time, t);
             }
-          });
+            return Unit.unit();
+          }
+        });
 
         Thread.sleep(TimeUnit.MILLISECONDS.convert(1, TimeUnit.MINUTES));
       } catch (final JFPException e) {

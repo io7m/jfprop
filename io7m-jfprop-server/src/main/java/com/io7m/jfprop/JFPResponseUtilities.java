@@ -1,10 +1,10 @@
 /*
  * Copyright © 2014 <code@io7m.com> http://io7m.com
- * 
+ *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
  * copyright notice and this permission notice appear in all copies.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
  * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
@@ -36,7 +36,7 @@ public final class JFPResponseUtilities
 {
   static <T> byte[] encodeList(
     final List<T> i)
-      throws UnsupportedEncodingException,
+    throws UnsupportedEncodingException,
       IOException
   {
     final ByteArrayOutputStream bao = new ByteArrayOutputStream();
@@ -53,7 +53,7 @@ public final class JFPResponseUtilities
 
   static <A, B> byte[] encodeMap(
     final Map<A, B> map)
-      throws UnsupportedEncodingException,
+    throws UnsupportedEncodingException,
       IOException
   {
     final ByteArrayOutputStream bao = new ByteArrayOutputStream();
@@ -76,7 +76,7 @@ public final class JFPResponseUtilities
 
   static <T> byte[] encodeSet(
     final Set<T> set)
-      throws UnsupportedEncodingException,
+    throws UnsupportedEncodingException,
       IOException
   {
     final ByteArrayOutputStream bao = new ByteArrayOutputStream();
@@ -94,7 +94,7 @@ public final class JFPResponseUtilities
   static void sendBytesAsUTF8(
     final HttpServletResponse response,
     final byte[] e)
-      throws IOException
+    throws IOException
   {
     response.setStatus(HttpServletResponse.SC_OK);
     response.setContentType("text/plain");
@@ -108,7 +108,7 @@ public final class JFPResponseUtilities
     final HttpServletResponse response,
     final int code,
     final @Nullable String message)
-      throws IOException
+    throws IOException
   {
     response.setStatus(code);
     response.setContentType("text/plain");

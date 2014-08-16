@@ -1,10 +1,10 @@
 /*
  * Copyright © 2014 <code@io7m.com> http://io7m.com
- *
+ * 
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
  * copyright notice and this permission notice appear in all copies.
- *
+ * 
  * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
  * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
@@ -52,7 +52,7 @@ final class JFPErrorReporterWithMail
 
         final StringBuilder text = new StringBuilder();
         text
-          .append("An error occurred whilst attempting to access an external URI.\n");
+        .append("An error occurred whilst attempting to access an external URI.\n");
         text.append("\n");
         text.append("Operation: ");
         text.append(operation);
@@ -120,26 +120,26 @@ final class JFPErrorReporterWithMail
       msg.setText(text.toString());
 
       config
-        .getServerAuthentication()
-        .acceptPartial(
-          new OptionPartialVisitorType<Pair<String, String>, Unit, MessagingException>() {
-            @Override public Unit none(
-              final None<Pair<String, String>> n)
+      .getServerAuthentication()
+      .acceptPartial(
+        new OptionPartialVisitorType<Pair<String, String>, Unit, MessagingException>() {
+          @Override public Unit none(
+            final None<Pair<String, String>> n)
               throws MessagingException
-            {
-              Transport.send(msg, recipients);
-              return Unit.unit();
-            }
+          {
+            Transport.send(msg, recipients);
+            return Unit.unit();
+          }
 
-            @Override public Unit some(
-              final Some<Pair<String, String>> s)
+          @Override public Unit some(
+            final Some<Pair<String, String>> s)
               throws MessagingException
-            {
-              final Pair<String, String> p = s.get();
-              Transport.send(msg, recipients, p.getLeft(), p.getRight());
-              return Unit.unit();
-            }
-          });
+          {
+            final Pair<String, String> p = s.get();
+            Transport.send(msg, recipients, p.getLeft(), p.getRight());
+            return Unit.unit();
+          }
+        });
 
     } catch (final MessagingException mex) {
       log.critical("could not send mail: " + mex);

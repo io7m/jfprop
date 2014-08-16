@@ -1,10 +1,10 @@
 /*
  * Copyright © 2014 <code@io7m.com> http://io7m.com
- * 
+ *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
  * copyright notice and this permission notice appear in all copies.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
  * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
@@ -26,13 +26,13 @@ import java.util.SortedMap;
 public interface JFPDatabaseTransactionType
 {
   /**
-   * @param project
-   *          The project path.
-   * @return The remotes for the given project, if any.
+   * @param repository
+   *          The repository path.
+   * @return The remotes for the given repository, if any.
    */
 
-  Set<JFPRemote> projectRemotesGet(
-    final JFPProjectPath project);
+  Set<JFPRemote> repositoryRemotesGet(
+    final JFPRepositoryPath repository);
 
   /**
    * @return A read-only map of the current remotes.

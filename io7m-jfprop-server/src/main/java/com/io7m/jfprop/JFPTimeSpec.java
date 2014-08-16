@@ -1,10 +1,10 @@
 /*
  * Copyright © 2014 <code@io7m.com> http://io7m.com
- * 
+ *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
  * copyright notice and this permission notice appear in all copies.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
  * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
@@ -52,7 +52,7 @@ public final class JFPTimeSpec implements Serializable
 
   public static JFPTimeSpec parseFromRequest(
     final Map<String, String[]> request)
-    throws JFPExceptionInvalidArgument,
+      throws JFPExceptionInvalidArgument,
       JFPExceptionNonexistent
   {
     final OptionType<JFPTimeComponentSpecType> d =
@@ -124,51 +124,51 @@ public final class JFPTimeSpec implements Serializable
 
     final Boolean day_matches =
       this.day
-        .accept(new OptionVisitorType<JFPTimeComponentSpecType, Boolean>() {
-          @Override public Boolean none(
-            final None<JFPTimeComponentSpecType> n)
-          {
-            return Boolean.TRUE;
-          }
+      .accept(new OptionVisitorType<JFPTimeComponentSpecType, Boolean>() {
+        @Override public Boolean none(
+          final None<JFPTimeComponentSpecType> n)
+        {
+          return Boolean.TRUE;
+        }
 
-          @Override public Boolean some(
-            final Some<JFPTimeComponentSpecType> s)
-          {
-            return s.get().matches(time.get(Calendar.DAY_OF_MONTH));
-          }
-        });
+        @Override public Boolean some(
+          final Some<JFPTimeComponentSpecType> s)
+        {
+          return s.get().matches(time.get(Calendar.DAY_OF_MONTH));
+        }
+      });
 
     final Boolean hour_matches =
       this.hour
-        .accept(new OptionVisitorType<JFPTimeComponentSpecType, Boolean>() {
-          @Override public Boolean none(
-            final None<JFPTimeComponentSpecType> n)
-          {
-            return Boolean.TRUE;
-          }
+      .accept(new OptionVisitorType<JFPTimeComponentSpecType, Boolean>() {
+        @Override public Boolean none(
+          final None<JFPTimeComponentSpecType> n)
+        {
+          return Boolean.TRUE;
+        }
 
-          @Override public Boolean some(
-            final Some<JFPTimeComponentSpecType> s)
-          {
-            return s.get().matches(time.get(Calendar.HOUR_OF_DAY));
-          }
-        });
+        @Override public Boolean some(
+          final Some<JFPTimeComponentSpecType> s)
+        {
+          return s.get().matches(time.get(Calendar.HOUR_OF_DAY));
+        }
+      });
 
     final Boolean minute_matches =
       this.minute
-        .accept(new OptionVisitorType<JFPTimeComponentSpecType, Boolean>() {
-          @Override public Boolean none(
-            final None<JFPTimeComponentSpecType> n)
-          {
-            return Boolean.TRUE;
-          }
+      .accept(new OptionVisitorType<JFPTimeComponentSpecType, Boolean>() {
+        @Override public Boolean none(
+          final None<JFPTimeComponentSpecType> n)
+        {
+          return Boolean.TRUE;
+        }
 
-          @Override public Boolean some(
-            final Some<JFPTimeComponentSpecType> s)
-          {
-            return s.get().matches(time.get(Calendar.MINUTE));
-          }
-        });
+        @Override public Boolean some(
+          final Some<JFPTimeComponentSpecType> s)
+        {
+          return s.get().matches(time.get(Calendar.MINUTE));
+        }
+      });
 
     return day_matches && hour_matches && minute_matches;
   }

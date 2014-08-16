@@ -25,6 +25,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.eclipse.jetty.server.Request;
 
+import com.io7m.jfunctional.Pair;
 import com.io7m.jlog.LogUsableType;
 
 /**
@@ -41,24 +42,15 @@ public final class JFPAdminCommandUserAdd extends JFPAdminHandlerAbstract
     super(in_config, db, in_log);
   }
 
-  @Override public void handleAuthenticated(
+  @Override public Pair<Integer, byte[]> handleAuthenticated(
     final String target,
     final Request base_request,
     final HttpServletRequest request,
-    final HttpServletResponse response,
     final JFPAdminDatabaseTransactionType transaction)
     throws JFPException,
       IOException,
       ServletException
   {
-    if ("POST".equals(request.getMethod()) == false) {
-      JFPResponseUtilities.sendText(
-        response,
-        HttpServletResponse.SC_METHOD_NOT_ALLOWED,
-        "Command requires POST");
-      return;
-    }
-
     try {
       final Map<String, String[]> params = request.getParameterMap();
       assert params != null;
@@ -67,22 +59,16 @@ public final class JFPAdminCommandUserAdd extends JFPAdminHandlerAbstract
         final JFPUserName user = JFPAuthentication.getUser(params);
         transaction.userAdd(user);
       } catch (final JFPExceptionAuthentication e) {
-        JFPResponseUtilities.sendText(
-          response,
+        return Pair.pair(
           HttpServletResponse.SC_BAD_REQUEST,
-          "User name missing or invalid");
-        return;
+          "User name missing or invalid".getBytes("UTF-8"));
       }
 
-      response.setStatus(HttpServletResponse.SC_OK);
-      response.setContentType("text/plain");
-      response.setCharacterEncoding("UTF-8");
-      response.setContentLength(0);
+      return Pair.pair(HttpServletResponse.SC_OK, new byte[0]);
     } catch (final JFPExceptionDuplicate e) {
-      JFPResponseUtilities.sendText(
-        response,
-        HttpServletResponse.SC_CONFLICT,
-        e.getMessage());
+      return Pair.pair(HttpServletResponse.SC_CONFLICT, e
+        .getMessage()
+        .getBytes("UTF-8"));
     }
   }
 }

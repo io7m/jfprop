@@ -20,10 +20,11 @@ import java.io.IOException;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Request;
+
+import com.io7m.jfunctional.Pair;
 
 /**
  * The type of command handlers that require admin credentials.
@@ -40,8 +41,6 @@ public interface JFPAdminHandlerType extends Handler
    *          The base request.
    * @param request
    *          The actual servlet request.
-   * @param response
-   *          The servlet response.
    * @param transaction
    *          The current database transaction.
    * @throws JFPException
@@ -50,13 +49,15 @@ public interface JFPAdminHandlerType extends Handler
    *           On I/O errors.
    * @throws ServletException
    *           On servlet errors.
+   * 
+   * @return A pair consisting of an HTTP status code, and some bytes
+   *         representing UTF-8 text.
    */
 
-  void handleAuthenticated(
+  Pair<Integer, byte[]> handleAuthenticated(
     final String target,
     final Request base_request,
     final HttpServletRequest request,
-    final HttpServletResponse response,
     final JFPAdminDatabaseTransactionType transaction)
     throws JFPException,
       IOException,

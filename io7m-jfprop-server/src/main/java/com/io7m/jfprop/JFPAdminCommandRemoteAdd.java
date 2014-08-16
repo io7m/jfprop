@@ -24,6 +24,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.eclipse.jetty.server.Request;
 
+import com.io7m.jfunctional.Pair;
 import com.io7m.jlog.LogUsableType;
 
 /**
@@ -40,11 +41,10 @@ public final class JFPAdminCommandRemoteAdd extends JFPAdminHandlerAbstract
     super(in_config, db, in_log);
   }
 
-  @Override public void handleAuthenticated(
+  @Override public Pair<Integer, byte[]> handleAuthenticated(
     final String target,
     final Request base_request,
     final HttpServletRequest request,
-    final HttpServletResponse response,
     final JFPAdminDatabaseTransactionType transaction)
     throws JFPException,
       IOException
@@ -55,20 +55,19 @@ public final class JFPAdminCommandRemoteAdd extends JFPAdminHandlerAbstract
 
       final JFPRemote remote = JFPRemote.fromParameters(params);
       final Integer id = transaction.remoteAdd(remote);
-      JFPResponseUtilities.sendText(
-        response,
-        HttpServletResponse.SC_OK,
-        Integer.toString(id));
+
+      return Pair.pair(HttpServletResponse.SC_OK, Integer
+        .toString(id)
+        .getBytes("UTF-8"));
+
     } catch (final JFPExceptionInvalidArgument e) {
-      JFPResponseUtilities.sendText(
-        response,
-        HttpServletResponse.SC_BAD_REQUEST,
-        e.getMessage());
+      return Pair.pair(HttpServletResponse.SC_BAD_REQUEST, e
+        .getMessage()
+        .getBytes("UTF-8"));
     } catch (final JFPExceptionNonexistent e) {
-      JFPResponseUtilities.sendText(
-        response,
-        HttpServletResponse.SC_BAD_REQUEST,
-        e.getMessage());
+      return Pair.pair(HttpServletResponse.SC_BAD_REQUEST, e
+        .getMessage()
+        .getBytes("UTF-8"));
     }
   }
 }

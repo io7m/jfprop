@@ -25,9 +25,10 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandler;
+import org.mapdb.TxRollbackException;
 
+import com.io7m.jfunctional.Pair;
 import com.io7m.jfunctional.PartialFunctionType;
-import com.io7m.jfunctional.Unit;
 import com.io7m.jlog.LogUsableType;
 import com.io7m.jnull.NullCheck;
 import com.io7m.jnull.Nullable;
@@ -70,11 +71,11 @@ abstract class JFPAdminHandlerAbstract extends AbstractHandler implements
 
     try {
       final String method = request.getMethod();
-      if (("POST".equals(method) == false) && ("GET".equals(method) == false)) {
+      if ("POST".equals(method) == false) {
         JFPResponseUtilities.sendText(
           response,
           HttpServletResponse.SC_METHOD_NOT_ALLOWED,
-          "GET or POST is required");
+          "POST is required");
         return;
       }
 
@@ -86,21 +87,25 @@ abstract class JFPAdminHandlerAbstract extends AbstractHandler implements
         throw new JFPExceptionAuthentication("incorrect password");
       }
 
-      this.database
-        .withAdminTransaction(new PartialFunctionType<JFPAdminDatabaseTransactionType, Unit, Exception>() {
-          @Override public Unit call(
-            final JFPAdminDatabaseTransactionType t)
-            throws Exception
-          {
-            JFPAdminHandlerAbstract.this.handleAuthenticated(
-              target,
-              base_request,
-              request,
-              response,
-              t);
-            return Unit.unit();
-          }
-        });
+      final Pair<Integer, byte[]> r =
+        this.database
+          .withAdminTransaction(new PartialFunctionType<JFPAdminDatabaseTransactionType, Pair<Integer, byte[]>, Exception>() {
+            @Override public Pair<Integer, byte[]> call(
+              final JFPAdminDatabaseTransactionType t)
+              throws Exception
+            {
+              return JFPAdminHandlerAbstract.this.handleAuthenticated(
+                target,
+                base_request,
+                request,
+                t);
+            }
+          });
+
+      JFPResponseUtilities.sendBytesAsUTF8WithStatus(
+        response,
+        r.getLeft(),
+        r.getRight());
 
     } catch (final JFPExceptionAuthentication e) {
       this.log.error("authentication failed: " + e.getMessage());
@@ -108,11 +113,19 @@ abstract class JFPAdminHandlerAbstract extends AbstractHandler implements
         response,
         HttpServletResponse.SC_FORBIDDEN,
         "Access denied");
-      return;
-    } catch (final JFPException e) {
-      throw new ServletException(e);
-    } catch (final Exception e) {
-      throw new ServletException(e);
+    } catch (final TxRollbackException e) {
+      this.log.debug("database transaction failed: " + e.toString());
+      JFPResponseUtilities
+        .sendText(
+          response,
+          HttpServletResponse.SC_CONFLICT,
+          "The command conflicted with an in-progress database transaction and was reverted");
+    } catch (final Throwable e) {
+      this.log.critical(e.toString());
+      JFPResponseUtilities.sendText(
+        response,
+        HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+        "Internal server error: " + e.toString());
     }
   }
 }

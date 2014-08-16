@@ -26,6 +26,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.eclipse.jetty.server.Request;
 
+import com.io7m.jfunctional.Pair;
 import com.io7m.jlog.LogUsableType;
 
 /**
@@ -33,39 +34,30 @@ import com.io7m.jlog.LogUsableType;
  */
 
 public final class JFPAdminCommandMassSyncList extends
-JFPAdminHandlerAbstract
+  JFPAdminHandlerAbstract
 {
   JFPAdminCommandMassSyncList(
     final JFPServerConfigType in_config,
     final JFPAdminDatabaseType db,
     final LogUsableType in_log)
-    {
+  {
     super(in_config, db, in_log);
-    }
+  }
 
-  @Override public void handleAuthenticated(
+  @Override public Pair<Integer, byte[]> handleAuthenticated(
     final String target,
     final Request base_request,
     final HttpServletRequest request,
-    final HttpServletResponse response,
     final JFPAdminDatabaseTransactionType transaction)
-      throws JFPException,
+    throws JFPException,
       IOException,
       ServletException
   {
-    if ("POST".equals(request.getMethod()) == false) {
-      JFPResponseUtilities.sendText(
-        response,
-        HttpServletResponse.SC_METHOD_NOT_ALLOWED,
-        "Command requires POST");
-      return;
-    }
-
     final Map<String, String[]> params = request.getParameterMap();
     assert params != null;
 
     final SortedMap<Integer, JFPMassSyncSpec> m = transaction.massSyncList();
     final byte[] b = JFPResponseUtilities.encodeMap(m);
-    JFPResponseUtilities.sendBytesAsUTF8(response, b);
+    return Pair.pair(HttpServletResponse.SC_OK, b);
   }
 }

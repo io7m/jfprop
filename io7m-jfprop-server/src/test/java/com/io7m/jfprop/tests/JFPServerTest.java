@@ -1,10 +1,10 @@
 /*
  * Copyright © 2014 <code@io7m.com> http://io7m.com
- *
+ * 
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
  * copyright notice and this permission notice appear in all copies.
- *
+ * 
  * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
  * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
@@ -130,7 +130,7 @@ import com.io7m.jlog.LogLevel;
     final AtomicReference<Exception> error = new AtomicReference<Exception>();
 
     final JFPServerMain s =
-      JFPServerMain.newServer(c, new JFPServerEventsType() {
+      JFPServerMain.newServerWithEvents(c, new JFPServerEventsType() {
         @Override public void serverStarted(
           final JFPServerControlType sc)
           throws Exception
@@ -241,8 +241,7 @@ import com.io7m.jlog.LogLevel;
             final int r = c.getResponseCode();
             Assert.assertEquals(HttpServletResponse.SC_OK, r);
 
-            final String text =
-              JFPServerTest.this.readAll(c.getInputStream());
+            final String text = JFPServerTest.readAll(c.getInputStream());
             key = new JFPKey(text.trim());
           }
 
@@ -305,7 +304,7 @@ import com.io7m.jlog.LogLevel;
     Assert.assertTrue(ran.get());
   }
 
-  protected String readAll(
+  protected static String readAll(
     final InputStream is)
     throws IOException
   {
@@ -338,7 +337,7 @@ import com.io7m.jlog.LogLevel;
               (HttpURLConnection) new URL(
                 "http://localhost:32768/?admin_password=abcd")
                 .openConnection();
-            c.setRequestMethod("GET");
+            c.setRequestMethod("POST");
 
             final int r = c.getResponseCode();
             Assert.assertEquals(HttpServletResponse.SC_NOT_FOUND, r);
@@ -604,7 +603,7 @@ import com.io7m.jlog.LogLevel;
               (HttpURLConnection) new URL(
                 "http://localhost:32768/user-list?admin_password=abcd")
                 .openConnection();
-            c.setRequestMethod("GET");
+            c.setRequestMethod("POST");
 
             final int r = c.getResponseCode();
             Assert.assertEquals(HttpServletResponse.SC_OK, r);
@@ -635,7 +634,7 @@ import com.io7m.jlog.LogLevel;
             final HttpURLConnection c =
               (HttpURLConnection) new URL("http://localhost:32768/user-list")
                 .openConnection();
-            c.setRequestMethod("GET");
+            c.setRequestMethod("POST");
 
             final int r = c.getResponseCode();
             Assert.assertEquals(HttpServletResponse.SC_FORBIDDEN, r);
@@ -667,7 +666,7 @@ import com.io7m.jlog.LogLevel;
               (HttpURLConnection) new URL(
                 "http://localhost:32768/user-list-keys?admin_password=abcd")
                 .openConnection();
-            c.setRequestMethod("GET");
+            c.setRequestMethod("POST");
 
             final int r = c.getResponseCode();
             Assert.assertEquals(HttpServletResponse.SC_BAD_REQUEST, r);
@@ -721,7 +720,7 @@ import com.io7m.jlog.LogLevel;
               (HttpURLConnection) new URL(
                 "http://localhost:32768/user-list-keys?admin_password=abcd&user=someone")
                 .openConnection();
-            c.setRequestMethod("GET");
+            c.setRequestMethod("POST");
 
             final int r = c.getResponseCode();
             Assert.assertEquals(HttpServletResponse.SC_OK, r);
@@ -753,7 +752,7 @@ import com.io7m.jlog.LogLevel;
               (HttpURLConnection) new URL(
                 "http://localhost:32768/user-list-keys?admin_password=abcd&user=someone")
                 .openConnection();
-            c.setRequestMethod("GET");
+            c.setRequestMethod("POST");
 
             final int r = c.getResponseCode();
             Assert.assertEquals(HttpServletResponse.SC_BAD_REQUEST, r);
@@ -785,7 +784,7 @@ import com.io7m.jlog.LogLevel;
               (HttpURLConnection) new URL(
                 "http://localhost:32768/user-list-keys?user=someone")
                 .openConnection();
-            c.setRequestMethod("GET");
+            c.setRequestMethod("POST");
 
             final int r = c.getResponseCode();
             Assert.assertEquals(HttpServletResponse.SC_FORBIDDEN, r);
@@ -963,8 +962,7 @@ import com.io7m.jlog.LogLevel;
             final int r = c.getResponseCode();
             Assert.assertEquals(HttpServletResponse.SC_OK, r);
 
-            final String text =
-              JFPServerTest.this.readAll(c.getInputStream());
+            final String text = JFPServerTest.readAll(c.getInputStream());
             rid = Integer.valueOf(text.trim());
 
             Assert.assertTrue(rid.intValue() > 0);
@@ -1195,8 +1193,7 @@ import com.io7m.jlog.LogLevel;
             final int r = c.getResponseCode();
             Assert.assertEquals(HttpServletResponse.SC_OK, r);
 
-            final String text =
-              JFPServerTest.this.readAll(c.getInputStream());
+            final String text = JFPServerTest.readAll(c.getInputStream());
             rid = Integer.valueOf(text.trim());
 
             Assert.assertTrue(rid.intValue() > 0);
@@ -1246,8 +1243,7 @@ import com.io7m.jlog.LogLevel;
             final int r = c.getResponseCode();
             Assert.assertEquals(HttpServletResponse.SC_OK, r);
 
-            final String text =
-              JFPServerTest.this.readAll(c.getInputStream());
+            final String text = JFPServerTest.readAll(c.getInputStream());
             rid = Integer.valueOf(text.trim());
 
             Assert.assertTrue(rid.intValue() > 0);
@@ -1274,8 +1270,7 @@ import com.io7m.jlog.LogLevel;
             final int r = c.getResponseCode();
             Assert.assertEquals(HttpServletResponse.SC_OK, r);
 
-            final String text =
-              JFPServerTest.this.readAll(c.getInputStream());
+            final String text = JFPServerTest.readAll(c.getInputStream());
             Assert.assertEquals(rid.toString(), text.trim());
           }
 
@@ -1344,8 +1339,7 @@ import com.io7m.jlog.LogLevel;
             final int r = c.getResponseCode();
             Assert.assertEquals(HttpServletResponse.SC_OK, r);
 
-            final String text =
-              JFPServerTest.this.readAll(c.getInputStream());
+            final String text = JFPServerTest.readAll(c.getInputStream());
             Assert.assertTrue(text.trim().isEmpty());
           }
 
@@ -1414,8 +1408,7 @@ import com.io7m.jlog.LogLevel;
             final int r = c.getResponseCode();
             Assert.assertEquals(HttpServletResponse.SC_OK, r);
 
-            final String text =
-              JFPServerTest.this.readAll(c.getInputStream());
+            final String text = JFPServerTest.readAll(c.getInputStream());
             rid = Integer.valueOf(text.trim());
 
             Assert.assertTrue(rid.intValue() > 0);
@@ -1786,13 +1779,12 @@ import com.io7m.jlog.LogLevel;
               (HttpURLConnection) new URL(
                 "http://localhost:32768/mass-sync-is-enabled?admin_password=abcd")
                 .openConnection();
-            c.setRequestMethod("GET");
+            c.setRequestMethod("POST");
 
             final int r = c.getResponseCode();
             Assert.assertEquals(HttpServletResponse.SC_OK, r);
 
-            final String text =
-              JFPServerTest.this.readAll(c.getInputStream());
+            final String text = JFPServerTest.readAll(c.getInputStream());
             Assert.assertEquals("true", text.trim());
           }
 
@@ -1812,13 +1804,12 @@ import com.io7m.jlog.LogLevel;
               (HttpURLConnection) new URL(
                 "http://localhost:32768/mass-sync-is-enabled?admin_password=abcd")
                 .openConnection();
-            c.setRequestMethod("GET");
+            c.setRequestMethod("POST");
 
             final int r = c.getResponseCode();
             Assert.assertEquals(HttpServletResponse.SC_OK, r);
 
-            final String text =
-              JFPServerTest.this.readAll(c.getInputStream());
+            final String text = JFPServerTest.readAll(c.getInputStream());
             Assert.assertEquals("false", text.trim());
           }
 
@@ -1853,7 +1844,7 @@ import com.io7m.jlog.LogLevel;
             final int r = c.getResponseCode();
             Assert.assertEquals(HttpServletResponse.SC_OK, r);
 
-            final String s = JFPServerTest.this.readAll(c.getInputStream());
+            final String s = JFPServerTest.readAll(c.getInputStream());
             Assert.assertTrue(s.trim().isEmpty());
           }
 

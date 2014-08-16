@@ -24,6 +24,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.eclipse.jetty.server.Request;
 
+import com.io7m.jfunctional.Pair;
 import com.io7m.jlog.LogUsableType;
 
 /**
@@ -40,11 +41,10 @@ public final class JFPAdminCommandUserList extends JFPAdminHandlerAbstract
     super(in_config, db, in_log);
   }
 
-  @Override public void handleAuthenticated(
+  @Override public Pair<Integer, byte[]> handleAuthenticated(
     final String target,
     final Request base_request,
     final HttpServletRequest request,
-    final HttpServletResponse response,
     final JFPAdminDatabaseTransactionType transaction)
     throws JFPException,
       IOException
@@ -53,6 +53,6 @@ public final class JFPAdminCommandUserList extends JFPAdminHandlerAbstract
 
     final SortedSet<JFPUserName> names = transaction.userListGet();
     final byte[] e = JFPResponseUtilities.encodeSet(names);
-    JFPResponseUtilities.sendBytesAsUTF8(response, e);
+    return Pair.pair(HttpServletResponse.SC_OK, e);
   }
 }

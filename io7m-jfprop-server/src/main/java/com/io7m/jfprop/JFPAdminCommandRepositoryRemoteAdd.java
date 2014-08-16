@@ -25,6 +25,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.eclipse.jetty.server.Request;
 
+import com.io7m.jfunctional.Pair;
 import com.io7m.jlog.LogUsableType;
 
 /**
@@ -42,24 +43,15 @@ public final class JFPAdminCommandRepositoryRemoteAdd extends
     super(in_config, db, in_log);
   }
 
-  @Override public void handleAuthenticated(
+  @Override public Pair<Integer, byte[]> handleAuthenticated(
     final String target,
     final Request base_request,
     final HttpServletRequest request,
-    final HttpServletResponse response,
     final JFPAdminDatabaseTransactionType transaction)
     throws JFPException,
       IOException,
       ServletException
   {
-    if ("POST".equals(request.getMethod()) == false) {
-      JFPResponseUtilities.sendText(
-        response,
-        HttpServletResponse.SC_METHOD_NOT_ALLOWED,
-        "Command requires POST");
-      return;
-    }
-
     try {
       final Map<String, String[]> params = request.getParameterMap();
       assert params != null;
@@ -75,16 +67,16 @@ public final class JFPAdminCommandRepositoryRemoteAdd extends
       assert remote != null;
 
       transaction.repositoryAddRemote(project, remote);
+
+      return Pair.pair(HttpServletResponse.SC_OK, new byte[0]);
     } catch (final JFPExceptionNonexistent e) {
-      JFPResponseUtilities.sendText(
-        response,
-        HttpServletResponse.SC_BAD_REQUEST,
-        e.getMessage());
+      return Pair.pair(HttpServletResponse.SC_BAD_REQUEST, e
+        .getMessage()
+        .getBytes("UTF-8"));
     } catch (final NumberFormatException e) {
-      JFPResponseUtilities.sendText(
-        response,
-        HttpServletResponse.SC_BAD_REQUEST,
-        e.getMessage());
+      return Pair.pair(HttpServletResponse.SC_BAD_REQUEST, e
+        .getMessage()
+        .getBytes("UTF-8"));
     }
   }
 }

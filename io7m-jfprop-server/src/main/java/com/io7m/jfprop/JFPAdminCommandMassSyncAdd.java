@@ -25,6 +25,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.eclipse.jetty.server.Request;
 
+import com.io7m.jfunctional.Pair;
 import com.io7m.jlog.LogUsableType;
 
 /**
@@ -37,28 +38,19 @@ public final class JFPAdminCommandMassSyncAdd extends JFPAdminHandlerAbstract
     final JFPServerConfigType in_config,
     final JFPAdminDatabaseType db,
     final LogUsableType in_log)
-    {
+  {
     super(in_config, db, in_log);
-    }
+  }
 
-  @Override public void handleAuthenticated(
+  @Override public Pair<Integer, byte[]> handleAuthenticated(
     final String target,
     final Request base_request,
     final HttpServletRequest request,
-    final HttpServletResponse response,
     final JFPAdminDatabaseTransactionType transaction)
-      throws JFPException,
+    throws JFPException,
       IOException,
       ServletException
   {
-    if ("POST".equals(request.getMethod()) == false) {
-      JFPResponseUtilities.sendText(
-        response,
-        HttpServletResponse.SC_METHOD_NOT_ALLOWED,
-        "Command requires POST");
-      return;
-    }
-
     try {
       final Map<String, String[]> params = request.getParameterMap();
       assert params != null;
@@ -66,15 +58,13 @@ public final class JFPAdminCommandMassSyncAdd extends JFPAdminHandlerAbstract
       final JFPMassSyncSpec m = JFPMassSyncSpec.parseFromRequest(params);
       final Integer id = transaction.massSyncAdd(m);
 
-      JFPResponseUtilities.sendText(
-        response,
+      return Pair.pair(
         HttpServletResponse.SC_OK,
-        id.toString());
+        id.toString().getBytes("UTF-8"));
     } catch (final JFPExceptionNonexistent e) {
-      JFPResponseUtilities.sendText(
-        response,
-        HttpServletResponse.SC_BAD_REQUEST,
-        e.getMessage());
+      return Pair.pair(HttpServletResponse.SC_BAD_REQUEST, e
+        .getMessage()
+        .getBytes("UTF-8"));
     }
   }
 }

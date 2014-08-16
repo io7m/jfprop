@@ -1,10 +1,10 @@
 /*
  * Copyright © 2014 <code@io7m.com> http://io7m.com
- *
+ * 
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
  * copyright notice and this permission notice appear in all copies.
- *
+ * 
  * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
  * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
@@ -96,11 +96,23 @@ public final class JFPResponseUtilities
     final byte[] e)
     throws IOException
   {
-    response.setStatus(HttpServletResponse.SC_OK);
+    JFPResponseUtilities.sendBytesAsUTF8WithStatus(
+      response,
+      HttpServletResponse.SC_OK,
+      e);
+  }
+
+  static void sendBytesAsUTF8WithStatus(
+    final HttpServletResponse response,
+    final Integer status,
+    final byte[] data)
+    throws IOException
+  {
+    response.setStatus(status.intValue());
     response.setContentType("text/plain");
     response.setCharacterEncoding("UTF-8");
-    response.setContentLength(e.length);
-    response.getOutputStream().write(e);
+    response.setContentLength(data.length);
+    response.getOutputStream().write(data);
     response.flushBuffer();
   }
 

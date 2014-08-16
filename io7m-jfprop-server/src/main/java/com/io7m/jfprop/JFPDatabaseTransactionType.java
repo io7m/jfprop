@@ -26,13 +26,19 @@ import java.util.SortedMap;
 public interface JFPDatabaseTransactionType
 {
   /**
+   * List all remotes (including global remotes that are implicitly assigned
+   * to all repositories) for the given repository.
+   *
    * @param repository
-   *          The repository path.
-   * @return The remotes for the given repository, if any.
+   *          The repository.
+   * @return The set of remotes for the repository.
+   * @throws JFPExceptionNonexistent
+   *           If the repository does not exist.
    */
 
-  Set<JFPRemote> repositoryRemotesGet(
-    final JFPRepositoryPath repository);
+  Set<Integer> repositoryListRemotes(
+    final JFPRepositoryPath repository)
+    throws JFPExceptionNonexistent;
 
   /**
    * @return A read-only map of the current remotes.

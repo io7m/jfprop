@@ -1,10 +1,10 @@
 /*
  * Copyright © 2014 <code@io7m.com> http://io7m.com
- * 
+ *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
  * copyright notice and this permission notice appear in all copies.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
  * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
@@ -1342,7 +1342,11 @@ import com.io7m.jlog.LogLevel;
             c.setRequestMethod("POST");
 
             final int r = c.getResponseCode();
-            Assert.assertEquals(HttpServletResponse.SC_BAD_REQUEST, r);
+            Assert.assertEquals(HttpServletResponse.SC_OK, r);
+
+            final String text =
+              JFPServerTest.this.readAll(c.getInputStream());
+            Assert.assertTrue(text.trim().isEmpty());
           }
 
           return Unit.unit();
@@ -1816,6 +1820,41 @@ import com.io7m.jlog.LogLevel;
             final String text =
               JFPServerTest.this.readAll(c.getInputStream());
             Assert.assertEquals("false", text.trim());
+          }
+
+          return Unit.unit();
+        } finally {
+          ran.set(true);
+        }
+      }
+    });
+
+    Assert.assertTrue(ran.get());
+  }
+
+  @Test(timeout = 1000000) public void testAdminRepositoryRemoteList()
+    throws Exception
+  {
+    final AtomicBoolean ran = new AtomicBoolean(false);
+
+    this.run(true, true, new Callable<Unit>() {
+      @Override public Unit call()
+        throws Exception
+      {
+        try {
+
+          {
+            final HttpURLConnection c =
+              (HttpURLConnection) new URL(
+                "http://localhost:32768/repository-remote-list?admin_password=abcd&repository=/a/b/c")
+                .openConnection();
+            c.setRequestMethod("POST");
+
+            final int r = c.getResponseCode();
+            Assert.assertEquals(HttpServletResponse.SC_OK, r);
+
+            final String s = JFPServerTest.this.readAll(c.getInputStream());
+            Assert.assertTrue(s.trim().isEmpty());
           }
 
           return Unit.unit();

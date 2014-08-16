@@ -1,10 +1,10 @@
 /*
  * Copyright © 2014 <code@io7m.com> http://io7m.com
- * 
+ *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
  * copyright notice and this permission notice appear in all copies.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
  * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
@@ -37,8 +37,8 @@ import com.io7m.jfprop.JFPExceptionDuplicate;
 import com.io7m.jfprop.JFPExceptionNonexistent;
 import com.io7m.jfprop.JFPKey;
 import com.io7m.jfprop.JFPMassSyncSpec;
-import com.io7m.jfprop.JFPRepositoryPath;
 import com.io7m.jfprop.JFPRemote;
+import com.io7m.jfprop.JFPRepositoryPath;
 import com.io7m.jfprop.JFPServerDatabaseTransactionType;
 import com.io7m.jfprop.JFPUserName;
 import com.io7m.jfunctional.PartialFunctionType;
@@ -76,25 +76,6 @@ import com.io7m.junreachable.UnreachableCodeException;
           final JFPRepositoryPath p = new JFPRepositoryPath("/a/b/c.fossil");
 
           t.repositoryAddRemote(p, Integer.valueOf(23));
-          return Unit.unit();
-        }
-      });
-  }
-
-  @Test(expected = JFPExceptionNonexistent.class) public
-    void
-    testProjectNonexistent_1()
-      throws Exception
-  {
-    final JFPAllDatabaseType db = this.database();
-    db
-      .withAdminTransaction(new PartialFunctionType<JFPAdminDatabaseTransactionType, Unit, JFPException>() {
-        @Override public Unit call(
-          final JFPAdminDatabaseTransactionType t)
-          throws JFPException
-        {
-          final JFPRepositoryPath p = new JFPRepositoryPath("/a/b/c.fossil");
-          t.repositoryListRemotes(p);
           return Unit.unit();
         }
       });

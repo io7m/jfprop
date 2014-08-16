@@ -42,7 +42,7 @@ import com.io7m.junreachable.UnreachableCodeException;
  * The main database implementation.
  */
 
-public final class JFPDatabase
+@SuppressWarnings({ "boxing", "synthetic-access" }) public final class JFPDatabase
 {
   private static final class Database implements JFPAllDatabaseType
   {
@@ -261,48 +261,21 @@ public final class JFPDatabase
     }
 
     @Override public Set<Integer> repositoryListRemotes(
-      final JFPRepositoryPath project)
+      final JFPRepositoryPath repository)
       throws JFPExceptionNonexistent
     {
-      final BTreeMap<JFPRepositoryPath, Set<Integer>> projects =
+      final BTreeMap<JFPRepositoryPath, Set<Integer>> repositories =
         JFPDatabase.getRepositories(this.db);
       final Set<Integer> globals = JFPDatabase.getRemotesGlobal(this.db);
 
-      if (projects.containsKey(project) == false) {
-        throw new JFPExceptionNonexistent(String.format(
-          "Nonexistent project '%s'",
-          project));
+      final Set<Integer> r = new HashSet<Integer>();
+      if (repositories.containsKey(repository)) {
+        final Set<Integer> repository_remotes = repositories.get(repository);
+        r.addAll(repository_remotes);
       }
 
-      final Set<Integer> project_remotes = projects.get(project);
-      final Set<Integer> r = new HashSet<Integer>();
-      r.addAll(project_remotes);
       r.addAll(globals);
       return r;
-    }
-
-    @Override public Set<JFPRemote> repositoryRemotesGet(
-      final JFPRepositoryPath project)
-    {
-      try {
-        final BTreeMap<JFPRepositoryPath, Set<Integer>> projects =
-          JFPDatabase.getRepositories(this.db);
-        final BTreeMap<Integer, JFPRemote> remotes =
-          JFPDatabase.getRemotes(this.db);
-
-        if (projects.containsKey(project)) {
-          final Set<JFPRemote> r = new HashSet<JFPRemote>();
-          final Set<Integer> ids = this.repositoryListRemotes(project);
-          for (final Integer i : ids) {
-            r.add(remotes.get(i));
-          }
-          return r;
-        }
-
-        return new HashSet<JFPRemote>();
-      } catch (final JFPExceptionNonexistent e) {
-        throw new UnreachableCodeException(e);
-      }
     }
 
     @Override public void userAdd(

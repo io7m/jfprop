@@ -1,10 +1,10 @@
 /*
  * Copyright © 2014 <code@io7m.com> http://io7m.com
- *
+ * 
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
  * copyright notice and this permission notice appear in all copies.
- *
+ * 
  * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
  * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
@@ -25,7 +25,7 @@ import java.util.SortedSet;
  */
 
 public interface JFPAdminDatabaseTransactionType extends
-JFPDatabaseTransactionType
+  JFPDatabaseTransactionType
 {
   /**
    * Add a new mass sync.
@@ -93,7 +93,7 @@ JFPDatabaseTransactionType
 
   void repositoryAddGlobalRemote(
     Integer remote)
-      throws JFPExceptionNonexistent;
+    throws JFPExceptionNonexistent;
 
   /**
    * Add the remote with the given identifier to the given repository.
@@ -109,22 +109,7 @@ JFPDatabaseTransactionType
   void repositoryAddRemote(
     final JFPRepositoryPath repository,
     Integer remote)
-      throws JFPExceptionNonexistent;
-
-  /**
-   * List all remotes (including global remotes that are implicitly assigned
-   * to all repositories) for the given repository.
-   *
-   * @param repository
-   *          The repository.
-   * @return The set of remotes for the repository.
-   * @throws JFPExceptionNonexistent
-   *           If the repository does not exist.
-   */
-
-  Set<Integer> repositoryListRemotes(
-    final JFPRepositoryPath repository)
-      throws JFPExceptionNonexistent;
+    throws JFPExceptionNonexistent;
 
   /**
    * Create a new user.
@@ -137,7 +122,7 @@ JFPDatabaseTransactionType
 
   void userAdd(
     JFPUserName user)
-      throws JFPExceptionDuplicate;
+    throws JFPExceptionDuplicate;
 
   /**
    * Generate a new key and add it to the given user.
@@ -151,7 +136,7 @@ JFPDatabaseTransactionType
 
   JFPKey userGenerateKey(
     JFPUserName user)
-      throws JFPExceptionNonexistent;
+    throws JFPExceptionNonexistent;
 
   /**
    * @return The current list of users.
@@ -171,7 +156,7 @@ JFPDatabaseTransactionType
 
   Set<JFPKey> userListKeys(
     JFPUserName user)
-      throws JFPExceptionNonexistent;
+    throws JFPExceptionNonexistent;
 
   /**
    * Revoke the given key from given user.
@@ -187,5 +172,5 @@ JFPDatabaseTransactionType
   void userRevokeKey(
     JFPUserName user,
     JFPKey key)
-      throws JFPExceptionNonexistent;
+    throws JFPExceptionNonexistent;
 }

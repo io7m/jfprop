@@ -61,6 +61,8 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <siteReposDirectory>/com/io7m/jfprop</siteReposDirectory>
+    <siteDocumentationDirectory>/com/io7m/jfprop/io7m-jfprop-documentation</siteDocumentationDirectory>
   </properties>
 
   <dependencies>

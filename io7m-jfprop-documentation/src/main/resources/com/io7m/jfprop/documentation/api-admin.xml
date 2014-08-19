@@ -38,6 +38,10 @@
       <s:term s:type="constant">403</s:term> status codes in the case of
       missing or invalid credentials.
     </s:paragraph>
+    <s:paragraph>
+      All requests made to the API are required to be via the HTTP
+      <s:term s:type="command">POST</s:term> method.
+    </s:paragraph>
   </s:section>
 
   <s:section xml:id="api.admin.mass-sync-add">

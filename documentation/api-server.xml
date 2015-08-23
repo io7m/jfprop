@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+  Copyright © 2014 <code@io7m.com> http://io7m.com
+
+  Permission to use, copy, modify, and/or distribute this software for any
+  purpose with or without fee is hereby granted, provided that the above
+  copyright notice and this permission notice appear in all copies.
+
+  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+  -->
+
+<s:part 
+  xml:id="api.server"  
+  xmlns:s="http://schemas.io7m.com/structural/2.1.0"
+  xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <s:part-title>API Reference: Server</s:part-title>
+  <s:part-contents/>
+
+  <s:section xml:id="api.server.overview">
+    <s:section-title>Overview</s:section-title>
+    <s:section-contents/>
+ 
+    <s:paragraph>
+      This section describes the API presented to clients. All commands
+      return a <s:term s:type="constant">200</s:term> status code on
+      success, or a status code in the <s:term s:type="constant">400</s:term>
+      range in the case of errors. All commands require clients to send
+      credentials in the form of valid user names and keys, and will return 
+      <s:term s:type="constant">403</s:term> status codes in the case of
+      missing or invalid credentials.
+    </s:paragraph>
+  </s:section>
+
+  <s:section xml:id="api.server.on-commit">
+    <s:section-title>on-commit</s:section-title>
+    <s:section-contents/>
+    
+    <s:subsection>
+      <s:subsection-title>Description</s:subsection-title>
+      <s:paragraph>
+        The <s:term s:type="command">on-commit</s:term> command notifies the
+        server that a given repository has changed and should be synchronized.
+      </s:paragraph>
+    </s:subsection>
+    
+    <s:subsection>
+      <s:subsection-title>Required Parameters</s:subsection-title>
+      <s:formal-item s:kind="specification" s:type="parameters">
+        <s:formal-item-title>Required parameters</s:formal-item-title>
+        <s:table>
+          <s:table-summary>Required parameters</s:table-summary>
+          <s:table-head>
+            <s:table-column-name>Name</s:table-column-name>
+            <s:table-column-name>Type</s:table-column-name>
+            <s:table-column-name>Description</s:table-column-name>
+          </s:table-head>
+          <s:table-body>
+            <s:table-row>
+              <s:table-cell>user</s:table-cell>
+              <s:table-cell><s:link s:target="api.types.user_name">user_name</s:link></s:table-cell>
+              <s:table-cell>The user name of the caller</s:table-cell>
+            </s:table-row>
+            <s:table-row>
+              <s:table-cell>key</s:table-cell>
+              <s:table-cell><s:link s:target="api.types.key">key</s:link></s:table-cell>
+              <s:table-cell>The key of the caller</s:table-cell>
+            </s:table-row>
+            <s:table-row>
+              <s:table-cell>repository</s:table-cell>
+              <s:table-cell><s:link s:target="api.types.path">path</s:link></s:table-cell>
+              <s:table-cell>The repository path</s:table-cell>
+            </s:table-row>
+          </s:table-body>
+        </s:table>
+      </s:formal-item>
+    </s:subsection>
+
+    <s:subsection>
+      <s:subsection-title>Return value</s:subsection-title>
+      <s:paragraph>
+        The command does not return a value.
+      </s:paragraph>
+    </s:subsection>
+  </s:section>
+
+  <s:section xml:id="api.server.list">
+    <s:section-title>list</s:section-title>
+    <s:section-contents/>
+    
+    <s:subsection>
+      <s:subsection-title>Description</s:subsection-title>
+      <s:paragraph>
+        The <s:term s:type="command">list</s:term> command lists
+        all repositories under management by the server.
+      </s:paragraph>
+    </s:subsection>
+    
+    <s:subsection>
+      <s:subsection-title>Required Parameters</s:subsection-title>
+      <s:formal-item s:kind="specification" s:type="parameters">
+        <s:formal-item-title>Required parameters</s:formal-item-title>
+        <s:table>
+          <s:table-summary>Required parameters</s:table-summary>
+          <s:table-head>
+            <s:table-column-name>Name</s:table-column-name>
+            <s:table-column-name>Type</s:table-column-name>
+            <s:table-column-name>Description</s:table-column-name>
+          </s:table-head>
+          <s:table-body>
+            <s:table-row>
+              <s:table-cell>user</s:table-cell>
+              <s:table-cell><s:link s:target="api.types.user_name">user_name</s:link></s:table-cell>
+              <s:table-cell>The user name of the caller</s:table-cell>
+            </s:table-row>
+            <s:table-row>
+              <s:table-cell>key</s:table-cell>
+              <s:table-cell><s:link s:target="api.types.key">key</s:link></s:table-cell>
+              <s:table-cell>The key of the caller</s:table-cell>
+            </s:table-row>
+          </s:table-body>
+        </s:table>
+      </s:formal-item>
+    </s:subsection>
+
+    <s:subsection>
+      <s:subsection-title>Return value</s:subsection-title>
+      <s:paragraph>
+        The command returns a list of values of type 
+        <s:link s:target="api.types.path">path</s:link>, one path per line.
+      </s:paragraph>
+    </s:subsection>
+  </s:section>
+
+</s:part>

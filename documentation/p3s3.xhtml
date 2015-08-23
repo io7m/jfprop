@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head><title>io7m-jfprop 0.3.0 Documentation: 3.3. user_name</title><link rel="stylesheet" type="text/css" href="jstructural-2.0.0-layout.css"/><link rel="stylesheet" type="text/css" href="jstructural-2.0.0-colour.css"/><link rel="stylesheet" type="text/css" href="documentation.css"/></head><body><div class="st200_body"><div class="brand">
+  <div class="brand_left">
+    <a href="http://io7m.com/">io7m</a>
+  </div>
+  <div class="brand_right">
+    <a href="http://io7m.github.io/jfprop">io7m-jfprop</a> 0.3.0
+  </div>
+</div><div class="st200_navbar st200_navbar_top"><table class="st200_navbar_table" summary="Navigation bar"><tr><td class="st200_navbar_prev_title_cell">3.2. Functions</td><td class="st200_navbar_up_title_cell">3. API Reference: Types</td><td class="st200_navbar_next_title_cell">3.4. key</td></tr><tr><td class="st200_navbar_prev_file_cell"><a href="p3s2.xhtml#st200_p3s2">Previous</a></td><td class="st200_navbar_up_file_cell"><a href="p3.xhtml#st200_p3">Up</a></td><td class="st200_navbar_next_file_cell"><a href="p3s4.xhtml#st200_p3s4">Next</a></td></tr></table><hr class="st200_hr"/></div><div class="st200_section_container"><div class="st200_section_title_number"><a id="st200_p3s3" href="#st200_p3s3">3.3</a></div><div class="st200_section_title">user_name</div><div class="st200_subsection_container"><div class="st200_subsection_title_number"><a id="st200_p3s3ss1" href="#st200_p3s3ss1">3.3.1</a></div><div class="st200_subsection_title">Description</div><div class="st200_paragraph_container"><div class="st200_paragraph_number"><a id="st200_p3s3ss1pg1" href="#st200_p3s3ss1pg1">1</a></div><div class="st200_paragraph">
+        Values of the <span class="st200_term type">user_name</span> type
+        represent valid user names.
+      </div></div></div><div class="st200_subsection_container"><div class="st200_subsection_title_number"><a id="st200_p3s3ss2" href="#st200_p3s3ss2">3.3.2</a></div><div class="st200_subsection_title">Definition</div><div class="st200_paragraph_container"><div class="st200_paragraph_number"><a id="st200_p3s3ss2pg1" href="#st200_p3s3ss2pg1">1</a></div><div class="st200_paragraph">
+        A string <span class="st200_term variable">s</span> can be 
+        interpreted as a value of type <span class="st200_term type">user_name</span> 
+        iff:
+      </div></div><div class="st200_formal_item"><div class="st200_formal_item_title"><a id="st200_p3s3ss2fo1" href="#st200_p3s3ss2fo1">3.3.2.1. Type predicate</a></div><pre class="st200_verbatim">(empty(s) = false) ∧ ∀i. in(s, i), 
+  ∀c. c = get(s,i),
+    is_digit(c) ∨ is_letter(c) ∨ (c = U+005F)</pre></div></div><div class="st200_subsection_container"><div class="st200_subsection_title_number"><a id="st200_p3s3ss3" href="#st200_p3s3ss3">3.3.3</a></div><div class="st200_subsection_title">Java</div><div class="st200_paragraph_container"><div class="st200_paragraph_number"><a id="st200_p3s3ss3pg1" href="#st200_p3s3ss3pg1">1</a></div><div class="st200_paragraph">
+        In the <span class="st200_term package">io7m-jfprop</span> server implementation,
+        the <span class="st200_term type">user_name</span> type is represented by the
+        <a class="st200_link_external" href="apidocs/com/io7m/jfprop/JFPUserName.html">JFPUserName</a>
+        type.
+      </div></div></div></div><div class="st200_navbar st200_navbar_bottom"><hr class="st200_hr"/><table class="st200_navbar_table" summary="Navigation bar"><tr><td class="st200_navbar_prev_file_cell"><a href="p3s2.xhtml#st200_p3s2">Previous</a></td><td class="st200_navbar_up_file_cell"><a href="p3.xhtml#st200_p3">Up</a></td><td class="st200_navbar_next_file_cell"><a href="p3s4.xhtml#st200_p3s4">Next</a></td></tr><tr><td class="st200_navbar_prev_title_cell">3.2. Functions</td><td class="st200_navbar_up_title_cell">3. API Reference: Types</td><td class="st200_navbar_next_title_cell">3.4. key</td></tr></table></div></div></body></html>

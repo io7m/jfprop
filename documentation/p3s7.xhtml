@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head><title>io7m-jfprop 0.3.0 Documentation: 3.7. time_component_spec</title><link rel="stylesheet" type="text/css" href="jstructural-2.0.0-layout.css"/><link rel="stylesheet" type="text/css" href="jstructural-2.0.0-colour.css"/><link rel="stylesheet" type="text/css" href="documentation.css"/></head><body><div class="st200_body"><div class="brand">
+  <div class="brand_left">
+    <a href="http://io7m.com/">io7m</a>
+  </div>
+  <div class="brand_right">
+    <a href="http://io7m.github.io/jfprop">io7m-jfprop</a> 0.3.0
+  </div>
+</div><div class="st200_navbar st200_navbar_top"><table class="st200_navbar_table" summary="Navigation bar"><tr><td class="st200_navbar_prev_title_cell">3.6. pattern</td><td class="st200_navbar_up_title_cell">3. API Reference: Types</td><td class="st200_navbar_next_title_cell">3.8. uri</td></tr><tr><td class="st200_navbar_prev_file_cell"><a href="p3s6.xhtml#st200_p3s6">Previous</a></td><td class="st200_navbar_up_file_cell"><a href="p3.xhtml#st200_p3">Up</a></td><td class="st200_navbar_next_file_cell"><a href="p3s8.xhtml#st200_p3s8">Next</a></td></tr></table><hr class="st200_hr"/></div><div class="st200_section_container"><div class="st200_section_title_number"><a id="st200_p3s7" href="#st200_p3s7">3.7</a></div><div class="st200_section_title">time_component_spec</div><div class="st200_subsection_container"><div class="st200_subsection_title_number"><a id="st200_p3s7ss1" href="#st200_p3s7ss1">3.7.1</a></div><div class="st200_subsection_title">Description</div><div class="st200_paragraph_container"><div class="st200_paragraph_number"><a id="st200_p3s7ss1pg1" href="#st200_p3s7ss1pg1">1</a></div><div class="st200_paragraph">
+        Values of the <span class="st200_term type">time_component_spec</span> type
+        represent patterns for matching periods of time. A value of the
+        <span class="st200_term type">time_component_spec</span> type can be of
+        one of three forms:
+      </div></div><div class="st200_formal_item"><div class="st200_formal_item_title"><a id="st200_p3s7ss1fo1" href="#st200_p3s7ss1fo1">3.7.1.1. Type definition</a></div><ol class="st200_list_ordered"><li class="st200_list_item">
+            <span class="st200_term constant">any</span> - matches any value.
+          </li><li class="st200_list_item">
+            <span class="st200_term constant">exact n</span> - matches values that
+            are equal to <span class="st200_term variable">n</span>.
+          </li><li class="st200_list_item">
+            <span class="st200_term constant">divisible n</span> - matches values that
+            are divisible by <span class="st200_term variable">n</span>.
+          </li></ol></div><div class="st200_paragraph_container"><div class="st200_paragraph_number"><a id="st200_p3s7ss1pg2" href="#st200_p3s7ss1pg2">2</a></div><div class="st200_paragraph">
+        Values of the <span class="st200_term type">time_component_spec</span> are
+        usually combined to specify times. The
+        <span class="st200_term package">io7m-jfprop</span> uses
+        three values of type <span class="st200_term type">time_component_spec</span>
+        to specify the times of day that mass synchronizations will be executed,
+        specifying the day, hour, and minute, respectively. As an example,
+        <span class="st200_term expression">(any, divisible 2, exact 30)</span>
+        specifies that a synchronization should run on all days, on even-numbered
+        hours, at <span class="st200_term constant">30</span> minutes past the hour.
+      </div></div></div><div class="st200_subsection_container"><div class="st200_subsection_title_number"><a id="st200_p3s7ss2" href="#st200_p3s7ss2">3.7.2</a></div><div class="st200_subsection_title">Java</div><div class="st200_paragraph_container"><div class="st200_paragraph_number"><a id="st200_p3s7ss2pg1" href="#st200_p3s7ss2pg1">1</a></div><div class="st200_paragraph">
+        In the <span class="st200_term package">io7m-jfprop</span> server implementation,
+        the <span class="st200_term type">time_component_spec</span> type is represented by the
+        <a class="st200_link_external" href="apidocs/com/io7m/jfprop/JFPTimeComponentSpecType.html">JFPTimeComponentSpecType</a>
+        type.
+      </div></div></div></div><div class="st200_navbar st200_navbar_bottom"><hr class="st200_hr"/><table class="st200_navbar_table" summary="Navigation bar"><tr><td class="st200_navbar_prev_file_cell"><a href="p3s6.xhtml#st200_p3s6">Previous</a></td><td class="st200_navbar_up_file_cell"><a href="p3.xhtml#st200_p3">Up</a></td><td class="st200_navbar_next_file_cell"><a href="p3s8.xhtml#st200_p3s8">Next</a></td></tr><tr><td class="st200_navbar_prev_title_cell">3.6. pattern</td><td class="st200_navbar_up_title_cell">3. API Reference: Types</td><td class="st200_navbar_next_title_cell">3.8. uri</td></tr></table></div></div></body></html>

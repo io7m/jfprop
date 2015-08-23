@@ -1,0 +1,341 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head><title>io7m-jfprop 0.3.0 Documentation: 2.2. Configuration</title><link rel="stylesheet" type="text/css" href="jstructural-2.0.0-layout.css"/><link rel="stylesheet" type="text/css" href="jstructural-2.0.0-colour.css"/><link rel="stylesheet" type="text/css" href="documentation.css"/></head><body><div class="st200_body"><div class="brand">
+  <div class="brand_left">
+    <a href="http://io7m.com/">io7m</a>
+  </div>
+  <div class="brand_right">
+    <a href="http://io7m.github.io/jfprop">io7m-jfprop</a> 0.3.0
+  </div>
+</div><div class="st200_navbar st200_navbar_top"><table class="st200_navbar_table" summary="Navigation bar"><tr><td class="st200_navbar_prev_title_cell">2.1. Overview</td><td class="st200_navbar_up_title_cell">2. User Guide</td><td class="st200_navbar_next_title_cell">3. API Reference: Types</td></tr><tr><td class="st200_navbar_prev_file_cell"><a href="p2s1.xhtml#st200_p2s1">Previous</a></td><td class="st200_navbar_up_file_cell"><a href="p2.xhtml#st200_p2">Up</a></td><td class="st200_navbar_next_file_cell"><a href="p3.xhtml#st200_p3">Next</a></td></tr></table><hr class="st200_hr"/></div><div class="st200_section_container"><div class="st200_section_title_number"><a id="st200_p2s2" href="#st200_p2s2">2.2</a></div><div class="st200_section_title">Configuration</div><ul class="st200_contents st200_section_contents_outer st200_section_contents"><li class="st200_contents_item st200_contents_item1 st200_contents_item_subsection"><a href="p2s2.xhtml#st200_p2s2ss1">2.2.1. Overview</a></li><li class="st200_contents_item st200_contents_item1 st200_contents_item_subsection"><a href="p2s2.xhtml#st200_p2s2ss2">2.2.2. Minimal server</a></li><li class="st200_contents_item st200_contents_item1 st200_contents_item_subsection"><a href="p2s2.xhtml#st200_p2s2ss3">2.2.3. Authentication</a></li><li class="st200_contents_item st200_contents_item1 st200_contents_item_subsection"><a href="p2s2.xhtml#st200_p2s2ss4">2.2.4. Synchronization</a></li><li class="st200_contents_item st200_contents_item1 st200_contents_item_subsection"><a href="p2s2.xhtml#st200_p2s2ss5">2.2.5. Mass synchronization</a></li><li class="st200_contents_item st200_contents_item1 st200_contents_item_subsection"><a href="p2s2.xhtml#st200_p2s2ss6">2.2.6. TLS</a></li><li class="st200_contents_item st200_contents_item1 st200_contents_item_subsection"><a href="p2s2.xhtml#st200_p2s2ss7">2.2.7. Remotes</a></li><li class="st200_contents_item st200_contents_item1 st200_contents_item_subsection"><a href="p2s2.xhtml#st200_p2s2ss8">2.2.8. Mail</a></li><li class="st200_contents_item st200_contents_item1 st200_contents_item_subsection"><a href="p2s2.xhtml#st200_p2s2ss9">2.2.9. Configuring Fossil</a></li></ul><div class="st200_subsection_container"><div class="st200_subsection_title_number"><a id="st200_p2s2ss1" href="#st200_p2s2ss1">2.2.1</a></div><div class="st200_subsection_title">Overview</div><div class="st200_paragraph_container"><div class="st200_paragraph_number"><a id="st200_p2s2ss1pg1" href="#st200_p2s2ss1pg1">1</a></div><div class="st200_paragraph">
+        The <span class="st200_term package">io7m-jfprop</span> server uses
+        a simple configuration file for the settings required to actually get the
+        server up and running, and then depends on a 
+        <span class="st200_term term">administration interface</span> to configure all
+        other settings. The administration interface listens for HTTP(S) requests and
+        provides a trivial <span class="st200_term term">REST</span> API intended to be
+        usable by simple command line tools.
+      </div></div><div class="st200_paragraph_container"><div class="st200_paragraph_number"><a id="st200_p2s2ss1pg2" href="#st200_p2s2ss1pg2">2</a></div><div class="st200_paragraph">
+        Full documentation for the configuration file format is given
+        in the <a class="st200_link" href="p6.xhtml#st200_p6">reference manual</a> 
+        for the format.
+      </div></div></div><div class="st200_subsection_container"><div class="st200_subsection_title_number"><a id="st200_p2s2ss2" href="#st200_p2s2ss2">2.2.2</a></div><div class="st200_subsection_title">Minimal server</div><div class="st200_paragraph_container"><div class="st200_paragraph_number"><a id="st200_p2s2ss2pg1" href="#st200_p2s2ss2pg1">1</a></div><div class="st200_paragraph">
+        The bare minimum configuration needed to get a server to start
+        is as follows:
+      </div></div><div class="st200_formal_item"><div class="st200_formal_item_title"><a id="st200_p2s2ss2fo1" href="#st200_p2s2ss2fo1">2.2.2.1. Minimal server configuration</a></div><pre class="st200_verbatim">com.io7m.jfprop.server_log_directory  = /var/log/jfprop
+com.io7m.jfprop.server_log_level      = LOG_DEBUG
+com.io7m.jfprop.server_database_file  = /var/db/jfprop
+
+com.io7m.jfprop.fossil_repository_directory = /fossil/repositories
+com.io7m.jfprop.fossil_executable           = /usr/bin/fossil
+
+com.io7m.jfprop.server_http_enabled  = true
+com.io7m.jfprop.server_http_address  = 10.2.1.10
+com.io7m.jfprop.server_http_port     = 10080
+
+com.io7m.jfprop.server_admin_enabled  = true
+com.io7m.jfprop.server_admin_address  = 127.0.0.1
+com.io7m.jfprop.server_admin_port     = 11080
+com.io7m.jfprop.server_admin_password = hackme</pre></div><div class="st200_paragraph_container"><div class="st200_paragraph_number"><a id="st200_p2s2ss2pg2" href="#st200_p2s2ss2pg2">2</a></div><div class="st200_paragraph">
+        The configuration file will:
+      </div></div><div class="st200_formal_item"><div class="st200_formal_item_title"><a id="st200_p2s2ss2fo2" href="#st200_p2s2ss2fo2">2.2.2.2. Minimal server configuration</a></div><ol class="st200_list_ordered"><li class="st200_list_item">
+            Tell the server to place HTTP(S) access logs in <span class="st200_term file">/var/log/jfprop</span>. 
+            The log files are in the
+            <a class="st200_link_external" href="https://en.wikipedia.org/wiki/Common_Log_Format">common log format</a>.
+            The log files are automatically rotated by date, and the server keeps 30 days worth of logs.
+          </li><li class="st200_list_item">
+            Tell the server to perform full debug logging.
+          </li><li class="st200_list_item">
+            Tell the server to create its configuration database at <span class="st200_term file">/var/db/jfprop</span>.
+          </li><li class="st200_list_item">
+            Set the administration password to <span class="st200_term constant">hackme</span>. Clients connecting
+            to the administration interface are required to present this password in order to access any commands.
+          </li><li class="st200_list_item">
+            Set the Fossil repository directory to <span class="st200_term file">/fossil/repositories</span>. The
+            server will resolve all repository names relative to this directory. So, if a client refers to
+            a repository named <span class="st200_term file">/com.example/project.fossil</span>, the server will
+            access <span class="st200_term file">/fossil/repositories/com.example/project.fossil</span>.
+          </li><li class="st200_list_item">
+            Tell the server to use the Fossil executable at
+            <span class="st200_term file">/usr/bin/fossil</span>.
+          </li><li class="st200_list_item">
+            Enable an HTTP server interface, making it accessible on 
+            <span class="st200_term constant">10.2.1.10:10080</span>. This is the interface
+            that clients use to send change notifications.
+          </li><li class="st200_list_item">
+            Enable an HTTP administration interface, making it accessible on 
+            <span class="st200_term constant">127.0.0.1:11080</span>. This is the interface
+            that clients use to administer the server.
+          </li></ol></div><div class="st200_paragraph_container"><div class="st200_paragraph_number"><a id="st200_p2s2ss2pg3" href="#st200_p2s2ss2pg3">3</a></div><div class="st200_paragraph">
+        With this configuration file (<span class="st200_term file">server.conf</span>), and 
+        assuming that all referenced directories have been created, the server can be 
+        started with the included 
+        <span class="st200_term file">io7m-jfprop-server-0.3.0-main.jar</span>:
+      </div></div><div class="st200_formal_item"><div class="st200_formal_item_title"><a id="st200_p2s2ss2fo3" href="#st200_p2s2ss2fo3">2.2.2.3. Minimal server configuration</a></div><pre class="st200_verbatim">$ java -jar io7m-jfprop-server-0.3.0-main.jar server.conf
+main: info: io7m-jfprop-server 0.3.0 starting
+main: info: starting http server on http://10.2.1.10:10080
+main: info: starting administration http server on http://localhost.localdomain:11080</pre></div><div class="st200_paragraph_container"><div class="st200_paragraph_number"><a id="st200_p2s2ss2pg4" href="#st200_p2s2ss2pg4">4</a></div><div class="st200_paragraph">
+        The server does not fork into the background, allowing it to be safely
+        monitored by process supervision programs such as 
+        <a class="st200_link_external" href="http://cr.yp.to/daemontools.html">daemontools</a>.
+      </div></div></div><div class="st200_subsection_container"><div class="st200_subsection_title_number"><a id="st200_p2s2ss3" href="#st200_p2s2ss3">2.2.3</a></div><div class="st200_subsection_title">Authentication</div><div class="st200_paragraph_container"><div class="st200_paragraph_number"><a id="st200_p2s2ss3pg1" href="#st200_p2s2ss3pg1">1</a></div><div class="st200_paragraph">
+        The <span class="st200_term package">io7m-jfprop</span> server implements
+        a simple authentication system. In order to use the administration interface, clients
+        must provide the <span class="st200_term term">admin password</span>. This is passed
+        as an ordinary HTTP request parameter called 
+        <span class="st200_term variable">admin_password</span>. As an example, using the
+        ubiquitous <a class="st200_link_external" href="http://curl.haxx.se/">curl</a> command
+        line tool (with individual HTTP parameters passed with the <span class="st200_term command">-d</span> option):
+      </div></div><div class="st200_formal_item"><div class="st200_formal_item_title"><a id="st200_p2s2ss3fo1" href="#st200_p2s2ss3fo1">2.2.3.1. Management access</a></div><pre class="st200_verbatim">$ curl http://127.0.0.1:11080/ -d admin_password=hackme
+Unknown or unspecified command</pre></div><div class="st200_paragraph_container"><div class="st200_paragraph_number"><a id="st200_p2s2ss3pg2" href="#st200_p2s2ss3pg2">2</a></div><div class="st200_paragraph">
+        The server replies with a simple <span class="st200_term constant">text/plain</span>
+        UTF-8 body. Without the admin password, access is denied (and a 
+        <span class="st200_term constant">403</span> HTTP status code is returned):
+      </div></div><div class="st200_formal_item"><div class="st200_formal_item_title"><a id="st200_p2s2ss3fo2" href="#st200_p2s2ss3fo2">2.2.3.2. Management access</a></div><pre class="st200_verbatim">$ curl http://127.0.0.1:11080/
+Access denied</pre></div><div class="st200_paragraph_container"><div class="st200_paragraph_number"><a id="st200_p2s2ss3pg3" href="#st200_p2s2ss3pg3">3</a></div><div class="st200_paragraph">
+        Clients wanting to send notifications of commits and tickets to the server must
+        also be authenticated. First, assuming a client with a user name 
+        <span class="st200_term constant">client0</span>, a <span class="st200_term term">user</span>
+        must first be created:
+      </div></div><div class="st200_formal_item"><div class="st200_formal_item_title"><a id="st200_p2s2ss3fo3" href="#st200_p2s2ss3fo3">2.2.3.3. User creation</a></div><pre class="st200_verbatim">$ curl http://127.0.0.1:11080/user-add -d admin_password=hackme -d user=client0</pre></div><div class="st200_paragraph_container"><div class="st200_paragraph_number"><a id="st200_p2s2ss3pg4" href="#st200_p2s2ss3pg4">4</a></div><div class="st200_paragraph">
+        The server says nothing and returns a standard 
+        <span class="st200_term constant">200</span> HTTP status code
+        if the operation is successful.
+      </div></div><div class="st200_paragraph_container"><div class="st200_paragraph_number"><a id="st200_p2s2ss3pg5" href="#st200_p2s2ss3pg5">5</a></div><div class="st200_paragraph">
+        A single user may have many different workstations, and for reasons of 
+        security, each workstation should be uniquely authenticated. For
+        example, if a developer loses their laptop to theft, that laptop should no
+        longer have any kind of access to the server. The server allows this kind
+        of control by requiring user accounts to have 
+        <span class="st200_term term">keys</span>. In order to generate a new key for
+        <span class="st200_term constant">client0</span>, use the
+        <span class="st200_term constant">user-generate-key</span> command:
+      </div></div><div class="st200_formal_item"><div class="st200_formal_item_title"><a id="st200_p2s2ss3fo4" href="#st200_p2s2ss3fo4">2.2.3.4. Key generation</a></div><pre class="st200_verbatim">$ curl http://127.0.0.1:11080/user-generate-key -d admin_password=hackme -d user=client0
+ff569067d71901822d41cb6f0a889da6caf1ecc1ca69fac22e7a10db1a24ee43
+$ curl http://127.0.0.1:11080/user-generate-key -d admin_password=hackme -d user=client0
+abc684a8a6fde91644c2cc4829baaef7a96445897a339f18ea40d99ec15491c1
+$ curl http://127.0.0.1:11080/user-generate-key -d admin_password=hackme -d user=client0
+04c7fea50c91415e39bbe3c0ce1a7bbce165fdd50e3d5c8b25d460f4ef99c923</pre></div><div class="st200_paragraph_container"><div class="st200_paragraph_number"><a id="st200_p2s2ss3pg6" href="#st200_p2s2ss3pg6">6</a></div><div class="st200_paragraph">
+        The keys for any user account can be listed:
+      </div></div><div class="st200_formal_item"><div class="st200_formal_item_title"><a id="st200_p2s2ss3fo5" href="#st200_p2s2ss3fo5">2.2.3.5. Key listing</a></div><pre class="st200_verbatim">$ curl http://127.0.0.1:11080/user-list-keys -d admin_password=hackme -d user=client0
+ff569067d71901822d41cb6f0a889da6caf1ecc1ca69fac22e7a10db1a24ee43
+abc684a8a6fde91644c2cc4829baaef7a96445897a339f18ea40d99ec15491c1
+04c7fea50c91415e39bbe3c0ce1a7bbce165fdd50e3d5c8b25d460f4ef99c923</pre></div><div class="st200_paragraph_container"><div class="st200_paragraph_number"><a id="st200_p2s2ss3pg7" href="#st200_p2s2ss3pg7">7</a></div><div class="st200_paragraph">
+        Keys can also be revoked at any time:
+      </div></div><div class="st200_formal_item"><div class="st200_formal_item_title"><a id="st200_p2s2ss3fo6" href="#st200_p2s2ss3fo6">2.2.3.6. Key revocation</a></div><pre class="st200_verbatim">$ curl http://127.0.0.1:11080/user-revoke-key -d admin_password=hackme -d user=client0 -d key=ff569067d71901822d41cb6f0a889da6caf1ecc1ca69fac22e7a10db1a24ee43
+$ curl http://127.0.0.1:11080/user-list-keys -d admin_password=hackme -d user=client0
+abc684a8a6fde91644c2cc4829baaef7a96445897a339f18ea40d99ec15491c1
+04c7fea50c91415e39bbe3c0ce1a7bbce165fdd50e3d5c8b25d460f4ef99c923</pre></div><div class="st200_paragraph_container"><div class="st200_paragraph_number"><a id="st200_p2s2ss3pg8" href="#st200_p2s2ss3pg8">8</a></div><div class="st200_paragraph">
+        Clients must present valid user names and keys in order to use the
+        server interface. The <span class="st200_term command">list</span> command 
+        (on the server interface, not the administration interface) will list 
+        all repositories in any subdirectory of the configured repository
+        directory. Assuming that the directory contains 
+        <span class="st200_term file">example0.fossil</span>,
+        <span class="st200_term file">example1.fossil</span>, and
+        <span class="st200_term file">example2.fossil</span>:
+      </div></div><div class="st200_formal_item"><div class="st200_formal_item_title"><a id="st200_p2s2ss3fo7" href="#st200_p2s2ss3fo7">2.2.3.7. Repository listing</a></div><pre class="st200_verbatim">$ curl http://127.0.0.1:10080/list -d user=client0 -d key=abc684a8a6fde91644c2cc4829baaef7a96445897a339f18ea40d99ec15491c1
+/example0.fossil
+/example1.fossil
+/example2.fossil</pre></div><div class="st200_paragraph_container"><div class="st200_paragraph_number"><a id="st200_p2s2ss3pg9" href="#st200_p2s2ss3pg9">9</a></div><div class="st200_paragraph">
+        Without a correct user name and key, access is denied:
+      </div></div><div class="st200_formal_item"><div class="st200_formal_item_title"><a id="st200_p2s2ss3fo8" href="#st200_p2s2ss3fo8">2.2.3.8. Repository listing (Access denied)</a></div><pre class="st200_verbatim">$ curl http://127.0.0.1:10080/list -d user=client0 -d key=notvalid
+Access denied</pre></div></div><div class="st200_subsection_container"><div class="st200_subsection_title_number"><a id="st200_p2s2ss4" href="#st200_p2s2ss4">2.2.4</a></div><div class="st200_subsection_title">Synchronization</div><div class="st200_paragraph_container"><div class="st200_paragraph_number"><a id="st200_p2s2ss4pg1" href="#st200_p2s2ss4pg1">1</a></div><div class="st200_paragraph">
+        With a user configured with a key, notifications can now be delivered to the
+        server interface.
+      </div></div><div class="st200_formal_item"><div class="st200_formal_item_title"><a id="st200_p2s2ss4fo1" href="#st200_p2s2ss4fo1">2.2.4.1. Commit notification</a></div><pre class="st200_verbatim">$ curl http://127.0.0.1:10080/on-commit -d repository=/example0.fossil -d user=client0 -d key=abc684a8a6fde91644c2cc4829baaef7a96445897a339f18ea40d99ec15491c1</pre></div><div class="st200_paragraph_container"><div class="st200_paragraph_number"><a id="st200_p2s2ss4pg2" href="#st200_p2s2ss4pg2">2</a></div><div class="st200_paragraph">
+        The server then runs <span class="st200_term command">fossil sync</span> on the
+        repository specified by the client.
+      </div></div></div><div class="st200_subsection_container"><div class="st200_subsection_title_number"><a id="st200_p2s2ss5" href="#st200_p2s2ss5">2.2.5</a></div><div class="st200_subsection_title">Mass synchronization</div><div class="st200_paragraph_container"><div class="st200_paragraph_number"><a id="st200_p2s2ss5pg1" href="#st200_p2s2ss5pg1">1</a></div><div class="st200_paragraph">
+        In the <a class="st200_link" href="p2s1.xhtml#st200_p2s1pg4">original example</a>,
+        one of the issues was that if developers make changes on an external mirror
+        repository, then those changes don't make it back into a canonical repository
+        until something causes the canonical repository to synchronize. The
+        <span class="st200_term package">io7m-jfprop</span> server can periodically
+        synchronize sets of repositories. Administrators provide 
+        <span class="st200_term term">time specifications</span> 
+        (such as "any day, on hours divisible by 2, at 30 minutes past the hour") and
+        <span class="st200_term term">regular expressions</span> 
+        (such as <span class="st200_term expression">"/x/.*\.fossil"</span>),
+        and the server synchronizes matching repositories at matching times. As an
+        example, to synchronize all repositories with names containing the word "example"
+        at <span class="st200_term term">14:25</span> every day:
+      </div></div><div class="st200_formal_item"><div class="st200_formal_item_title"><a id="st200_p2s2ss5fo1" href="#st200_p2s2ss5fo1">2.2.5.1. Mass synchronization example</a></div><pre class="st200_verbatim">$ curl http://127.0.0.1:11080/mass-sync-add -d admin_password=hackme -d time_spec_day=any -d time_spec_hour='exact 14' -d time_spec_minute='exact 25' -d pattern='.*example.*\.fossil'</pre></div><div class="st200_paragraph_container"><div class="st200_paragraph_number"><a id="st200_p2s2ss5pg2" href="#st200_p2s2ss5pg2">2</a></div><div class="st200_paragraph">
+        To synchronize all repositories at the start of all even hours:
+      </div></div><div class="st200_formal_item"><div class="st200_formal_item_title"><a id="st200_p2s2ss5fo2" href="#st200_p2s2ss5fo2">2.2.5.2. Mass synchronization example</a></div><pre class="st200_verbatim">$ curl http://127.0.0.1:11080/mass-sync-add -d admin_password=hackme -d time_spec_day=any -d time_spec_hour='divisible 2' -d time_spec_minute='exact 0' -d pattern='.*\.fossil'</pre></div><div class="st200_paragraph_container"><div class="st200_paragraph_number"><a id="st200_p2s2ss5pg3" href="#st200_p2s2ss5pg3">3</a></div><div class="st200_paragraph">
+        The server provides a test command, 
+        <span class="st200_term command">mass-sync-test-pattern</span>, that adminstrators 
+        can use to check if a given pattern will match a given repository:
+      </div></div><div class="st200_formal_item"><div class="st200_formal_item_title"><a id="st200_p2s2ss5fo3" href="#st200_p2s2ss5fo3">2.2.5.3. Mass synchronization example</a></div><pre class="st200_verbatim">$ curl http://127.0.0.1:11080/mass-sync-test-pattern -d admin_password=hackme -d pattern='.*\.fossil' -d text='a.fossil'
+true
+
+$ curl http://127.0.0.1:11080/mass-sync-test-pattern -d admin_password=hackme -d pattern='example\.fossil' -d text='a.fossil'
+false</pre></div><div class="st200_paragraph_container"><div class="st200_paragraph_number"><a id="st200_p2s2ss5pg4" href="#st200_p2s2ss5pg4">4</a></div><div class="st200_paragraph">
+        Mass synchronization is not enabled by default, and must be explicitly
+        enabled in the configuration file:
+      </div></div><div class="st200_formal_item"><div class="st200_formal_item_title"><a id="st200_p2s2ss5fo4" href="#st200_p2s2ss5fo4">2.2.5.4. Mass synchronization configuration</a></div><pre class="st200_verbatim">com.io7m.jfprop.server_mass_synchronizer_enabled = true</pre></div><div class="st200_paragraph_container"><div class="st200_paragraph_number"><a id="st200_p2s2ss5pg5" href="#st200_p2s2ss5pg5">5</a></div><div class="st200_paragraph">
+        This is intended as a safety feature in emergencies: If a misconfigured
+        mass synchronization is causing repository syncs at an alarming rate, the
+        administrator can stop the server, disable the synchronizer, restart the
+        server, and then not have to rush to fix the misconfigured mass synchronization
+        in the administration interface before more synchronizations occur.
+      </div></div></div><div class="st200_subsection_container"><div class="st200_subsection_title_number"><a id="st200_p2s2ss6" href="#st200_p2s2ss6">2.2.6</a></div><div class="st200_subsection_title">TLS</div><div class="st200_paragraph_container"><div class="st200_paragraph_number"><a id="st200_p2s2ss6pg1" href="#st200_p2s2ss6pg1">1</a></div><div class="st200_paragraph">
+        Clearly, sending user names, keys, and passwords in cleartext over
+        hostile networks is a bad idea. The 
+        <span class="st200_term package">io7m-jfprop</span> server can
+        be configured to use the 
+        <a class="st200_link_external" href="http://en.wikipedia.org/wiki/Transport_Layer_Security">TLS</a>
+        protocol to secure all communications between clients and the server.
+      </div></div><div class="st200_paragraph_container"><div class="st200_paragraph_number"><a id="st200_p2s2ss6pg2" href="#st200_p2s2ss6pg2">2</a></div><div class="st200_paragraph">
+        Familiarity with Java <a class="st200_link_external" href="http://en.wikipedia.org/wiki/Keystore">keystores</a>
+        and <span class="st200_term term">truststores</span> is assumed, and the
+        configuration of these is outside of the scope of this documentation.
+        The following configuration file enables TLS for both the administration
+        and server interfaces:
+      </div></div><div class="st200_formal_item"><div class="st200_formal_item_title"><a id="st200_p2s2ss6fo1" href="#st200_p2s2ss6fo1">2.2.6.1. TLS server configuration</a></div><pre class="st200_verbatim">com.io7m.jfprop.server_log_directory  = /var/log/jfprop
+com.io7m.jfprop.server_log_level      = LOG_DEBUG
+com.io7m.jfprop.server_database_file  = /var/db/jfprop
+
+com.io7m.jfprop.fossil_repository_directory = /fossil/repositories
+com.io7m.jfprop.fossil_executable           = /usr/bin/fossil
+
+com.io7m.jfprop.server_https_enabled             = true
+com.io7m.jfprop.server_https_address             = 10.2.1.10
+com.io7m.jfprop.server_https_port                = 10443
+com.io7m.jfprop.server_https_keystore_path       = /etc/jfprop/key_store.jks
+com.io7m.jfprop.server_https_keystore_type       = JKS
+com.io7m.jfprop.server_https_keystore_password   = compromisemykeystore
+com.io7m.jfprop.server_https_truststore_path     = /etc/jfprop/trust_store.jks
+com.io7m.jfprop.server_https_truststore_type     = JKS
+com.io7m.jfprop.server_https_truststore_password = compromisemytruststore
+
+com.io7m.jfprop.server_admin_https_enabled             = true
+com.io7m.jfprop.server_admin_https_address             = 127.0.0.1
+com.io7m.jfprop.server_admin_https_port                = 11443
+com.io7m.jfprop.server_admin_https_keystore_path       = /etc/jfprop/key_store.jks
+com.io7m.jfprop.server_admin_https_keystore_type       = JKS
+com.io7m.jfprop.server_admin_https_keystore_password   = compromisemykeystore
+com.io7m.jfprop.server_admin_https_truststore_path     = /etc/jfprop/trust_store.jks
+com.io7m.jfprop.server_admin_https_truststore_type     = JKS
+com.io7m.jfprop.server_admin_https_truststore_password = compromisemytruststore
+com.io7m.jfprop.server_admin_password                  = hackme</pre></div><div class="st200_paragraph_container"><div class="st200_paragraph_number"><a id="st200_p2s2ss6pg3" href="#st200_p2s2ss6pg3">3</a></div><div class="st200_paragraph">
+        The configuration file will:
+      </div></div><div class="st200_formal_item"><div class="st200_formal_item_title"><a id="st200_p2s2ss6fo2" href="#st200_p2s2ss6fo2">2.2.6.2. TLS server configuration</a></div><ol class="st200_list_ordered"><li class="st200_list_item">
+            Enable an HTTPS administration interface, making it accessible on 
+            <span class="st200_term constant">127.0.0.1:11443</span>. The administration
+            interface will use the given <span class="st200_term file">/etc/jfprop/key_store.jks</span>
+            key store, and <span class="st200_term file">/etc/jfprop/trust_store.jks</span>
+            trust store.
+          </li><li class="st200_list_item">
+            Enable an HTTPS server interface, making it accessible on 
+            <span class="st200_term constant">10.2.1.10:10443</span>. The server
+            interface will use the given <span class="st200_term file">/etc/jfprop/key_store.jks</span>
+            key store, and <span class="st200_term file">/etc/jfprop/trust_store.jks</span>
+            trust store.
+          </li></ol></div><div class="st200_paragraph_container"><div class="st200_paragraph_number"><a id="st200_p2s2ss6pg4" href="#st200_p2s2ss6pg4">4</a></div><div class="st200_paragraph">
+        Note that the configuration file does not enable the plain HTTP interfaces,
+        so all clients <span class="st200_term term">must</span> speak TLS in order to be
+        able to communicate with the server. This is optional: The 
+        <span class="st200_term package">io7m-jfprop</span> server supports
+        any combination of HTTP and HTTPS interfaces running on any given addresses.
+      </div></div></div><div class="st200_subsection_container"><div class="st200_subsection_title_number"><a id="st200_p2s2ss7" href="#st200_p2s2ss7">2.2.7</a></div><div class="st200_subsection_title">Remotes</div><div class="st200_paragraph_container"><div class="st200_paragraph_number"><a id="st200_p2s2ss7pg1" href="#st200_p2s2ss7pg1">1</a></div><div class="st200_paragraph">
+        The <span class="st200_term package">io7m-jfprop</span> server
+        is capable of calling the 
+        <a class="st200_link" href="p4s2.xhtml#st200_p4s2">on-commit</a> command
+        on other <span class="st200_term package">io7m-jfprop</span> servers.
+        This allows notifications to propagate to other servers automatically,
+        triggering chains of synchronizations <span class="st200_footnote_reference"><a id="st200_fn_2_ref" href="#st200_fn_2">[2]</a></span>.
+      </div></div><div class="st200_paragraph_container"><div class="st200_paragraph_number"><a id="st200_p2s2ss7pg2" href="#st200_p2s2ss7pg2">2</a></div><div class="st200_paragraph">
+        Essentially, administrators add <span class="st200_term term">remotes</span>
+        and then associate those remotes with repositories. These are distinct
+        from Fossil's concept of remotes. When a client calls the 
+        <a class="st200_link" href="p4s2.xhtml#st200_p4s2">on-commit</a>
+        command for a repository <span class="st200_term variable">r</span>, the
+        server calls the 
+        <a class="st200_link" href="p4s2.xhtml#st200_p4s2">on-commit</a>
+        command on all remotes associated with 
+        <span class="st200_term variable">r</span>. The server appears to be an
+        ordinary client to the remotes (and must therefore have a configured
+        user name and key). Adding a remote is simple:
+      </div></div><div class="st200_formal_item"><div class="st200_formal_item_title"><a id="st200_p2s2ss7fo1" href="#st200_p2s2ss7fo1">2.2.7.1. Remote creation</a></div><pre class="st200_verbatim">$ curl http://127.0.0.1:11080/remote-add -d admin_password=hackme -d remote_uri=http://remote.example.com -d remote_user=someone -d remote_key=3b46849adef3ed05c2a0124a884312fc72adbb9be1cc29ea2a03bb30dd229914
+$ curl http://127.0.0.1:11080/remote-add -d admin_password=hackme -d remote_uri=http://remote2.example.com -d remote_user=someone -d remote_key=157d284ca5859aed03f4afff21e82fcf9e8e1f1bdec070ff60a5bbb7d85137a3
+$ curl http://127.0.0.1:11080/remote-list -d admin_password=hackme
+1|http://remote.example.com|someone|3b46849adef3ed05c2a0124a884312fc72adbb9be1cc29ea2a03bb30dd229914
+2|http://remote2.example.com|someone|157d284ca5859aed03f4afff21e82fcf9e8e1f1bdec070ff60a5bbb7d85137a3
+</pre></div><div class="st200_paragraph_container"><div class="st200_paragraph_number"><a id="st200_p2s2ss7pg3" href="#st200_p2s2ss7pg3">3</a></div><div class="st200_paragraph">
+          Remotes are referred to by server-generated integer identifiers. In
+          the above example, the initially created remote has an identifier of 
+          <span class="st200_term constant">1</span>.
+          Remotes can be associated with individual repositories, or can be associated
+          with all repositories globally. The latter case is intended to save administrators
+          the burden of configuring hundreds of repositories.
+        </div></div><div class="st200_formal_item"><div class="st200_formal_item_title"><a id="st200_p2s2ss7fo2" href="#st200_p2s2ss7fo2">2.2.7.2. Remote association</a></div><pre class="st200_verbatim">$ curl http://127.0.0.1:11080/repository-remote-add -d admin_password=hackme -d remote_id=1 -d repository=/x/y/example0.fossil
+$ curl http://127.0.0.1:11080/repository-remote-list -d admin_password=hackme -d repository=/x/y/example0.fossil
+1
+$ curl http://127.0.0.1:11080/repository-remote-global-add -d admin_password=hackme -d remote_id=2
+$ curl http://127.0.0.1:11080/repository-remote-list -d admin_password=hackme -d repository=/x/y/example0.fossil
+1
+2</pre></div></div><div class="st200_subsection_container"><div class="st200_subsection_title_number"><a id="st200_p2s2ss8" href="#st200_p2s2ss8">2.2.8</a></div><div class="st200_subsection_title">Mail</div><div class="st200_paragraph_container"><div class="st200_paragraph_number"><a id="st200_p2s2ss8pg1" href="#st200_p2s2ss8pg1">1</a></div><div class="st200_paragraph">
+        The <span class="st200_term package">io7m-jfprop</span> server is
+        capable of notifying an administrator when certain classes of problems
+        occur. Specifically, when a synchronization error occurs for a repository,
+        and when notifying a 
+        <a class="st200_link" href="p2s2.xhtml#st200_p2s2ss7">remote</a> fails.
+      </div></div><div class="st200_paragraph_container"><div class="st200_paragraph_number"><a id="st200_p2s2ss8pg2" href="#st200_p2s2ss8pg2">2</a></div><div class="st200_paragraph">
+        The following configuration file enables mail notifications for an
+        administrator, setting the mail server, recipient, and sender:
+      </div></div><div class="st200_formal_item"><div class="st200_formal_item_title"><a id="st200_p2s2ss8fo1" href="#st200_p2s2ss8fo1">2.2.8.1. Mail notification configuration</a></div><pre class="st200_verbatim">com.io7m.jfprop.mail_enabled        = true
+com.io7m.jfprop.mail_server_address = 127.0.0.1
+com.io7m.jfprop.mail_recipient      = admin@ops.example.com
+com.io7m.jfprop.mail_sender         = jfprop@fossil.example.com
+com.io7m.jfprop.mail_auth_user      = jfprop
+com.io7m.jfprop.mail_auth_password  = freemailboxaccess</pre></div><div class="st200_paragraph_container"><div class="st200_paragraph_number"><a id="st200_p2s2ss8pg3" href="#st200_p2s2ss8pg3">3</a></div><div class="st200_paragraph">
+        If the mail server requires a username and password for authentication,
+        these can be specified separately:
+      </div></div><div class="st200_formal_item"><div class="st200_formal_item_title"><a id="st200_p2s2ss8fo2" href="#st200_p2s2ss8fo2">2.2.8.2. Mail notification configuration (Authentication)</a></div><pre class="st200_verbatim">com.io7m.jfprop.mail_enabled        = true
+com.io7m.jfprop.mail_server_address = 127.0.0.1
+com.io7m.jfprop.mail_recipient      = admin@ops.example.com
+com.io7m.jfprop.mail_sender         = jfprop@fossil.example.com
+</pre></div></div><div class="st200_subsection_container"><div class="st200_subsection_title_number"><a id="st200_p2s2ss9" href="#st200_p2s2ss9">2.2.9</a></div><div class="st200_subsection_title">Configuring Fossil</div><div class="st200_paragraph_container"><div class="st200_paragraph_number"><a id="st200_p2s2ss9pg1" href="#st200_p2s2ss9pg1">1</a></div><div class="st200_paragraph">
+        In order to actually make use of the <span class="st200_term package">io7m-jfprop</span> system,
+        the Fossil tool must be configured to send HTTP(S) requests
+        when commits and ticket changes occur. Note that a version of 
+        Fossil built more recently than
+        <a class="st200_link_external" href="http://fossil-scm.org/index.html/info/1311841a3c201a669bc0e433e24c6caf3fd3ab1d">2013-12-20</a>
+        is required.
+      </div></div><div class="st200_paragraph_container"><div class="st200_paragraph_number"><a id="st200_p2s2ss9pg2" href="#st200_p2s2ss9pg2">2</a></div><div class="st200_paragraph">
+        Using the <span class="st200_term command">fossil ui</span> web interface,
+        navigate to <span class="st200_term constant">Admin → Transfers</span>.
+        Then, assuming the 
+        <span class="st200_term package">io7m-jfprop</span> server is
+        at <span class="st200_term expression">http://fsl.iw.example.com:10080</span>,
+        the repository in question is <span class="st200_term file">/example0.fossil</span>,
+        the desired user name is <span class="st200_term constant">someone</span>, and
+        the desired key is <span class="st200_term constant">f6925a1f7d8bb47376ec1d89291a9e5d9b6ca1a55932d853610c67b34a9ed785</span>,
+        the following <span class="st200_term package">TH1</span> script added to the
+        <span class="st200_term constant">Commit</span> and
+        <span class="st200_term constant">Ticket</span> sections will cause Fossil
+        to notify the server when commits or ticket changes occur:
+      </div></div><div class="st200_formal_item"><div class="st200_formal_item_title"><a id="st200_p2s2ss9fo1" href="#st200_p2s2ss9fo1">2.2.9.1. TH1 Commit/ticket hook</a></div><pre class="st200_verbatim">
+puts "Commit hook: notifying http://fsl.iw.example.com:10080...\n"
+http -async "http://fsl.iw.example.com:10080/on-commit" "user=someone&amp;key=f6925a1f7d8bb47376ec1d89291a9e5d9b6ca1a55932d853610c67b34a9ed785&amp;repository=/example0.fossil"</pre></div><div class="st200_paragraph_container"><div class="st200_paragraph_number"><a id="st200_p2s2ss9pg3" href="#st200_p2s2ss9pg3">3</a></div><div class="st200_paragraph">
+        Note that by default, Fossil will only allow connections to 
+        servers with names that are matched by the pattern specified
+        in the <span class="st200_term variable">th1-uri-regexp</span> setting.
+        By default, the value of this setting is empty and so all connection
+        attempts will be denied. To allow connections to
+        <span class="st200_term expression">http://fsl.iw.example.com:10080</span>,
+        set the <span class="st200_term variable">th1-uri-regexp</span> setting
+        to a pattern that matches the URI:
+      </div></div><div class="st200_formal_item"><div class="st200_formal_item_title"><a id="st200_p2s2ss9fo2" href="#st200_p2s2ss9fo2">2.2.9.2. TH1 URI pattern</a></div><pre class="st200_verbatim">$ fossil settings th1-uri-regexp 'http://fsl\.iw\.example\.com'
+$ fossil settings th1-uri-regexp
+th1-uri-regexp   (local) http://fsl\.iw\.example\.com</pre></div><div class="st200_paragraph_container"><div class="st200_paragraph_number"><a id="st200_p2s2ss9pg4" href="#st200_p2s2ss9pg4">4</a></div><div class="st200_paragraph">
+        This can be tested by navigating to the 
+        <span class="st200_term constant">Admin → TH1</span> section in the
+        web interface and manually executing <span class="st200_term command">http -async</span>
+        commands at the command prompt - URIs that are not allowed by the current regular
+        expression will raise errors.
+      </div></div></div></div><div class="st200_footnotes"><hr/><div class="st200_footnote_container"><div class="st200_footnote_number">[<a id="st200_fn_2" href="#st200_fn_2_ref">2</a>]</div><div class="st200_footnote_body">
+          There is currently no protection against servers continually
+          calling each other in an infinite loop. Configure remotes wisely!
+        </div></div></div><div class="st200_navbar st200_navbar_bottom"><hr class="st200_hr"/><table class="st200_navbar_table" summary="Navigation bar"><tr><td class="st200_navbar_prev_file_cell"><a href="p2s1.xhtml#st200_p2s1">Previous</a></td><td class="st200_navbar_up_file_cell"><a href="p2.xhtml#st200_p2">Up</a></td><td class="st200_navbar_next_file_cell"><a href="p3.xhtml#st200_p3">Next</a></td></tr><tr><td class="st200_navbar_prev_title_cell">2.1. Overview</td><td class="st200_navbar_up_title_cell">2. User Guide</td><td class="st200_navbar_next_title_cell">3. API Reference: Types</td></tr></table></div></div></body></html>

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head><title>io7m-jfprop 0.3.0 Documentation: 3.2. Functions</title><link rel="stylesheet" type="text/css" href="jstructural-2.0.0-layout.css"/><link rel="stylesheet" type="text/css" href="jstructural-2.0.0-colour.css"/><link rel="stylesheet" type="text/css" href="documentation.css"/></head><body><div class="st200_body"><div class="brand">
+  <div class="brand_left">
+    <a href="http://io7m.com/">io7m</a>
+  </div>
+  <div class="brand_right">
+    <a href="http://io7m.github.io/jfprop">io7m-jfprop</a> 0.3.0
+  </div>
+</div><div class="st200_navbar st200_navbar_top"><table class="st200_navbar_table" summary="Navigation bar"><tr><td class="st200_navbar_prev_title_cell">3.1. Type Rules</td><td class="st200_navbar_up_title_cell">3. API Reference: Types</td><td class="st200_navbar_next_title_cell">3.3. user_name</td></tr><tr><td class="st200_navbar_prev_file_cell"><a href="p3s1.xhtml#st200_p3s1">Previous</a></td><td class="st200_navbar_up_file_cell"><a href="p3.xhtml#st200_p3">Up</a></td><td class="st200_navbar_next_file_cell"><a href="p3s3.xhtml#st200_p3s3">Next</a></td></tr></table><hr class="st200_hr"/></div><div class="st200_section_container"><div class="st200_section_title_number"><a id="st200_p3s2" href="#st200_p3s2">3.2</a></div><div class="st200_section_title">Functions</div><ul class="st200_contents st200_section_contents_outer st200_section_contents"><li class="st200_contents_item st200_contents_item1 st200_contents_item_subsection"><a href="p3s2.xhtml#st200_p3s2ss1">3.2.1. length</a></li><li class="st200_contents_item st200_contents_item1 st200_contents_item_subsection"><a href="p3s2.xhtml#st200_p3s2ss2">3.2.2. empty</a></li><li class="st200_contents_item st200_contents_item1 st200_contents_item_subsection"><a href="p3s2.xhtml#st200_p3s2ss3">3.2.3. is_digit</a></li><li class="st200_contents_item st200_contents_item1 st200_contents_item_subsection"><a href="p3s2.xhtml#st200_p3s2ss4">3.2.4. is_letter</a></li><li class="st200_contents_item st200_contents_item1 st200_contents_item_subsection"><a href="p3s2.xhtml#st200_p3s2ss5">3.2.5. in</a></li><li class="st200_contents_item st200_contents_item1 st200_contents_item_subsection"><a href="p3s2.xhtml#st200_p3s2ss6">3.2.6. get</a></li><li class="st200_contents_item st200_contents_item1 st200_contents_item_subsection"><a href="p3s2.xhtml#st200_p3s2ss7">3.2.7. contains</a></li></ul><div class="st200_subsection_container"><div class="st200_subsection_title_number"><a id="st200_p3s2ss1" href="#st200_p3s2ss1">3.2.1</a></div><div class="st200_subsection_title">length</div><div class="st200_formal_item"><div class="st200_formal_item_title"><a id="st200_p3s2ss1fo1" href="#st200_p3s2ss1fo1">3.2.1.1. Specification</a></div><pre class="st200_verbatim">length : ∀t. list[t] → integer</pre></div><div class="st200_paragraph_container"><div class="st200_paragraph_number"><a id="st200_p3s2ss1pg1" href="#st200_p3s2ss1pg1">1</a></div><div class="st200_paragraph">
+        The <span class="st200_term function">length</span> function
+        returns the number of values in the given argument list.
+      </div></div></div><div class="st200_subsection_container"><div class="st200_subsection_title_number"><a id="st200_p3s2ss2" href="#st200_p3s2ss2">3.2.2</a></div><div class="st200_subsection_title">empty</div><div class="st200_formal_item"><div class="st200_formal_item_title"><a id="st200_p3s2ss2fo1" href="#st200_p3s2ss2fo1">3.2.2.1. Specification</a></div><pre class="st200_verbatim">empty : string → boolean</pre></div><div class="st200_paragraph_container"><div class="st200_paragraph_number"><a id="st200_p3s2ss2pg1" href="#st200_p3s2ss2pg1">1</a></div><div class="st200_paragraph">
+        The <span class="st200_term function">empty</span> function
+        returns <span class="st200_term constant">true</span>
+        for a value <span class="st200_term variable">s</span>
+        iff <a class="st200_link" href="p3s2.xhtml#st200_p3s2ss1">length</a><span class="st200_term expression">(s) = 0</span>.
+      </div></div></div><div class="st200_subsection_container"><div class="st200_subsection_title_number"><a id="st200_p3s2ss3" href="#st200_p3s2ss3">3.2.3</a></div><div class="st200_subsection_title">is_digit</div><div class="st200_formal_item"><div class="st200_formal_item_title"><a id="st200_p3s2ss3fo1" href="#st200_p3s2ss3fo1">3.2.3.1. Specification</a></div><pre class="st200_verbatim">is_digit : character → boolean</pre></div><div class="st200_paragraph_container"><div class="st200_paragraph_number"><a id="st200_p3s2ss3pg1" href="#st200_p3s2ss3pg1">1</a></div><div class="st200_paragraph">
+        The <span class="st200_term function">is_digit</span> function
+        returns <span class="st200_term constant">true</span> iff the given
+        category of the argument is <span class="st200_term constant">DECIMAL_DIGIT_NUMBER</span>.
+      </div></div></div><div class="st200_subsection_container"><div class="st200_subsection_title_number"><a id="st200_p3s2ss4" href="#st200_p3s2ss4">3.2.4</a></div><div class="st200_subsection_title">is_letter</div><div class="st200_formal_item"><div class="st200_formal_item_title"><a id="st200_p3s2ss4fo1" href="#st200_p3s2ss4fo1">3.2.4.1. Specification</a></div><pre class="st200_verbatim">is_letter : character → boolean</pre></div><div class="st200_paragraph_container"><div class="st200_paragraph_number"><a id="st200_p3s2ss4pg1" href="#st200_p3s2ss4pg1">1</a></div><div class="st200_paragraph">
+        The <span class="st200_term function">is_letter</span> function
+        returns <span class="st200_term constant">true</span> iff the given
+        category of the argument is one of 
+        <span class="st200_term constant">UPPERCASE_LETTER</span>,
+        <span class="st200_term constant">LOWERCASE_LETTER</span>,
+        <span class="st200_term constant">TITLECASE_LETTER</span>,
+        <span class="st200_term constant">MODIFIER_LETTER</span>, or
+        <span class="st200_term constant">OTHER_LETTER</span>.
+      </div></div></div><div class="st200_subsection_container"><div class="st200_subsection_title_number"><a id="st200_p3s2ss5" href="#st200_p3s2ss5">3.2.5</a></div><div class="st200_subsection_title">in</div><div class="st200_formal_item"><div class="st200_formal_item_title"><a id="st200_p3s2ss5fo1" href="#st200_p3s2ss5fo1">3.2.5.1. Specification</a></div><pre class="st200_verbatim">in : ∀t. (list[t], integer) → boolean</pre></div><div class="st200_paragraph_container"><div class="st200_paragraph_number"><a id="st200_p3s2ss5pg1" href="#st200_p3s2ss5pg1">1</a></div><div class="st200_paragraph">
+        The <span class="st200_term function">in</span> function
+        returns <span class="st200_term constant">true</span> 
+        for arguments (<span class="st200_term variable">k</span>, 
+        <span class="st200_term variable">i</span>)
+        iff <span class="st200_term variable">i</span>
+        is greater than or equal to <span class="st200_term constant">0</span>
+        and less than
+        <a class="st200_link" href="p3s2.xhtml#st200_p3s2ss1">length</a><span class="st200_term expression">(k)</span>.
+      </div></div></div><div class="st200_subsection_container"><div class="st200_subsection_title_number"><a id="st200_p3s2ss6" href="#st200_p3s2ss6">3.2.6</a></div><div class="st200_subsection_title">get</div><div class="st200_formal_item"><div class="st200_formal_item_title"><a id="st200_p3s2ss6fo1" href="#st200_p3s2ss6fo1">3.2.6.1. Specification</a></div><pre class="st200_verbatim">get : ∀t. (list[t], integer) → character</pre></div><div class="st200_paragraph_container"><div class="st200_paragraph_number"><a id="st200_p3s2ss6pg1" href="#st200_p3s2ss6pg1">1</a></div><div class="st200_paragraph">
+        The <span class="st200_term function">get</span> function
+        called with arguments
+        (<span class="st200_term variable">k</span>, 
+        <span class="st200_term variable">i</span>) returns the
+        value in the list <span class="st200_term variable">k</span>
+        at index <span class="st200_term variable">i</span>. The results
+        are undefined if 
+        <a class="st200_link" href="p3s2.xhtml#st200_p3s2ss5">in</a><span class="st200_term expression">(k, i) = false</span>.
+      </div></div></div><div class="st200_subsection_container"><div class="st200_subsection_title_number"><a id="st200_p3s2ss7" href="#st200_p3s2ss7">3.2.7</a></div><div class="st200_subsection_title">contains</div><div class="st200_formal_item"><div class="st200_formal_item_title"><a id="st200_p3s2ss7fo1" href="#st200_p3s2ss7fo1">3.2.7.1. Specification</a></div><pre class="st200_verbatim">contains : ∀t. (list[t], list[t]) → boolean</pre></div><div class="st200_paragraph_container"><div class="st200_paragraph_number"><a id="st200_p3s2ss7pg1" href="#st200_p3s2ss7pg1">1</a></div><div class="st200_paragraph">
+        The <span class="st200_term function">contains</span> function
+        called with arguments
+        (<span class="st200_term variable">k</span>, 
+        <span class="st200_term variable">m</span>) returns 
+        <span class="st200_term constant">true</span> if the list
+        <span class="st200_term variable">k</span> contains the sequence
+        of values given by list <span class="st200_term variable">m</span>.
+      </div></div></div></div><div class="st200_navbar st200_navbar_bottom"><hr class="st200_hr"/><table class="st200_navbar_table" summary="Navigation bar"><tr><td class="st200_navbar_prev_file_cell"><a href="p3s1.xhtml#st200_p3s1">Previous</a></td><td class="st200_navbar_up_file_cell"><a href="p3.xhtml#st200_p3">Up</a></td><td class="st200_navbar_next_file_cell"><a href="p3s3.xhtml#st200_p3s3">Next</a></td></tr><tr><td class="st200_navbar_prev_title_cell">3.1. Type Rules</td><td class="st200_navbar_up_title_cell">3. API Reference: Types</td><td class="st200_navbar_next_title_cell">3.3. user_name</td></tr></table></div></div></body></html>

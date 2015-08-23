@@ -1,0 +1,513 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+  Copyright © 2014 <code@io7m.com> http://io7m.com
+
+  Permission to use, copy, modify, and/or distribute this software for any
+  purpose with or without fee is hereby granted, provided that the above
+  copyright notice and this permission notice appear in all copies.
+
+  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+  -->
+
+<s:part 
+  xml:id="api.types"  
+  xmlns:s="http://schemas.io7m.com/structural/2.1.0"
+  xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <s:part-title>API Reference: Types</s:part-title>
+  <s:part-contents/>
+
+  <s:section xml:id="api.types.type_rules">
+    <s:section-title>Type Rules</s:section-title>
+    <s:section-contents/>
+    
+    <s:subsection xml:id="api.types.type_rules.overview">
+      <s:subsection-title>Overview</s:subsection-title>
+      <s:paragraph>
+        The APIs exposed by the servers accept parameters that are each
+        implicitly of a given <s:term s:type="term">type</s:term>. Because
+        HTTP only exposes an interface that only allows parameters to be
+        arbitrary character strings, it's necessary to give 
+        <s:term s:type="term">interpretive</s:term> typing rules. That is,
+        the rules state that a given string <s:term s:type="variable">s</s:term>
+        is of type <s:term s:type="type">t</s:term> iff 
+        <s:term s:type="variable">s</s:term> 
+        <s:term s:type="term">can be interpreted as</s:term> a value of
+        type <s:term s:type="type">t</s:term> according to the given set of
+        rules for <s:term s:type="type">t</s:term>.
+      </s:paragraph>
+      <s:paragraph>
+        As an example, a string <s:term s:type="variable">s</s:term> 
+        can be interpreted as a value of type <s:term s:type="type">integer</s:term>
+        iff the contents of the string match the pattern
+        <s:term s:type="expression">0 | [1-9][0-9]*</s:term>.
+      </s:paragraph>
+      <s:paragraph>
+        The purpose of giving typing rules in this style is so that APIs
+        can be defined in terms of the types of the parameters, and a programmer
+        reading the API definition need only look up the definitions of the types
+        to know how to correctly format string values for the API. Additionally,
+        developers may be speaking to the server from any number of different
+        programming languages. The rules are given in terms of an extremely
+        simple pure-functional language and so are easily mapped
+        to code written in more or less any modern programming language.
+      </s:paragraph>
+    </s:subsection>
+
+    <s:subsection xml:id="api.types.type_rules.rules">
+      <s:subsection-title>Typing Rules</s:subsection-title>
+      <s:paragraph>
+        Rules are specified in terms of combinations of 
+        <s:link s:target="api.types.functions">functions</s:link>
+        over <s:term s:type="type">string</s:term>,
+        <s:term s:type="type">character</s:term>,
+        <s:term s:type="type">integer</s:term>, and 
+        <s:term s:type="type">boolean</s:term> types.
+      </s:paragraph>
+      <s:paragraph>
+        The syntax <s:term s:type="expression">s : t</s:term>
+        means that <s:term s:type="variable">s</s:term> is of
+        type <s:term s:type="variable">t</s:term>. The syntax
+        <s:term s:type="expression">f : t → u</s:term> states
+        that <s:term s:type="variable">f</s:term> is a function
+        that takes a value of type <s:term s:type="variable">t</s:term>
+        and returns a value of type <s:term s:type="variable">u</s:term>.
+        The syntax <s:term s:type="expression">f : (t,u) → v</s:term>
+        states that <s:term s:type="variable">f</s:term> is
+        a function that takes two arguments, the first of type
+        <s:term s:type="variable">t</s:term> and the second of
+        type <s:term s:type="variable">u</s:term> and returns
+        a value of type <s:term s:type="variable">v</s:term>.
+        The syntax <s:term s:type="expression">f(x)</s:term> is
+        the application of a unary function
+        <s:term s:type="expression">f</s:term> to a value
+        <s:term s:type="expression">x</s:term>. The syntax
+        <s:term s:type="expression">f(x,y)</s:term> is the application
+        of a two-argument function <s:term s:type="expression">f</s:term>
+        to values <s:term s:type="expression">x</s:term> and
+        <s:term s:type="expression">y</s:term>.
+      </s:paragraph>
+      <s:paragraph>
+        The syntax <s:term s:type="expression">∀i. p(i)</s:term>
+        introduces a new universally-quantified variable 
+        <s:term s:type="variable">i</s:term> and states that
+        the function <s:term s:type="variable">p</s:term> 
+        evaluates to <s:term s:type="constant">true</s:term>
+        for <s:term s:type="variable">i</s:term>. In other words,
+        "for every possible <s:term s:type="variable">i</s:term>,
+        <s:term s:type="variable">p</s:term> holds for
+        <s:term s:type="variable">i</s:term>".
+      </s:paragraph>
+      <s:paragraph>
+        The syntax <s:term s:type="expression">∃i. p(i)</s:term>
+        introduces a new existentially-quantified variable 
+        <s:term s:type="variable">i</s:term> and states that
+        the function <s:term s:type="variable">p</s:term>
+        evaluates to <s:term s:type="constant">true</s:term>
+        for <s:term s:type="variable">i</s:term>. In other words,
+        "there exists some <s:term s:type="variable">i</s:term>,
+        such that <s:term s:type="variable">p</s:term> holds for
+        <s:term s:type="variable">i</s:term>".
+      </s:paragraph>
+      <s:paragraph>
+        The expression <s:term s:type="expression">x ∧ y</s:term>
+        evaluates to <s:term s:type="constant">true</s:term>
+        if both <s:term s:type="variable">x</s:term> and
+        <s:term s:type="variable">y</s:term> evaluate to 
+        <s:term s:type="constant">true</s:term>. If
+        <s:term s:type="variable">x</s:term> evaluates to
+        <s:term s:type="constant">false</s:term>, then
+        <s:term s:type="variable">y</s:term> is not evaluated
+        and the whole expression evaluates to
+        <s:term s:type="constant">false</s:term>. This is the
+        same <s:term s:type="term">short-circuit</s:term> logic
+        seen in the <s:term s:type="function">AND</s:term>
+        operators of most programming languages. The 
+        <s:term s:type="expression">∧</s:term> operator is left-associative,
+        so <s:term s:type="expression">x ∧ y ∧ z = (x ∧ y) ∧ z</s:term>.
+      </s:paragraph>
+      <s:paragraph>
+        The expression <s:term s:type="expression">x ∨ y</s:term>
+        evaluates to <s:term s:type="constant">true</s:term>
+        if either of <s:term s:type="variable">x</s:term> or
+        <s:term s:type="variable">y</s:term> evaluates to 
+        <s:term s:type="constant">true</s:term>. The 
+        <s:term s:type="expression">∧</s:term> operator is left-associative,
+        so <s:term s:type="expression">x ∨ y ∨ z = (x ∨ y) ∨ z</s:term>.
+      </s:paragraph>
+    </s:subsection>
+    
+    <s:subsection xml:id="api.types.type_rules.predefined">
+      <s:subsection-title>Predefined Types</s:subsection-title>
+      <s:paragraph xml:id="api.types.type_rules.predefined.boolean">
+        The predefined <s:term s:type="type">boolean</s:term>
+        type has two values: <s:term s:type="constant">true</s:term>
+        and <s:term s:type="constant">false</s:term>.
+      </s:paragraph>
+      <s:paragraph xml:id="api.types.type_rules.predefined.integer">
+        The predefined <s:term s:type="type">integer</s:term>
+        type represents integer values in the exclusive range
+        <s:term s:type="type">(-∞, ∞)</s:term>.
+      </s:paragraph>
+      <s:paragraph xml:id="api.types.type_rules.predefined.character">
+        The predefined <s:term s:type="type">character</s:term>
+        type represents a Unicode codepoint. Specific character
+        values are given in type rules by the syntax 
+        <s:term s:type="expression">U+NNNN</s:term>,
+        where <s:term s:type="variable">N</s:term> represents a hexadecimal
+        digit. For example, <s:term s:type="constant">U+03BB</s:term>
+        corresponds to the lowercase lambda symbol 
+        <s:term s:type="constant">λ</s:term>. 
+        Characters are placed into categories according to the
+        Unicode standard, For example, the character
+        <s:term s:type="constant">U+0037</s:term>, corresponding
+        to the digit 7 is in the <s:term s:type="constant">DECIMAL_DIGIT_NUMBER</s:term>
+        category.
+      </s:paragraph>
+      <s:paragraph xml:id="api.types.type_rules.predefined.list">
+        The predefined <s:term s:type="type">list[t]</s:term>
+        type represents a bounded list of values of type 
+        <s:term s:type="type">t</s:term>.
+      </s:paragraph>
+      <s:paragraph xml:id="api.types.type_rules.predefined.string">
+        The predefined <s:term s:type="type">string</s:term>
+        is a synonym for the type 
+        <s:term s:type="type">list[character]</s:term>.
+      </s:paragraph>
+    </s:subsection>
+  </s:section>
+  
+  <s:section xml:id="api.types.functions">
+    <s:section-title>Functions</s:section-title>
+    <s:section-contents/>
+
+    <s:subsection xml:id="api.types.functions.length">
+      <s:subsection-title>length</s:subsection-title>
+      <s:formal-item s:kind="specification">
+        <s:formal-item-title>Specification</s:formal-item-title>
+        <s:verbatim>length : ∀t. list[t] → integer</s:verbatim>
+      </s:formal-item>
+      <s:paragraph>
+        The <s:term s:type="function">length</s:term> function
+        returns the number of values in the given argument list.
+      </s:paragraph>
+    </s:subsection>
+
+    <s:subsection xml:id="api.types.functions.empty">
+      <s:subsection-title>empty</s:subsection-title>
+      <s:formal-item s:kind="specification">
+        <s:formal-item-title>Specification</s:formal-item-title>
+        <s:verbatim>empty : string → boolean</s:verbatim>
+      </s:formal-item>
+      <s:paragraph>
+        The <s:term s:type="function">empty</s:term> function
+        returns <s:term s:type="constant">true</s:term>
+        for a value <s:term s:type="variable">s</s:term>
+        iff <s:link s:target="api.types.functions.length">length</s:link><s:term s:type="expression">(s) = 0</s:term>.
+      </s:paragraph>
+    </s:subsection>
+
+    <s:subsection xml:id="api.types.functions.is_digit">
+      <s:subsection-title>is_digit</s:subsection-title>
+      <s:formal-item s:kind="specification">
+        <s:formal-item-title>Specification</s:formal-item-title>
+        <s:verbatim>is_digit : character → boolean</s:verbatim>
+      </s:formal-item>
+      <s:paragraph>
+        The <s:term s:type="function">is_digit</s:term> function
+        returns <s:term s:type="constant">true</s:term> iff the given
+        category of the argument is <s:term s:type="constant">DECIMAL_DIGIT_NUMBER</s:term>.
+      </s:paragraph>
+    </s:subsection>
+
+    <s:subsection xml:id="api.types.functions.is_letter">
+      <s:subsection-title>is_letter</s:subsection-title>
+      <s:formal-item s:kind="specification">
+        <s:formal-item-title>Specification</s:formal-item-title>
+        <s:verbatim>is_letter : character → boolean</s:verbatim>
+      </s:formal-item>
+      <s:paragraph>
+        The <s:term s:type="function">is_letter</s:term> function
+        returns <s:term s:type="constant">true</s:term> iff the given
+        category of the argument is one of 
+        <s:term s:type="constant">UPPERCASE_LETTER</s:term>,
+        <s:term s:type="constant">LOWERCASE_LETTER</s:term>,
+        <s:term s:type="constant">TITLECASE_LETTER</s:term>,
+        <s:term s:type="constant">MODIFIER_LETTER</s:term>, or
+        <s:term s:type="constant">OTHER_LETTER</s:term>.
+      </s:paragraph>
+    </s:subsection>
+
+    <s:subsection xml:id="api.types.functions.in">
+      <s:subsection-title>in</s:subsection-title>
+      <s:formal-item s:kind="specification">
+        <s:formal-item-title>Specification</s:formal-item-title>
+        <s:verbatim>in : ∀t. (list[t], integer) → boolean</s:verbatim>
+      </s:formal-item>
+      <s:paragraph>
+        The <s:term s:type="function">in</s:term> function
+        returns <s:term s:type="constant">true</s:term> 
+        for arguments (<s:term s:type="variable">k</s:term>, 
+        <s:term s:type="variable">i</s:term>)
+        iff <s:term s:type="variable">i</s:term>
+        is greater than or equal to <s:term s:type="constant">0</s:term>
+        and less than
+        <s:link s:target="api.types.functions.length">length</s:link><s:term s:type="expression">(k)</s:term>.
+      </s:paragraph>
+    </s:subsection>
+    
+    <s:subsection xml:id="api.types.functions.get">
+      <s:subsection-title>get</s:subsection-title>
+      <s:formal-item s:kind="specification">
+        <s:formal-item-title>Specification</s:formal-item-title>
+        <s:verbatim>get : ∀t. (list[t], integer) → character</s:verbatim>
+      </s:formal-item>
+      <s:paragraph>
+        The <s:term s:type="function">get</s:term> function
+        called with arguments
+        (<s:term s:type="variable">k</s:term>, 
+        <s:term s:type="variable">i</s:term>) returns the
+        value in the list <s:term s:type="variable">k</s:term>
+        at index <s:term s:type="variable">i</s:term>. The results
+        are undefined if 
+        <s:link s:target="api.types.functions.in">in</s:link><s:term s:type="expression">(k, i) = false</s:term>.
+      </s:paragraph>
+    </s:subsection>
+
+    <s:subsection xml:id="api.types.functions.contains">
+      <s:subsection-title>contains</s:subsection-title>
+      <s:formal-item s:kind="specification">
+        <s:formal-item-title>Specification</s:formal-item-title>
+        <s:verbatim>contains : ∀t. (list[t], list[t]) → boolean</s:verbatim>
+      </s:formal-item>
+      <s:paragraph>
+        The <s:term s:type="function">contains</s:term> function
+        called with arguments
+        (<s:term s:type="variable">k</s:term>, 
+        <s:term s:type="variable">m</s:term>) returns 
+        <s:term s:type="constant">true</s:term> if the list
+        <s:term s:type="variable">k</s:term> contains the sequence
+        of values given by list <s:term s:type="variable">m</s:term>.
+      </s:paragraph>
+    </s:subsection>
+  </s:section>
+
+  <s:section xml:id="api.types.user_name">
+    <s:section-title>user_name</s:section-title>
+    <s:subsection>
+      <s:subsection-title>Description</s:subsection-title>
+      <s:paragraph>
+        Values of the <s:term s:type="type">user_name</s:term> type
+        represent valid user names.
+      </s:paragraph>
+    </s:subsection>
+    <s:subsection>
+      <s:subsection-title>Definition</s:subsection-title>
+      <s:paragraph>
+        A string <s:term s:type="variable">s</s:term> can be 
+        interpreted as a value of type <s:term s:type="type">user_name</s:term> 
+        iff:
+      </s:paragraph>
+      <s:formal-item s:kind="rules">
+        <s:formal-item-title>Type predicate</s:formal-item-title>
+        <s:verbatim><![CDATA[(empty(s) = false) ∧ ∀i. in(s, i), 
+  ∀c. c = get(s,i),
+    is_digit(c) ∨ is_letter(c) ∨ (c = U+005F)]]></s:verbatim>
+      </s:formal-item>
+    </s:subsection>
+    <s:subsection>
+      <s:subsection-title>Java</s:subsection-title>
+      <s:paragraph>
+        In the <s:term s:type="package">io7m-jfprop</s:term> server implementation,
+        the <s:term s:type="type">user_name</s:term> type is represented by the
+        <s:link-external s:target="apidocs/com/io7m/jfprop/JFPUserName.html">JFPUserName</s:link-external>
+        type.
+      </s:paragraph>
+    </s:subsection>
+  </s:section>
+
+  <s:section xml:id="api.types.key">
+    <s:section-title>key</s:section-title>
+    <s:subsection>
+      <s:subsection-title>Description</s:subsection-title>
+      <s:paragraph>
+        Values of the <s:term s:type="type">key</s:term> type
+        represent valid keys.
+      </s:paragraph>
+    </s:subsection>
+    <s:subsection>
+      <s:subsection-title>Definition</s:subsection-title>
+      <s:paragraph>
+        A string <s:term s:type="variable">s</s:term> can be 
+        interpreted as a value of type <s:term s:type="type">key</s:term> 
+        iff:
+      </s:paragraph>
+      <s:formal-item s:kind="rules">
+        <s:formal-item-title>Type predicate</s:formal-item-title>
+        <s:verbatim><![CDATA[(empty(s) = false) ∧ ∀i. in(s, i), 
+  ∀c. c = get(s,i),
+    is_digit(c) ∨ (c >= U+0061 ∧ c <= U+0066)]]></s:verbatim>
+      </s:formal-item>
+    </s:subsection>
+    <s:subsection>
+      <s:subsection-title>Java</s:subsection-title>
+      <s:paragraph>
+        In the <s:term s:type="package">io7m-jfprop</s:term> server implementation,
+        the <s:term s:type="type">key</s:term> type is represented by the
+        <s:link-external s:target="apidocs/com/io7m/jfprop/JFPKey.html">JFPKey</s:link-external>
+        type.
+      </s:paragraph>
+    </s:subsection>
+  </s:section>
+
+  <s:section xml:id="api.types.path">
+    <s:section-title>path</s:section-title>
+    <s:subsection>
+      <s:subsection-title>Description</s:subsection-title>
+      <s:paragraph>
+        Values of the <s:term s:type="type">path</s:term> type
+        represent valid paths.
+      </s:paragraph>
+    </s:subsection>
+    <s:subsection>
+      <s:subsection-title>Definition</s:subsection-title>
+      <s:paragraph>
+        A string <s:term s:type="variable">s</s:term> can be 
+        interpreted as a value of type <s:term s:type="type">path</s:term> 
+        iff <s:term s:type="variable">s</s:term> can be split into a sequence
+        of valid <s:term s:type="term">path components</s:term> separated by
+        single forward slash <s:term s:type="constant">"/"</s:term> 
+        <s:term s:type="constant">(U+002F)</s:term> characters. A valid
+        path component is defined by the <s:term s:type="function">valid_path_component</s:term>
+        predicate:
+      </s:paragraph>
+      <s:formal-item s:kind="rules">
+        <s:formal-item-title>Type predicate (valid_path_component)</s:formal-item-title>
+        <s:verbatim><![CDATA[valid_path_component : string → boolean =
+  ∀t. (empty(t) = false) ∧ (contains(t,"..") = false),
+    ∀i. in(t, i), 
+      ∀c. c = get(t,i),
+        is_digit(c) ∨ is_letter(c) ∨ (c = ".") ∨ (c = "_") ∨ (c = "-")]]></s:verbatim>
+      </s:formal-item>
+      <s:paragraph>
+        A valid <s:term s:type="type">path</s:term> is required to begin
+        with a single forward slash <s:term s:type="constant">"/"</s:term> 
+        <s:term s:type="constant">(U+002F)</s:term>, and must be longer than
+        a single character. If <s:term s:type="variable">s</s:term> is divided
+        into substrings delimited by <s:term s:type="constant">U+002F</s:term> 
+        (such that <s:term s:type="constant">U+002F</s:term> does not appear 
+        in any resulting substring), then for each substring 
+        <s:term s:type="variable">t</s:term>,
+        <s:term s:type="expression">valid_path_component(t) = true</s:term>.
+      </s:paragraph>
+    </s:subsection>
+    <s:subsection>
+      <s:subsection-title>Java</s:subsection-title>
+      <s:paragraph>
+        In the <s:term s:type="package">io7m-jfprop</s:term> server implementation,
+        the <s:term s:type="type">path</s:term> type is represented by the
+        <s:link-external s:target="apidocs/com/io7m/jfprop/JFPRepositoryPath.html">JFPRepositoryPath</s:link-external>
+        type.
+      </s:paragraph>
+    </s:subsection>
+  </s:section>
+
+  <s:section xml:id="api.types.pattern">
+    <s:section-title>pattern</s:section-title>
+    <s:subsection>
+      <s:subsection-title>Description</s:subsection-title>
+      <s:paragraph>
+        Values of the <s:term s:type="type">pattern</s:term> type
+        represent valid Java
+        <s:link-external s:target="http://docs.oracle.com/javase/7/docs/api/java/util/regex/Pattern.html">regular expressions</s:link-external>
+        and are therefore subject to the same syntax rules.
+      </s:paragraph>
+    </s:subsection>
+    <s:subsection>
+      <s:subsection-title>Java</s:subsection-title>
+      <s:paragraph>
+        In the <s:term s:type="package">io7m-jfprop</s:term> server implementation,
+        the <s:term s:type="type">pattern</s:term> type is represented by the
+        <s:term s:type="type">java.util.regex.Pattern</s:term> type.
+      </s:paragraph>
+    </s:subsection>
+  </s:section>
+
+  <s:section xml:id="api.types.time_component_spec">
+    <s:section-title>time_component_spec</s:section-title>
+    <s:subsection>
+      <s:subsection-title>Description</s:subsection-title>
+      <s:paragraph>
+        Values of the <s:term s:type="type">time_component_spec</s:term> type
+        represent patterns for matching periods of time. A value of the
+        <s:term s:type="type">time_component_spec</s:term> type can be of
+        one of three forms:
+      </s:paragraph>
+      <s:formal-item s:kind="rules">
+        <s:formal-item-title>Type definition</s:formal-item-title>
+        <s:list-ordered>
+          <s:list-item>
+            <s:term s:type="constant">any</s:term> - matches any value.
+          </s:list-item>
+          <s:list-item>
+            <s:term s:type="constant">exact n</s:term> - matches values that
+            are equal to <s:term s:type="variable">n</s:term>.
+          </s:list-item>
+          <s:list-item>
+            <s:term s:type="constant">divisible n</s:term> - matches values that
+            are divisible by <s:term s:type="variable">n</s:term>.
+          </s:list-item>
+        </s:list-ordered>
+      </s:formal-item>
+      <s:paragraph>
+        Values of the <s:term s:type="type">time_component_spec</s:term> are
+        usually combined to specify times. The
+        <s:term s:type="package">io7m-jfprop</s:term> uses
+        three values of type <s:term s:type="type">time_component_spec</s:term>
+        to specify the times of day that mass synchronizations will be executed,
+        specifying the day, hour, and minute, respectively. As an example,
+        <s:term s:type="expression">(any, divisible 2, exact 30)</s:term>
+        specifies that a synchronization should run on all days, on even-numbered
+        hours, at <s:term s:type="constant">30</s:term> minutes past the hour.
+      </s:paragraph>
+    </s:subsection>
+    <s:subsection>
+      <s:subsection-title>Java</s:subsection-title>
+      <s:paragraph>
+        In the <s:term s:type="package">io7m-jfprop</s:term> server implementation,
+        the <s:term s:type="type">time_component_spec</s:term> type is represented by the
+        <s:link-external s:target="apidocs/com/io7m/jfprop/JFPTimeComponentSpecType.html">JFPTimeComponentSpecType</s:link-external>
+        type.
+      </s:paragraph>
+    </s:subsection>
+  </s:section>
+
+  <s:section xml:id="api.types.uri">
+    <s:section-title>uri</s:section-title>
+    <s:subsection>
+      <s:subsection-title>Description</s:subsection-title>
+      <s:paragraph>
+        Values of the <s:term s:type="type">uri</s:term> type
+        represent valid URIs and are therefore subject to the 
+        syntax rules published in
+        <s:link-external s:target="http://www.ietf.org/rfc/rfc2396.txt">RFC 2396</s:link-external>.
+      </s:paragraph>
+    </s:subsection>
+    <s:subsection>
+      <s:subsection-title>Java</s:subsection-title>
+      <s:paragraph>
+        In the <s:term s:type="package">io7m-jfprop</s:term> server implementation,
+        the <s:term s:type="type">pattern</s:term> type is represented by the
+        <s:link-external s:target="http://docs.oracle.com/javase/7/docs/api/java/net/URI.html">URI</s:link-external> type.
+      </s:paragraph>
+    </s:subsection>
+  </s:section>
+
+</s:part>

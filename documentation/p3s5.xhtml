@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head><title>io7m-jfprop 0.3.0 Documentation: 3.5. path</title><link rel="stylesheet" type="text/css" href="jstructural-2.0.0-layout.css"/><link rel="stylesheet" type="text/css" href="jstructural-2.0.0-colour.css"/><link rel="stylesheet" type="text/css" href="documentation.css"/></head><body><div class="st200_body"><div class="brand">
+  <div class="brand_left">
+    <a href="http://io7m.com/">io7m</a>
+  </div>
+  <div class="brand_right">
+    <a href="http://io7m.github.io/jfprop">io7m-jfprop</a> 0.3.0
+  </div>
+</div><div class="st200_navbar st200_navbar_top"><table class="st200_navbar_table" summary="Navigation bar"><tr><td class="st200_navbar_prev_title_cell">3.4. key</td><td class="st200_navbar_up_title_cell">3. API Reference: Types</td><td class="st200_navbar_next_title_cell">3.6. pattern</td></tr><tr><td class="st200_navbar_prev_file_cell"><a href="p3s4.xhtml#st200_p3s4">Previous</a></td><td class="st200_navbar_up_file_cell"><a href="p3.xhtml#st200_p3">Up</a></td><td class="st200_navbar_next_file_cell"><a href="p3s6.xhtml#st200_p3s6">Next</a></td></tr></table><hr class="st200_hr"/></div><div class="st200_section_container"><div class="st200_section_title_number"><a id="st200_p3s5" href="#st200_p3s5">3.5</a></div><div class="st200_section_title">path</div><div class="st200_subsection_container"><div class="st200_subsection_title_number"><a id="st200_p3s5ss1" href="#st200_p3s5ss1">3.5.1</a></div><div class="st200_subsection_title">Description</div><div class="st200_paragraph_container"><div class="st200_paragraph_number"><a id="st200_p3s5ss1pg1" href="#st200_p3s5ss1pg1">1</a></div><div class="st200_paragraph">
+        Values of the <span class="st200_term type">path</span> type
+        represent valid paths.
+      </div></div></div><div class="st200_subsection_container"><div class="st200_subsection_title_number"><a id="st200_p3s5ss2" href="#st200_p3s5ss2">3.5.2</a></div><div class="st200_subsection_title">Definition</div><div class="st200_paragraph_container"><div class="st200_paragraph_number"><a id="st200_p3s5ss2pg1" href="#st200_p3s5ss2pg1">1</a></div><div class="st200_paragraph">
+        A string <span class="st200_term variable">s</span> can be 
+        interpreted as a value of type <span class="st200_term type">path</span> 
+        iff <span class="st200_term variable">s</span> can be split into a sequence
+        of valid <span class="st200_term term">path components</span> separated by
+        single forward slash <span class="st200_term constant">"/"</span> 
+        <span class="st200_term constant">(U+002F)</span> characters. A valid
+        path component is defined by the <span class="st200_term function">valid_path_component</span>
+        predicate:
+      </div></div><div class="st200_formal_item"><div class="st200_formal_item_title"><a id="st200_p3s5ss2fo1" href="#st200_p3s5ss2fo1">3.5.2.1. Type predicate (valid_path_component)</a></div><pre class="st200_verbatim">valid_path_component : string → boolean =
+  ∀t. (empty(t) = false) ∧ (contains(t,"..") = false),
+    ∀i. in(t, i), 
+      ∀c. c = get(t,i),
+        is_digit(c) ∨ is_letter(c) ∨ (c = ".") ∨ (c = "_") ∨ (c = "-")</pre></div><div class="st200_paragraph_container"><div class="st200_paragraph_number"><a id="st200_p3s5ss2pg2" href="#st200_p3s5ss2pg2">2</a></div><div class="st200_paragraph">
+        A valid <span class="st200_term type">path</span> is required to begin
+        with a single forward slash <span class="st200_term constant">"/"</span> 
+        <span class="st200_term constant">(U+002F)</span>, and must be longer than
+        a single character. If <span class="st200_term variable">s</span> is divided
+        into substrings delimited by <span class="st200_term constant">U+002F</span> 
+        (such that <span class="st200_term constant">U+002F</span> does not appear 
+        in any resulting substring), then for each substring 
+        <span class="st200_term variable">t</span>,
+        <span class="st200_term expression">valid_path_component(t) = true</span>.
+      </div></div></div><div class="st200_subsection_container"><div class="st200_subsection_title_number"><a id="st200_p3s5ss3" href="#st200_p3s5ss3">3.5.3</a></div><div class="st200_subsection_title">Java</div><div class="st200_paragraph_container"><div class="st200_paragraph_number"><a id="st200_p3s5ss3pg1" href="#st200_p3s5ss3pg1">1</a></div><div class="st200_paragraph">
+        In the <span class="st200_term package">io7m-jfprop</span> server implementation,
+        the <span class="st200_term type">path</span> type is represented by the
+        <a class="st200_link_external" href="apidocs/com/io7m/jfprop/JFPRepositoryPath.html">JFPRepositoryPath</a>
+        type.
+      </div></div></div></div><div class="st200_navbar st200_navbar_bottom"><hr class="st200_hr"/><table class="st200_navbar_table" summary="Navigation bar"><tr><td class="st200_navbar_prev_file_cell"><a href="p3s4.xhtml#st200_p3s4">Previous</a></td><td class="st200_navbar_up_file_cell"><a href="p3.xhtml#st200_p3">Up</a></td><td class="st200_navbar_next_file_cell"><a href="p3s6.xhtml#st200_p3s6">Next</a></td></tr><tr><td class="st200_navbar_prev_title_cell">3.4. key</td><td class="st200_navbar_up_title_cell">3. API Reference: Types</td><td class="st200_navbar_next_title_cell">3.6. pattern</td></tr></table></div></div></body></html>

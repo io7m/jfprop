@@ -18,7 +18,7 @@
 
 <s:part 
   xml:id="config_reference"  
-  xmlns:s="http://schemas.io7m.com/structural/2.0.0"
+  xmlns:s="http://schemas.io7m.com/structural/2.1.0"
   xmlns:xi="http://www.w3.org/2001/XInclude">
 
   <s:part-title>Configuration File Reference</s:part-title>

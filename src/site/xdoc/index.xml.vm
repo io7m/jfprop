@@ -10,8 +10,15 @@
 
   <body>
     <subsection name="jfprop">
-      <p>The <var>jfprop</var> package implements a simple server for
-      propagating <a href="http://fossil-scm.org">Fossil</a> repositories.</p>
+      <p>
+        The <var>jfprop</var> package implements a simple server for
+        propagating <a href="http://fossil-scm.org">Fossil</a> repositories.
+      </p>
+    </subsection>
+    <subsection name="Features">
+      <ul>
+        <li>ISC license.</li>
+      </ul>
     </subsection>
   </body>
 

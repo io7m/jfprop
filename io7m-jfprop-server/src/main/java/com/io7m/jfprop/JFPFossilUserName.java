@@ -35,7 +35,7 @@ public final class JFPFossilUserName implements
    * @param name
    *          The name.
    * @return <code>true</code> iff
-   *         <code>length(name) > 0 ∧ ∀i. isLetter(name(i)) ∨ isDigit(name(i)) ∨ name(i) = '_'</code>
+   *         <code>length(name) &gt; 0 ∧ ∀i. isLetter(name(i)) ∨ isDigit(name(i)) ∨ name(i) = '_'</code>
    *         .
    */
 
